@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Corkboard docs">
     <h2>Corkboard</h2>
-    <p class="version">v0.1.13 · 2026-11-10</p>
+    <p class="version">v0.1.14 · 2026-11-10</p>
     <ul>
     
       <li><a href="../">Corkboard</a>
@@ -108,7 +108,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.13.zip">Download v0.1.13</a>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.14.zip">Download v0.1.14</a>
   </nav>
   <article>
     <h1>Corkboard&#39;s design</h1>
@@ -189,6 +189,15 @@ words in the filter bar, with matching snippets in the preview.</p>
 Projects and Issues. <code>c</code> in the app, a global key through the menu bar extra, and <code>corkboard capture …</code>. It lands
 where it was captured from, or in the Account's default Team, shown as a chip to change. The app stays running with no
 windows, so it needs no separate helper as Microfiche's Capture agent is.</p>
+<ul>
+<li>Built: <code>c</code>, Capture an Issue… in the File menu and the menu bar extra, ⌃⌥⌘C from any app (chosen in Settings, as
+the shortcut that brings Corkboard forward is), and <code>corkboard capture …</code>, which queues it for the app to send. The line reads <code>team:</code>, <code>state:</code>, <code>p:</code>, <code>@</code>,
+<code>in:</code>, <code>+</code>, <code>due:</code>, <code>^</code> (Parent), <code>&gt;</code> or <code>blocking:</code>, <code>blocked-by:</code> and <code>related:</code>; <code>tab</code> finishes the one being
+typed and otherwise steps through the chips, Return makes it, and Escape forgets it. It's made from the Issue under
+the cursor's Team and the Project shown, or the Team chosen in Settings. A new Issue is a Change like any other,
+under an id Corkboard gives it, so Changes made before Linear has it name it too; it shows as <code>CRK-new</code> until Linear
+names it, and <code>u</code> takes it back, to Linear's trash once it's sent.</li>
+</ul>
 <h2 id="writing">Writing <a class="header-anchor" href="#writing">#</a></h2>
 <p>Descriptions and comments are shown rendered as Markdown, as Red Pen's preview does, and written in Microfiche's Vim
 editor (<code>microfiche-modal-editor</code>): <code>e</code> the description, <code>c c</code> a comment, <code>@</code> and <code>#</code> completing people and Issues.
