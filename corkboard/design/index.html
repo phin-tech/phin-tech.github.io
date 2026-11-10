@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Corkboard docs">
     <h2>Corkboard</h2>
-    <p class="version">v0.1.14 · 2026-11-10</p>
+    <p class="version">v0.1.15 · 2026-11-10</p>
     <ul>
     
       <li><a href="../">Corkboard</a>
@@ -108,7 +108,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.14.zip">Download v0.1.14</a>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.15.zip">Download v0.1.15</a>
   </nav>
   <article>
     <h1>Corkboard&#39;s design</h1>
@@ -197,6 +197,12 @@ typed and otherwise steps through the chips, Return makes it, and Escape forgets
 the cursor's Team and the Project shown, or the Team chosen in Settings. A new Issue is a Change like any other,
 under an id Corkboard gives it, so Changes made before Linear has it name it too; it shows as <code>CRK-new</code> until Linear
 names it, and <code>u</code> takes it back, to Linear's trash once it's sent.</li>
+<li>New Issue… (⌘N, and New Window is ⇧⌘N) is the same, in a window of its own with a title and a description over the
+line: <code>tab</code> goes from one to the next and ⌘↩ makes it. Escape puts it away keeping what's written. The toolbar has a
+button for it, and each Corkboard mode column a +, which starts it in that column.</li>
+<li>A chip, clicked or reached with <code>tab</code> and Return, opens a picker under the chips: a search over what its field can
+be (Teams, statuses, priorities, people, Projects, Labels, dates, Issues), <code>↑</code> <code>↓</code> and Return to take one. Labels
+go on and off and the picker stays, since an Issue has several.</li>
 </ul>
 <h2 id="writing">Writing <a class="header-anchor" href="#writing">#</a></h2>
 <p>Descriptions and comments are shown rendered as Markdown, as Red Pen's preview does, and written in Microfiche's Vim
