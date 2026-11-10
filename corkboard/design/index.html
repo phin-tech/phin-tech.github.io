@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Corkboard docs">
     <h2>Corkboard</h2>
-    <p class="version">v0.1.18 · 2026-11-10</p>
+    <p class="version">v0.1.19 · 2026-11-10</p>
     <ul>
     
       <li><a href="../">Corkboard</a>
@@ -102,13 +102,16 @@
       <li><a href="../adr/0004-a-microfiche-folder-is-an-account/">A Microfiche folder is an Account, reached through Microfiche&#39;s API</a>
       </li>
     
+      <li><a href="../adr/0005-changes-reach-projects-and-milestones/">Changes reach Projects and Milestones as well as Issues</a>
+      </li>
+    
       <li><a href="../design/" aria-current="page">Corkboard&#39;s design</a>
       
         <ul class="toc"><li class="l2"><a href="#what-its-for">What it&#39;s for</a></li><li class="l2"><a href="#keys">Keys</a></li><li class="l2"><a href="#places">Places</a></li><li class="l2"><a href="#modes">Modes</a></li><li class="l2"><a href="#all-issues-and-home">All Issues and Home</a></li><li class="l2"><a href="#filters-and-search">Filters and Search</a></li><li class="l2"><a href="#capture">Capture</a></li><li class="l2"><a href="#welcome-and-the-tour">Welcome and the tour</a></li><li class="l2"><a href="#writing">Writing</a></li><li class="l2"><a href="#verbs">Verbs</a></li><li class="l2"><a href="#changes-and-sync">Changes and sync</a></li><li class="l2"><a href="#accounts-and-signing-in">Accounts and signing in</a></li><li class="l2"><a href="#agents">Agents</a></li><li class="l2"><a href="#shipping">Shipping</a></li></ul>
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.18.zip">Download v0.1.18</a>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.19.zip">Download v0.1.19</a>
   </nav>
   <article>
     <h1>Corkboard&#39;s design</h1>
@@ -145,7 +148,14 @@ level, <code>[e</code> <code>]e</code> reorder, <code>m</code> Places it elsewhe
 many Sub-issues are done (<code>3/5</code>) and blockers. Nesting moves an Issue into its Parent's Project and Milestone, never
 its Team, and the status bar says so (<code>WEB-40 → Q1 Platform</code>).</li>
 <li>Built: the sidebar lists Projects, and <code>g p</code> picks one. Sub-issues are ordered by Linear's <code>subIssueSortOrder</code>,
-top-level Issues by <code>sortOrder</code>. Empty Milestones aren't shown yet, and <code>m</code> (Placing) and dragging are still to come.</li>
+top-level Issues by <code>sortOrder</code>. <code>m</code> (Placing) and dragging to reorder or Nest are still to come.</li>
+<li>The Project heads its Outline: its Summary, Project status (<code>w s</code>), Lead (<code>w l</code>), start and Target dates (<code>w ⇧S</code>,
+<code>w t</code>), how much is done, and its description; <code>w r</code> renames it and <code>w m</code> writes the Summary. Every Milestone is
+headed, empty ones too, with its Target date and how much of it is done. <code>⇧M n</code> makes one after the cursor's, and
+<code>⇧M r</code>, <code>⇧M t</code>, <code>⇧M k</code> <code>⇧M j</code> and <code>⇧M d</code> rename, date, move and delete the cursor's, or one picked when the cursor
+is under none. Deleting one leaves its Issues under No milestone, and <code>u</code> brings it back with them (ADR 0005).
+An Issue dragged onto a Milestone's heading, or onto a row under it, moves into that Milestone as <code>p m</code> would,
+bringing the Selection when it's part of it; one outside the Project stays put.</li>
 <li><strong>Every other list is flat</strong>; <code>z a</code> opens an Issue's Sub-issues in place.</li>
 <li><strong>Inbox</strong>: one row for each Issue. <code>s …</code> snoozes and <code>d</code> archives, in Linear; opening one marks it read. Every Issue
 verb works from its preview.</li>
@@ -239,7 +249,7 @@ yet: typecase's can follow.</p>
 v0.5.0 with SQLite, the <code>corkboard:</code> URL scheme, the menu bar extra, Open at login and the command line.</p>
 
     <nav class="pager" aria-label="Pages">
-      <span><a href="../adr/0004-a-microfiche-folder-is-an-account/"><small>Previous</small>A Microfiche folder is an Account, reached through Microfiche&#39;s API</a></span>
+      <span><a href="../adr/0005-changes-reach-projects-and-milestones/"><small>Previous</small>Changes reach Projects and Milestones as well as Issues</a></span>
       <span></span>
     </nav>
   </article>
