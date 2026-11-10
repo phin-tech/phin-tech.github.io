@@ -1,0 +1,225 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Corkboard&#39;s design · Corkboard docs</title>
+<meta name="description" content="Linear, shaped by the keyboard">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/corkboard/index.html">Corkboard in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Corkboard docs">
+    <h2>Corkboard</h2>
+    <p class="version">v0.1.12 · 2026-11-10</p>
+    <ul>
+    
+      <li><a href="../">Corkboard</a>
+      </li>
+    
+      <li><a href="../adr/0001-a-local-copy-of-linear/">Corkboard keeps a Local copy of Linear, and lists read only from it</a>
+      </li>
+    
+      <li><a href="../adr/0002-linears-model-is-the-apps-model/">Linear&#39;s model is the app&#39;s model; other trackers adapt to it</a>
+      </li>
+    
+      <li><a href="../adr/0003-everything-belongs-to-an-account/">Everything in the Local copy belongs to one Account, from the start</a>
+      </li>
+    
+      <li><a href="../adr/0004-a-microfiche-folder-is-an-account/">A Microfiche folder is an Account, reached through Microfiche&#39;s API</a>
+      </li>
+    
+      <li><a href="../design/" aria-current="page">Corkboard&#39;s design</a>
+      
+        <ul class="toc"><li class="l2"><a href="#what-its-for">What it&#39;s for</a></li><li class="l2"><a href="#keys">Keys</a></li><li class="l2"><a href="#places">Places</a></li><li class="l2"><a href="#modes">Modes</a></li><li class="l2"><a href="#all-issues-and-home">All Issues and Home</a></li><li class="l2"><a href="#filters-and-search">Filters and Search</a></li><li class="l2"><a href="#capture">Capture</a></li><li class="l2"><a href="#writing">Writing</a></li><li class="l2"><a href="#verbs">Verbs</a></li><li class="l2"><a href="#changes-and-sync">Changes and sync</a></li><li class="l2"><a href="#accounts-and-signing-in">Accounts and signing in</a></li><li class="l2"><a href="#agents">Agents</a></li><li class="l2"><a href="#shipping">Shipping</a></li></ul>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.12.zip">Download v0.1.12</a>
+  </nav>
+  <article>
+    <h1>Corkboard&#39;s design</h1>
+    <p>What was settled before the first line of code, and why. Words are as <code>CONTEXT.md</code> defines them; the decisions that
+are hard to reverse are in <code>docs/adr/</code>.</p>
+<h2 id="what-its-for">What it's for <a class="header-anchor" href="#what-its-for">#</a></h2>
+<p>A better Linear client, for shaping work rather than only seeing it: better Filters and Search, Links between Issues
+and from Issues to Projects that are quick to make, Sub-issues that are easy to manage, and Projects that are easy to
+shape and read. Speed and the keyboard are how it gets there. Initiatives, roadmaps and Cycles stay in Linear's app for
+now.</p>
+<h2 id="keys">Keys <a class="header-anchor" href="#keys">#</a></h2>
+<p>Red Pen's model, with Microfiche's selection:</p>
+<ul>
+<li>No modes for moving: <code>j</code> <code>k</code>, <code>g g</code> <code>G</code>, <code>J</code> <code>K</code> between Issues even in the preview, <code>↩</code> shows the preview, <code>Tab</code>
+moves the keys into it, <code>f</code> shows an Issue over the whole window, <code>q</code> or <code>⎋</code> steps out.</li>
+<li>Verbs are two-key mnemonics, as Red Pen's <code>s l</code> and <code>m w</code> are: <code>l p</code> link to a Parent, <code>l b</code> blocking, <code>l r</code>
+related, <code>l d</code> a duplicate, <code>p p</code> into a Project, <code>s …</code> snooze, <code>u</code> undo. <code>Space</code> or <code>,</code> is the Leader menu, with
+every Command; ⌘K is the palette.</li>
+<li>A Selection is a range (<code>V</code>, then <code>j</code> <code>k</code>) or single Issues (<code>v</code>), and the two combine. A verb acts on the
+Selection, or on the Issue under the cursor with none. The status bar says how many are selected.</li>
+<li>The mouse reaches the same Commands, with no mode to switch: a click moves the cursor, ⌘-click picks (<code>v</code>),
+⇧-click makes a range (<code>V</code>), a double click or a click on the cursor's row shows the preview, and a right click
+has the verbs for what's chosen (a row outside it becomes the cursor first, as in Finder). The title bar has buttons
+for the commonest, each saying its key, and pointing at an identifier names the row's keys.</li>
+<li>A verb that needs a target opens a picker: fuzzy over identifiers and titles from the Local copy, offering only
+targets that make sense (no Parent that would make a loop).</li>
+</ul>
+<h2 id="places">Places <a class="header-anchor" href="#places">#</a></h2>
+<p>The sidebar has My Issues, Inbox, Triage, Projects and Saved Searches (⌘1 to ⌘9).</p>
+<ul>
+<li><strong>Projects</strong> open as an Outline. The moves are Microfiche's: <code>&gt;&gt;</code> Nests under the Issue above, <code>&lt;&lt;</code> takes it out a
+level, <code>[e</code> <code>]e</code> reorder, <code>m</code> Places it elsewhere while showing where, <code>z a</code> folds. Rows show the Workflow state, how
+many Sub-issues are done (<code>3/5</code>) and blockers. Nesting moves an Issue into its Parent's Project and Milestone, never
+its Team, and the status bar says so (<code>WEB-40 → Q1 Platform</code>).</li>
+<li>Built: the sidebar lists Projects, and <code>g p</code> picks one. Sub-issues are ordered by Linear's <code>subIssueSortOrder</code>,
+top-level Issues by <code>sortOrder</code>. Empty Milestones aren't shown yet, and <code>m</code> (Placing) and dragging are still to come.</li>
+<li><strong>Every other list is flat</strong>; <code>z a</code> opens an Issue's Sub-issues in place.</li>
+<li><strong>Inbox</strong>: one row for each Issue. <code>s …</code> snoozes and <code>d</code> archives, in Linear; opening one marks it read. Every Issue
+verb works from its preview.</li>
+<li><strong>Triage</strong>: <code>a</code> accepts into the Team's default state, <code>A</code> accepts with a line of fields in Capture's syntax, <code>x</code>
+declines with a reason posted as a comment, <code>l d</code> marks a duplicate, <code>s …</code> snoozes. All work on a Selection.</li>
+</ul>
+<h2 id="modes">Modes <a class="header-anchor" href="#modes">#</a></h2>
+<p>Whatever's shown can be seen three ways, and the verbs are the same in each.</p>
+<ul>
+<li><strong>List mode</strong>, rows, which Corkboard opens in.</li>
+<li><strong>Corkboard mode</strong> (<code>b</code>), cards on a cork board, with Strings for Links.</li>
+<li><strong>Paper mode</strong> (<code>P</code>), the Issues written as a Microfiche Note, for reading down a Project or a Filter as text.
+Headings group them as the board's columns do (or by Milestone, on a Project); Sub-issues go beneath their Parents
+even where their state would put them under another Heading, and say their own state; Links are Fields named from
+the Issue's side. It moves as Microfiche's normal mode does, and there's no insert mode: nothing on the paper is
+text to edit. Each Project and Filter keeps its own folded Headings. Lines are one height, so only those in sight
+are built, as in List mode.</li>
+</ul>
+<h2 id="all-issues-and-home">All Issues and Home <a class="header-anchor" href="#all-issues-and-home">#</a></h2>
+<p>All Issues is the Local copy: your Teams' Issues, and whatever a search has brought. Every other view is a Saved
+Search over it, My Issues (<code>@me is:open</code>) among them, put there once and Home to start with. Home is what Corkboard
+opens on, and <code>g h</code> goes back to. A filter also asks Linear for the same, translated to its IssueFilter, one page,
+400 ms after it settles; a Saved Search marked Keep synced is asked again at every sync. Nothing else beyond your Teams
+is downloaded.</p>
+<h2 id="filters-and-search">Filters and Search <a class="header-anchor" href="#filters-and-search">#</a></h2>
+<p>The typecase filter bar, read as Microfiche's <code>:linear</code> query is: <code>@me project:Website,Billing +bug -priority:low status:&quot;In Progress&quot; due:&lt;fri</code>. Built so far: <code>+label</code> (or <code>label:</code>), <code>state:</code> (<code>status:</code>), <code>is:started</code>,
+<code>priority:</code> (<code>p:</code>), <code>project:</code> (<code>in:</code>), <code>team:</code>, <code>due:</code> with <code>&lt;</code> and <code>&gt;</code>, <code>-</code> before any to leave it out, and words
+over the identifier, title and description. It reads only the Local copy, so it never waits on Linear. Saved Searches keep a Filter by name, as
+its text, in the settings file; <code>+</code> saves what's shown, ⌘1 to ⌘9 bring the first nine back, and My Issues clears the
+Filter. Link keys are named from the Issue's side and are fixed for now: <code>is:blocked</code>,
+<code>is:blocking</code>, <code>has:subs</code>, <code>blocked-by:AUTH-12</code>, <code>blocking:</code>, <code>parent:</code>, <code>child:</code>, <code>related:</code>, <code>duplicate-of:</code>.
+Parentheses are kept for nested Filters later (<code>blocked-by:(project:Billing -is:done)</code>), so no saved text may use them
+now.</p>
+<p>⌘K is typecase's palette: every Command, by its menu's name, with its keys (menu or <code>SPC</code>). <code>#</code> searches Issues:
+the whole Local copy as you type, whoever's and however done, and after a pause in typing, Linear's own search,
+whose finds the Local copy lacks are listed under &quot;from Linear&quot; and kept in the Local copy for next time. An Issue the
+list has gets the cursor; one it doesn't is shown in the preview until the cursor moves.</p>
+<p>One Search over titles, descriptions and comments, used three ways: jumping (⌘K, <code>#</code>), picking a verb's target, and
+words in the filter bar, with matching snippets in the preview.</p>
+<h2 id="capture">Capture <a class="header-anchor" href="#capture">#</a></h2>
+<p>The Capture box, after Microfiche's: one line in the Filter's sigils, <code>Fix token refresh +bug @sam p:&quot;Q1 Platform&quot; ^AUTH-12 &gt;WEB-40 due:fri</code>, with chips that read the line and write into it, and <code>tab</code> completing people, labels,
+Projects and Issues. <code>c</code> in the app, a global key through the menu bar extra, and <code>corkboard capture …</code>. It lands
+where it was captured from, or in the Account's default Team, shown as a chip to change. The app stays running with no
+windows, so it needs no separate helper as Microfiche's Capture agent is.</p>
+<h2 id="writing">Writing <a class="header-anchor" href="#writing">#</a></h2>
+<p>Descriptions and comments are shown rendered as Markdown, as Red Pen's preview does, and written in Microfiche's Vim
+editor (<code>microfiche-modal-editor</code>): <code>e</code> the description, <code>c c</code> a comment, <code>@</code> and <code>#</code> completing people and Issues.
+Corkboard takes the editor from Microfiche's repository by tag at first, and it moves into typecase
+(<code>typecase-vim</code>, <code>typecase-modal-editor</code>) once Corkboard has shown what it needs changed.</p>
+<h2 id="verbs">Verbs <a class="header-anchor" href="#verbs">#</a></h2>
+<p>Every verb has a key, a place in the leader, a menu item (which ⌘K lists) and a place in the right-click menu; the
+preview's fields are buttons for theirs. Built so far: <code>s</code> status, <code>p 1</code>–<code>p 4</code> and <code>p 0</code> priority, <code>a</code> assign, <code>l p</code>
+link to a Parent (refusing loops), <code>l u</code> take out from under it, <code>u</code> undo, <code>l b</code> blocks, <code>l B</code> blocked by, <code>l r</code> related, <code>l d</code>
+duplicate of, <code>l x</code> take a Link away, <code>p p</code> move to a Project. A picker is the palette's card, narrowed by typing. A
+Link made here waits as <code>local-&lt;Change&gt;</code> until Linear gives it an id.</p>
+<h2 id="changes-and-sync">Changes and sync <a class="header-anchor" href="#changes-and-sync">#</a></h2>
+<p>See ADR 0001. Every edit is a Change: on screen at once, sent from a queue kept on disk, waiting while offline
+(&quot;6 changes waiting&quot;), taken back with a toast if Linear refuses. The last write wins on each field. <code>u</code> undoes your
+last edit, a bulk one included, by queuing the opposite Changes.</p>
+<h2 id="accounts-and-signing-in">Accounts and signing in <a class="header-anchor" href="#accounts-and-signing-in">#</a></h2>
+<p>Several Accounts (ADR 0003), each a personal API key kept in the Keychain, with the Teams to follow and a default Team
+for Captures, chosen in Settings. Lists and Searches can span the Accounts of one Source, never two Sources; Links can't span Accounts.</p>
+<h2 id="agents">Agents <a class="header-anchor" href="#agents">#</a></h2>
+<p>An MCP server (<code>corkboard mcp</code>) in the first version, over the Local copy: search, read, link, Nest, move into a
+Project, Capture. Its edits are Changes like anyone's, so they queue, roll back and undo the same way. No agent panel
+yet: typecase's can follow.</p>
+<h2 id="shipping">Shipping <a class="header-anchor" href="#shipping">#</a></h2>
+<p>The download page with Sparkle, as the other apps; GitHub releases and a cask may follow. Made from gpui-template
+v0.5.0 with SQLite, the <code>corkboard:</code> URL scheme, the menu bar extra, Open at login and the command line.</p>
+
+    <nav class="pager" aria-label="Pages">
+      <span><a href="../adr/0004-a-microfiche-folder-is-an-account/"><small>Previous</small>A Microfiche folder is an Account, reached through Microfiche&#39;s API</a></span>
+      <span></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>
