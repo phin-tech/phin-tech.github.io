@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Corkboard docs">
     <h2>Corkboard</h2>
-    <p class="version">v0.1.25 · 2026-11-11</p>
+    <p class="version">v0.1.26 · 2026-11-11</p>
     <ul>
     
       <li><a href="../">Corkboard</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.25.zip">Download v0.1.25</a>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.26.zip">Download v0.1.26</a>
   </nav>
   <article>
     <h1>Corkboard&#39;s design</h1>
@@ -190,7 +190,7 @@ opens on, and <code>g h</code> goes back to. A filter also asks Linear for the s
 is downloaded.</p>
 <h2 id="filters-and-search">Filters and Search <a class="header-anchor" href="#filters-and-search">#</a></h2>
 <p>The typecase filter bar, read as Microfiche's <code>:linear</code> query is: <code>@me project:Website,Billing +bug -priority:low status:&quot;In Progress&quot; due:&lt;fri</code>. Built so far: <code>+label</code> (or <code>label:</code>), <code>state:</code> (<code>status:</code>), <code>is:started</code>,
-<code>priority:</code> (<code>p:</code>), <code>project:</code> (<code>in:</code>), <code>team:</code>, <code>due:</code> with <code>&lt;</code> and <code>&gt;</code>, <code>-</code> before any to leave it out, and words
+<code>priority:</code> (<code>p:</code>), <code>project:</code> (<code>in:</code>), <code>team:</code>, <code>due:</code>, <code>created:</code> and <code>updated:</code> with <code>&lt;</code> and <code>&gt;</code> (<code>created:&lt;-6m</code>), <code>-</code> before any to leave it out, and words
 over the identifier, title and description. It reads only the Local copy, so it never waits on Linear. Saved Searches keep a Filter by name, as
 its text, in the settings file; <code>+</code> saves what's shown, ⌘1 to ⌘9 bring the first nine back, and My Issues clears the
 Filter. Link keys are named from the Issue's side and are fixed for now: <code>is:blocked</code>,
@@ -279,7 +279,9 @@ last edit, a bulk one included, by queuing the opposite Changes.</p>
 for Captures, chosen in Settings. Lists and Searches can span the Accounts of one Source, never two Sources; Links can't span Accounts.</p>
 <h2 id="agents">Agents <a class="header-anchor" href="#agents">#</a></h2>
 <p>An MCP server (<code>corkboard mcp</code>) in the first version, over the Local copy: search, read, link, Nest, move into a
-Project, Capture. Its edits are Changes like anyone's, so they queue, roll back and undo the same way. No agent panel
+Project, Capture. Lists sort by when Issues were made or last changed, and each Issue says both. An Issue's history
+(<code>issue_history</code>, <code>corkboard history</code>), who changed what and when, is the one read asked of Linear, since the Local
+copy keeps only what an Issue is now. Its edits are Changes like anyone's, so they queue, roll back and undo the same way. No agent panel
 yet: typecase's can follow.</p>
 <p><code>corkboard mcp</code> is a command of the app's own binary, not a server left running. It shares the Local copy with the
 app and sends Changes itself, so an agent's edits reach Linear with the app closed. Each sender takes a turn before
