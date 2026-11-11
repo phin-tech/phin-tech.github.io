@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Corkboard docs">
     <h2>Corkboard</h2>
-    <p class="version">v0.1.24 · 2026-11-11</p>
+    <p class="version">v0.1.25 · 2026-11-11</p>
     <ul>
     
       <li><a href="../">Corkboard</a>
@@ -105,13 +105,16 @@
       <li><a href="../adr/0005-changes-reach-projects-and-milestones/">Changes reach Projects and Milestones as well as Issues</a>
       </li>
     
+      <li><a href="../adr/0006-stickies-are-files-not-issues/">Stickies are Markdown files in a folder of yours, not Issues or an Account&#39;s</a>
+      </li>
+    
       <li><a href="../design/" aria-current="page">Corkboard&#39;s design</a>
       
-        <ul class="toc"><li class="l2"><a href="#what-its-for">What it&#39;s for</a></li><li class="l2"><a href="#keys">Keys</a></li><li class="l2"><a href="#places">Places</a></li><li class="l2"><a href="#modes">Modes</a></li><li class="l2"><a href="#all-issues-and-home">All Issues and Home</a></li><li class="l2"><a href="#filters-and-search">Filters and Search</a></li><li class="l2"><a href="#capture">Capture</a></li><li class="l2"><a href="#welcome-and-the-tour">Welcome and the tour</a></li><li class="l2"><a href="#writing">Writing</a></li><li class="l2"><a href="#verbs">Verbs</a></li><li class="l2"><a href="#changes-and-sync">Changes and sync</a></li><li class="l2"><a href="#accounts-and-signing-in">Accounts and signing in</a></li><li class="l2"><a href="#agents">Agents</a></li><li class="l2"><a href="#shipping">Shipping</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#what-its-for">What it&#39;s for</a></li><li class="l2"><a href="#keys">Keys</a></li><li class="l2"><a href="#places">Places</a></li><li class="l2"><a href="#modes">Modes</a></li><li class="l2"><a href="#all-issues-and-home">All Issues and Home</a></li><li class="l2"><a href="#filters-and-search">Filters and Search</a></li><li class="l2"><a href="#capture">Capture</a></li><li class="l2"><a href="#welcome-and-the-tour">Welcome and the tour</a></li><li class="l2"><a href="#stickies">Stickies</a></li><li class="l2"><a href="#writing">Writing</a></li><li class="l2"><a href="#verbs">Verbs</a></li><li class="l2"><a href="#changes-and-sync">Changes and sync</a></li><li class="l2"><a href="#accounts-and-signing-in">Accounts and signing in</a></li><li class="l2"><a href="#agents">Agents</a></li><li class="l2"><a href="#shipping">Shipping</a></li></ul>
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.24.zip">Download v0.1.24</a>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.25.zip">Download v0.1.25</a>
   </nav>
   <article>
     <h1>Corkboard&#39;s design</h1>
@@ -227,6 +230,35 @@ sidebar, the filter bar, the list, the preview, the modes and the toolbar, over 
 window shows a Local copy of the sample, made afresh each time, and ending it brings yours back. Syncing and sending
 Changes keep to yours throughout, and the edits to undo are forgotten when it starts and ends, so <code>u</code> never crosses
 from one to the other.</p>
+<h2 id="stickies">Stickies <a class="header-anchor" href="#stickies">#</a></h2>
+<p>Notes of your own, which aren't Linear's (ADR 0006): a place in the sidebar, under All Issues, and <code>g s</code>. Each Sticky
+is a Markdown file in a folder you choose, its colour and Labels in a YAML header, so the folder can sit in iCloud
+Drive or git and any editor can write in it. Where each is pinned on the cork is the Local copy's, by its folder and
+name; a Sticky never moved goes in the next free place along a grid.</p>
+<ul>
+<li>The three modes are the Issues': <code>b</code> pins them to the cork anywhere, each leaning a degree or two as a hand left
+it, dragged and left where they're dropped (Tidy the Board puts them back on the grid), with ← → and <code>j</code> <code>k</code> moving
+the cursor to the nearest one that way; a right click on bare cork puts a new one there. List mode is rows, and <code>P</code>
+writes them out under a Heading for each first Label.</li>
+<li>There's no preview: a Sticky is written on in place, on its card, its row or its place on the paper, with its
+colours and Labels under the writing. <code>e</code>, <code>↩</code>, a second click or a double one starts; Escape or ⌘↩ finishes.
+<code>n</code> (or ⌘N, while the Stickies are shown) makes one beside the cursor's, in its colour and first Label, ready to
+write on, and one made and left empty goes again. <code>p c</code> is its colour, <code>p l</code> its Labels, <code>d</code> tears it off to the
+Trash, and <code>u</code> undoes each of these, the typing included. Each Label has a colour of its own, picked by its name.</li>
+<li>Tape (<code>⇧N</code>, or Tape a Section Here from a right click on the cork) is a strip of masking tape with a section's
+name handwritten on it, to head a part of the cork; it leans more than a note does. It's a Sticky of its own kind,
+so it's kept, written on, moved, torn off and undone as one is; List mode shows it as a heading, and Paper mode,
+which has its own Headings, leaves it out.</li>
+<li>A checkbox written on one (<code>- [ ] eggs</code>) is ticked from the card itself, and the card and the row say <code>1/3</code>. That's
+as far as doing goes: no states, dates or reminders. What needs a date is sent to Reminders; what's work, to Linear.</li>
+<li>Holding the line on what a canvas could become: no shapes, drawing, images, templates, frames or live sharing for
+now. Frames (named areas) are the first that may come, once there are too many to read by Label.</li>
+<li>The canvas (<code>corkboard_core::canvas</code>) is plain geometry over an R*-tree: what's in sight, what's under a point,
+what's beside the cursor, and where there's room. Only the Stickies in sight are built. The Issues' board keeps
+its own columns for now, and can move onto it once it needs what it does.</li>
+<li>Microfiche's Notes and Apple Notes may become other folders of Stickies later, through the same seam, and a place
+showing more than one of them together would need an ADR of its own.</li>
+</ul>
 <h2 id="writing">Writing <a class="header-anchor" href="#writing">#</a></h2>
 <p>Descriptions and comments are shown rendered as Markdown, as Red Pen's preview does, and written in Microfiche's Vim
 editor (<code>microfiche-modal-editor</code>): <code>e</code> the description, <code>c c</code> a comment, <code>@</code> and <code>#</code> completing people and Issues.
@@ -267,7 +299,7 @@ sends Corkboard's prompts, and <code>[[prompts]]</code> in the settings file add
 v0.5.0 with SQLite, the <code>corkboard:</code> URL scheme, the menu bar extra, Open at login and the command line.</p>
 
     <nav class="pager" aria-label="Pages">
-      <span><a href="../adr/0005-changes-reach-projects-and-milestones/"><small>Previous</small>Changes reach Projects and Milestones as well as Issues</a></span>
+      <span><a href="../adr/0006-stickies-are-files-not-issues/"><small>Previous</small>Stickies are Markdown files in a folder of yours, not Issues or an Account&#39;s</a></span>
       <span></span>
     </nav>
   </article>

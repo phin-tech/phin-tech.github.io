@@ -3,6 +3,7 @@ corkboard/adr/0002-linears-model-is-the-apps-model/index.html
 corkboard/adr/0003-everything-belongs-to-an-account/index.html
 corkboard/adr/0004-a-microfiche-folder-is-an-account/index.html
 corkboard/adr/0005-changes-reach-projects-and-milestones/index.html
+corkboard/adr/0006-stickies-are-files-not-issues/index.html
 corkboard/design/index.html
 corkboard/index.html
 index.html
