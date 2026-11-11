@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Corkboard docs">
     <h2>Corkboard</h2>
-    <p class="version">v0.1.23 · 2026-11-10</p>
+    <p class="version">v0.1.24 · 2026-11-11</p>
     <ul>
     
       <li><a href="../">Corkboard</a>
@@ -111,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.23.zip">Download v0.1.23</a>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.24.zip">Download v0.1.24</a>
   </nav>
   <article>
     <h1>Corkboard&#39;s design</h1>
@@ -249,6 +249,19 @@ for Captures, chosen in Settings. Lists and Searches can span the Accounts of on
 <p>An MCP server (<code>corkboard mcp</code>) in the first version, over the Local copy: search, read, link, Nest, move into a
 Project, Capture. Its edits are Changes like anyone's, so they queue, roll back and undo the same way. No agent panel
 yet: typecase's can follow.</p>
+<p><code>corkboard mcp</code> is a command of the app's own binary, not a server left running. It shares the Local copy with the
+app and sends Changes itself, so an agent's edits reach Linear with the app closed. Each sender takes a turn before
+sending, so none goes twice, and the app notices what another process wrote. The command line asks the same things
+(<code>corkboard search</code>, <code>nest</code>, <code>link</code>…), and a terminal Corkboard can stand on the same footing later, which is why what
+a Command changes is worked out in the core rather than in a view. An agent adds it as a stdio server, for Claude Code:
+<code>claude mcp add corkboard -- /Applications/Corkboard.app/Contents/MacOS/corkboard mcp</code>; Settings › Agent shows the
+setup for each client, and installs the <code>corkboard</code> command and a skill for it (<code>skills/corkboard</code>), for Claude Code
+and for the agents that read <code>~/.agents/skills</code>, such as Codex and Pi; <code>npx skills add</code> finds it in the repository.</p>
+<p>The Agent panel (typecase's) runs your own agent beside your Issues, as Red Pen and Microfiche do, given only that
+server. Its server also reaches the window it's in, along a socket of the window's own, to ask what it shows and to go
+to an Issue or a Filter, or keep a Filter as a Saved Search, as Microfiche's sidebar does. It opens on the conversation
+about all your Issues unless Settings says the one at the cursor. Its Changes say which agent made them. View › Ask the Agent
+sends Corkboard's prompts, and <code>[[prompts]]</code> in the settings file adds your own.</p>
 <h2 id="shipping">Shipping <a class="header-anchor" href="#shipping">#</a></h2>
 <p>The download page with Sparkle, as the other apps; GitHub releases and a cask may follow. Made from gpui-template
 v0.5.0 with SQLite, the <code>corkboard:</code> URL scheme, the menu bar extra, Open at login and the command line.</p>
