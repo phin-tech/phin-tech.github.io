@@ -7,6 +7,8 @@ corkboard/adr/0006-stickies-are-files-not-issues/index.html
 corkboard/design/index.html
 corkboard/index.html
 index.html
+microfiche/index.html
+microfiche/keys/index.html
 redpen/adr/0001-several-forges-in-one-queue/index.html
 redpen/adr/0002-local-changes-read-with-git-and-kept-here/index.html
 redpen/hooks/index.html
