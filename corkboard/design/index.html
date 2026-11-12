@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Corkboard docs">
     <h2>Corkboard</h2>
-    <p class="version">v0.1.31 · 2026-11-12</p>
+    <p class="version">v0.2.0 · 2026-11-12</p>
     <ul>
     
       <li><a href="../">Corkboard</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.31.zip">Download v0.1.31</a>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.2.0.zip">Download v0.2.0</a>
   </nav>
   <article>
     <h1>Corkboard&#39;s design</h1>
@@ -256,6 +256,14 @@ Trash, and <code>u</code> undoes each of these, the typing included. Each Label 
 name handwritten on it, to head a part of the cork; it leans more than a note does. It's a Sticky of its own kind,
 so it's kept, written on, moved, torn off and undone as one is; List mode shows it as a heading, and Paper mode,
 which has its own Headings, leaves it out.</li>
+<li>Stickies go together the way paper on a cork does. Each note has a tack, and dragging from it to another ties a
+String between them (<code>strings: [name]</code> in the file it was tied from), which hangs and swings as the Issues' do; Cut
+Its Strings cuts them. ⌥ as one is let go over another clips it on (<code>clipped to: name</code>): it sits a little down and
+along, under a paper clip, and the pile moves as one. ⌥-dragging one out of a pile, or Unclip, takes it off, and it
+stays where it was. Both are in the files, so the folder keeps them; <code>u</code> takes either back.</li>
+<li>The paper looks handled: each note's bottom corner curls up a little, the writing's pressure varies line by line,
+tape's ends are torn, and a note torn off leaves its tack's hole in the cork until the app quits. All of it is drawn
+from the Sticky's name, so it looks the same every time.</li>
 <li>A checkbox written on one (<code>- [ ] eggs</code>) is ticked from the card itself, and the card and the row say <code>1/3</code>. That's
 as far as doing goes: no states, dates or reminders. What needs a date is sent to Reminders; what's work, to Linear.</li>
 <li>Holding the line on what a canvas could become: no shapes, drawing, images, templates, frames or live sharing for
