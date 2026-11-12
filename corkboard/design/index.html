@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Corkboard docs">
     <h2>Corkboard</h2>
-    <p class="version">v0.1.27 · 2026-11-11</p>
+    <p class="version">v0.1.28 · 2026-11-12</p>
     <ul>
     
       <li><a href="../">Corkboard</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.27.zip">Download v0.1.27</a>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.28.zip">Download v0.1.28</a>
   </nav>
   <article>
     <h1>Corkboard&#39;s design</h1>
@@ -150,7 +150,8 @@ targets that make sense (no Parent that would make a loop).</li>
 level, <code>[e</code> <code>]e</code> reorder, <code>m</code> Places it elsewhere while showing where, <code>z a</code> folds. Rows show the Workflow state, how
 many Sub-issues are done (<code>3/5</code>) and blockers. Nesting moves an Issue into its Parent's Project and Milestone, never
 its Team, and the status bar says so (<code>WEB-40 → Q1 Platform</code>).</li>
-<li>Built: the sidebar lists Projects, and <code>g p</code> picks one. Sub-issues are ordered by Linear's <code>subIssueSortOrder</code>,
+<li>Built: the sidebar lists only the Projects favorited (with its +, or Project › Favorite or Unfavorite), kept in the
+settings file as <code>favorite_projects</code>, and <code>g p</code> picks any one. Sub-issues are ordered by Linear's <code>subIssueSortOrder</code>,
 top-level Issues by <code>sortOrder</code>. <code>m</code> (Placing) and dragging to reorder or Nest are still to come.</li>
 <li>The Project heads its Outline: its Summary, Project status (<code>w s</code>), Lead (<code>w l</code>), start and Target dates (<code>w ⇧S</code>,
 <code>w t</code>), how much is done, and its description; <code>w r</code> renames it and <code>w m</code> writes the Summary. Every Milestone is
@@ -190,7 +191,7 @@ opens on, and <code>g h</code> goes back to. A filter also asks Linear for the s
 is downloaded.</p>
 <h2 id="filters-and-search">Filters and Search <a class="header-anchor" href="#filters-and-search">#</a></h2>
 <p>The typecase filter bar, read as Microfiche's <code>:linear</code> query is: <code>@me project:Website,Billing +bug -priority:low status:&quot;In Progress&quot; due:&lt;fri</code>. Built so far: <code>+label</code> (or <code>label:</code>), <code>state:</code> (<code>status:</code>), <code>is:started</code>,
-<code>priority:</code> (<code>p:</code>), <code>project:</code> (<code>in:</code>), <code>team:</code>, <code>due:</code>, <code>created:</code> and <code>updated:</code> with <code>&lt;</code> and <code>&gt;</code> (<code>created:&lt;-6m</code>), <code>-</code> before any to leave it out, and words
+<code>priority:</code> (<code>p:</code>), <code>project:</code> (<code>in:</code>), <code>team:</code>, <code>cycle:</code> (a number or name, <code>current</code> or <code>none</code>), <code>due:</code>, <code>created:</code> and <code>updated:</code> with <code>&lt;</code> and <code>&gt;</code> (<code>created:&lt;-6m</code>), <code>-</code> before any to leave it out, and words
 over the identifier, title and description. It reads only the Local copy, so it never waits on Linear. Saved Searches keep a Filter by name, as
 its text, in the settings file; <code>+</code> saves what's shown, ⌘1 to ⌘9 bring the first nine back, and My Issues clears the
 Filter. Link keys are named from the Issue's side and are fixed for now: <code>is:blocked</code>,
