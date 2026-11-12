@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Corkboard docs">
     <h2>Corkboard</h2>
-    <p class="version">v0.1.28 · 2026-11-12</p>
+    <p class="version">v0.1.29 · 2026-11-12</p>
     <ul>
     
       <li><a href="../">Corkboard</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.28.zip">Download v0.1.28</a>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.1.29.zip">Download v0.1.29</a>
   </nav>
   <article>
     <h1>Corkboard&#39;s design</h1>
@@ -163,6 +163,12 @@ bringing the Selection when it's part of it; one outside the Project stays put.<
 <li><strong>Every other list is flat</strong>; <code>z a</code> opens an Issue's Sub-issues in place.</li>
 <li><strong>Inbox</strong>: one row for each Issue. <code>s …</code> snoozes and <code>d</code> archives, in Linear; opening one marks it read. Every Issue
 verb works from its preview.</li>
+<li>Built: <code>g i</code> shows the Inbox, its unread count in the sidebar; each sync brings every Notification of the last three
+months that isn't archived. A row says who did what to which Issue and when, unread ones with a dot. <code>↩</code> (or a second
+click) shows the Issue in the preview and marks the row read; <code>⇧U</code> marks it read and <code>x</code> archives it (<code>d</code> tears off a
+Sticky), each a Change sent as <code>notificationUpdate</code>'s <code>readAt</code> or <code>notificationArchive</code>, and <code>u</code> takes it back. One
+about an Issue the Local copy hasn't synced opens in Linear. <code>corkboard inbox</code> and the MCP server's
+<code>list_notifications</code> list what's unread. Snoozing is still to come; one snoozed in Linear stays hidden until it wakes.</li>
 <li><strong>Triage</strong>: <code>a</code> accepts into the Team's default state, <code>A</code> accepts with a line of fields in Capture's syntax, <code>x</code>
 declines with a reason posted as a comment, <code>l d</code> marks a duplicate, <code>s …</code> snoozes. All work on a Selection.</li>
 </ul>
@@ -191,7 +197,7 @@ opens on, and <code>g h</code> goes back to. A filter also asks Linear for the s
 is downloaded.</p>
 <h2 id="filters-and-search">Filters and Search <a class="header-anchor" href="#filters-and-search">#</a></h2>
 <p>The typecase filter bar, read as Microfiche's <code>:linear</code> query is: <code>@me project:Website,Billing +bug -priority:low status:&quot;In Progress&quot; due:&lt;fri</code>. Built so far: <code>+label</code> (or <code>label:</code>), <code>state:</code> (<code>status:</code>), <code>is:started</code>,
-<code>priority:</code> (<code>p:</code>), <code>project:</code> (<code>in:</code>), <code>team:</code>, <code>cycle:</code> (a number or name, <code>current</code> or <code>none</code>), <code>due:</code>, <code>created:</code> and <code>updated:</code> with <code>&lt;</code> and <code>&gt;</code> (<code>created:&lt;-6m</code>), <code>-</code> before any to leave it out, and words
+<code>priority:</code> (<code>p:</code>), <code>project:</code> (<code>in:</code>), <code>team:</code>, <code>cycle:</code> (a number or name, <code>current</code> or <code>none</code>), <code>estimate:</code> (points, with <code>&lt;</code> and <code>&gt;</code>, or <code>none</code>), <code>due:</code>, <code>created:</code> and <code>updated:</code> with <code>&lt;</code> and <code>&gt;</code> (<code>created:&lt;-6m</code>), <code>-</code> before any to leave it out, and words
 over the identifier, title and description. It reads only the Local copy, so it never waits on Linear. Saved Searches keep a Filter by name, as
 its text, in the settings file; <code>+</code> saves what's shown, ⌘1 to ⌘9 bring the first nine back, and My Issues clears the
 Filter. Link keys are named from the Issue's side and are fixed for now: <code>is:blocked</code>,
@@ -262,7 +268,7 @@ showing more than one of them together would need an ADR of its own.</li>
 </ul>
 <h2 id="writing">Writing <a class="header-anchor" href="#writing">#</a></h2>
 <p>Descriptions and comments are shown rendered as Markdown, as Red Pen's preview does, and written in Microfiche's Vim
-editor (<code>microfiche-modal-editor</code>): <code>e</code> the description, <code>c c</code> a comment, <code>@</code> and <code>#</code> completing people and Issues.
+editor (<code>microfiche-modal-editor</code>): <code>e</code> the description, <code>m</code> a comment, <code>@</code> and <code>#</code> completing people and Issues.
 Corkboard takes the editor from Microfiche's repository by tag at first, and it moves into typecase
 (<code>typecase-vim</code>, <code>typecase-modal-editor</code>) once Corkboard has shown what it needs changed.</p>
 <h2 id="verbs">Verbs <a class="header-anchor" href="#verbs">#</a></h2>
