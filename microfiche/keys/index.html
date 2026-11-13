@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Microfiche docs">
     <h2>Microfiche</h2>
-    <p class="version">v0.8.5 · 2026-11-13</p>
+    <p class="version">v0.8.6 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Microfiche</a>
@@ -96,7 +96,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.5.zip">Download v0.8.5</a>
+    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.6.zip">Download v0.8.6</a>
   </nav>
   <article>
     <h1>Using Microfiche from the keyboard</h1>
@@ -502,6 +502,10 @@ And so is this.
 <td>Cancelled</td>
 </tr>
 <tr>
+<td><code>SPC m a</code>, <code>:archive [days]</code></td>
+<td>Archive finished Tasks</td>
+</tr>
+<tr>
 <td><code>SPC m d s</code></td>
 <td>Set the Scheduled date</td>
 </tr>
@@ -552,6 +556,16 @@ unfinished children block their parent. <code>blocking:true</code> or <code>bloc
 <code>ordered:true</code> on a Task makes its children go in order, each Blocked until those before it are finished, whether or
 not dependencies are enforced. A cancelled child or earlier sibling never blocks, because cancelling a step of your own
 is the decision a cancelled Dependency still waits for.</p>
+<p>Finishing a Task stamps the day on it as <code>closed:2026-11-13</code>, and reopening it takes the stamp off. Moving between done
+and cancelled keeps the first day. A Repeat goes back to todo, so its Log records the day instead.</p>
+<p>Archive takes finished Tasks out of the way once they've stayed finished <code>archive_after_days</code> days, 14 unless set
+under <code>[tasks]</code>. <code>SPC m a</code> runs it on the folder, saving the open Note first, <code>:archive 0</code> takes every finished Task
+whatever its day, and <code>microfiche archive</code> and the MCP server's <code>archive</code> do the same. Each Task it takes is tagged
+<code>+archived</code>, which keeps it off the Agenda and out of Queries until one asks for <code>+archived</code>. With <code>archive_to</code> set
+to a Note, such as <code>&quot;archive.fiche&quot;</code>, they're moved to the end of it too, with <code>archived_from:</code> naming the Note they
+left and their Links following them, as Org's archive file does. A finished Task with no <code>closed:</code> day, from before
+the stamp or typed by hand, is given today's the first time Archive meets it. A Task with unfinished work nested
+beneath it stays, so nothing open is hidden, and one that moves takes its subtree along.</p>
 <h2 id="7-finding-things">7. Finding things <a class="header-anchor" href="#7-finding-things">#</a></h2>
 <table>
 <thead>
@@ -717,6 +731,10 @@ is the decision a cancelled Dependency still waits for.</p>
 <tr>
 <td><code>-done</code>, <code>!done</code>, <code>NOT done</code></td>
 <td>Leaves out what the word finds</td>
+</tr>
+<tr>
+<td><code>+archived</code></td>
+<td>Archived Tasks, which every other Query leaves out</td>
 </tr>
 </tbody>
 </table>
