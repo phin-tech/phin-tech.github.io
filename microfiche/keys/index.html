@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Microfiche docs">
     <h2>Microfiche</h2>
-    <p class="version">v0.8.3 · 2026-11-13</p>
+    <p class="version">v0.8.4 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Microfiche</a>
@@ -96,7 +96,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.3.zip">Download v0.8.3</a>
+    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.4.zip">Download v0.8.4</a>
   </nav>
   <article>
     <h1>Using Microfiche from the keyboard</h1>
@@ -292,6 +292,11 @@
 </tr>
 </tbody>
 </table>
+<p><code>y</code>, <code>d</code>, <code>c</code>, <code>x</code> and <code>p</code> share the system clipboard, as <code>cmd-c</code> and <code>cmd-v</code> do: <code>yy</code> here pastes in another app,
+and <code>p</code> pastes what another app copied. Clipboard under Editor in the settings window, <code>clipboard = &quot;vim&quot;</code>, keeps them
+to Vim's own register instead. Lines copied from a Note reach other apps as Markdown, Tasks as checkboxes, <code>- [ ]</code> or
+<code>- [x]</code>, and a cancelled one struck through, while pasting them back into Microfiche gives exactly what was copied. A
+word or two from inside a line is copied as typed.</p>
 <p>Completion opens by itself where you're writing something it knows: a Task's state after <code>[</code>, a Field on a Task or the
 line under it, a Field's value after its <code>:</code>, a tag after <code>+</code> and an Event after <code>@</code>. Writing in Headings, bullets and
 paragraphs leaves it shut. <code>C-space</code> opens it anywhere it has something to offer. For long writing, Completion under
