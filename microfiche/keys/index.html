@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Microfiche docs">
     <h2>Microfiche</h2>
-    <p class="version">v0.8.1 · 2026-11-12</p>
+    <p class="version">v0.8.2 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Microfiche</a>
@@ -96,7 +96,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.1.zip">Download v0.8.1</a>
+    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.2.zip">Download v0.8.2</a>
   </nav>
   <article>
     <h1>Using Microfiche from the keyboard</h1>
@@ -286,8 +286,29 @@
 <td><code>enter</code></td>
 <td>Follow a Link, change a Task's state, or open an Image, whichever the line holds</td>
 </tr>
+<tr>
+<td><code>C-space</code> while typing</td>
+<td>Open completion here</td>
+</tr>
 </tbody>
 </table>
+<p>Completion opens by itself where you're writing something it knows: a Task's state after <code>[</code>, a Field on a Task or the
+line under it, a Field's value after its <code>:</code>, a tag after <code>+</code> and an Event after <code>@</code>. Writing in Headings, bullets and
+paragraphs leaves it shut. <code>C-space</code> opens it anywhere it has something to offer. For long writing, Completion under
+Editor in the settings window can wait for <code>C-space</code> every time:</p>
+<pre><code class="language-toml">[editor]
+completion = &quot;on-demand&quot;
+</code></pre>
+<p>For a chapter or an essay, tag a Heading's subtree <code>+prose</code> on the line under it, or put <code>+prose</code> at the very top to
+cover the whole Note. That's Writing: nothing in it is read as a Task or a Field, so it raises no diagnostics, stays out
+of the Agenda and opens no completion by itself. Its Headings still fold and show in the Outline, and it ends at the
+next Heading as deep as the tagged one or shallower.</p>
+<pre><code># Chapter one
++prose
+- a list here is just a list
+</code></pre>
+<p>A Markdown file, <code>.md</code>, is a Note that's Writing throughout. It's in the list of Notes, <code>gf</code> and search find it, and
+Links reach it and its Headings, but nothing in it is a Task. <code>cmd-n</code> makes one when the name you type ends in <code>.md</code>.</p>
 <h2 id="4-selecting">4. Selecting <a class="header-anchor" href="#4-selecting">#</a></h2>
 <p><code>v</code> selects characters and <code>V</code> selects whole lines. Move to grow the selection, press <code>o</code> to swap which end moves, and press <code>esc</code> to stop.</p>
 <h3 id="41-text-objects">4.1 Text objects <a class="header-anchor" href="#41-text-objects">#</a></h3>
@@ -866,7 +887,11 @@ relative_line_numbers = true
 </tr>
 <tr>
 <td><code>cmd-n</code></td>
-<td>New Note</td>
+<td>New Note: a list like <code>gf</code>'s, where you type a path from the folder's root such as <code>essays/chapter-one</code>. The top row makes the Note there, and its folders when it's saved; the rest are Notes that already match, to open instead. <code>tab</code> finishes a folder's name</td>
+</tr>
+<tr>
+<td><code>:note path</code></td>
+<td>The same, typed. <code>:note</code> alone starts an untitled Note</td>
 </tr>
 <tr>
 <td><code>cmd-shift-n</code>, <code>SPC f n</code>, <code>:new</code></td>
