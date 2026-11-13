@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Microfiche docs">
     <h2>Microfiche</h2>
-    <p class="version">v0.8.2 · 2026-11-13</p>
+    <p class="version">v0.8.3 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Microfiche</a>
@@ -96,7 +96,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.2.zip">Download v0.8.2</a>
+    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.3.zip">Download v0.8.3</a>
   </nav>
   <article>
     <h1>Using Microfiche from the keyboard</h1>
@@ -769,7 +769,7 @@ max_width = 100
 relative_line_numbers = true
 </code></pre>
 <h3 id="81-the-agent-sidebar">8.1 The Agent sidebar <a class="header-anchor" href="#81-the-agent-sidebar">#</a></h3>
-<p><code>SPC t a</code> or <code>cmd-j</code> slides the Agent sidebar out over the Note, from the right or the left as Side under Agent in the settings window says, with the cursor in its box: type, and <code>enter</code> asks. It's a coding agent of your own, Claude Code unless another is chosen there, run signed in as you already are and given only Microfiche's MCP server on the window's folder, so it reads and changes Notes as the server lets it and nothing else. Each Note has a conversation of its own, kept between runs, and All Notes has one for the folder as a whole. The agent can read the whole folder from any of them, so a Note's conversation can ask about everything too; it's only where the question is kept. The sidebar's title says which is showing, and the button beside it switches to the other. Opens on, under Agent in the settings window, chooses which a window's sidebar starts on, this Note or All Notes. Header switch there chooses how that button looks: Arrows, naming where it goes, Toggle, lit while All Notes is on, or Hidden, leaving <code>cmd-shift-j</code>. A Link in an answer opens its Note. Drag the sidebar's inner edge to widen it, and double-click the edge for its own width again.</p>
+<p><code>SPC t a</code> or <code>cmd-j</code> slides the Agent sidebar out over the Note, from the right or the left as Side under Agent in the settings window says, with the cursor in its box: type, and <code>enter</code> asks. It's a coding agent of your own, Claude Code unless another is chosen there, run signed in as you already are and given only Microfiche's MCP server on the window's folder, so it reads and changes Notes as the server lets it and nothing else. Each Note has a conversation of its own, kept between runs, and All Notes has one for the folder as a whole. The agent can read the whole folder from any of them, so a Note's conversation can ask about everything too; it's only where the question is kept. The sidebar's title says which is showing, and the button beside it switches to the other. Opens on, under Agent in the settings window, chooses which a window's sidebar starts on, this Note or All Notes. Header switch there chooses how that button looks: Arrows, naming where it goes, Toggle, lit while All Notes is on, or Hidden, leaving <code>cmd-shift-j</code>. A Link in an answer opens its Note. Math in an answer, <code>$…$</code> in a line or <code>$$…$$</code> on its own, is typeset, and a <code>mermaid</code> code block is drawn as its diagram, in the theme's colours. Drag the sidebar's inner edge to widen it, and double-click the edge for its own width again.</p>
 <table>
 <thead>
 <tr>
@@ -880,6 +880,10 @@ relative_line_numbers = true
 <tr>
 <td><code>SPC f S</code></td>
 <td>Save as</td>
+</tr>
+<tr>
+<td><code>SPC f y</code></td>
+<td>Copy the Note's full path, as <code>/Users/you/notes/walks.fiche</code>, for a terminal or another app. File › Copy Path does too</td>
 </tr>
 <tr>
 <td><code>:w!</code></td>
