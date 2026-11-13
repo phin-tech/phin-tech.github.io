@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.3 · 2026-11-13</p>
+    <p class="version">v0.2.4 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -111,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.3.zip">Download v0.2.3</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.4.zip">Download v0.2.4</a>
   </nav>
   <article>
     <h1>The command line and agents</h1>
@@ -123,7 +123,9 @@ anything. By hand, that's:</p>
 </code></pre>
 <h2 id="looking">Looking <a class="header-anchor" href="#looking">#</a></h2>
 <pre><code class="language-sh">boiler-room status               # the service, and what to install
-boiler-room service restart      # restart the service (or Help › Restart)
+boiler-room service status       # running, which version, and whether it starts at login
+boiler-room service restart      # restart it; start, stop and login-items too
+boiler-room service settings     # daemon.toml's path, made if missing; --edit opens it
 boiler-room jobs                 # every Job and Errand, and how it went
 boiler-room runs aws-case-1234   # its newest Runs
 boiler-room show 42              # one Run: output, errors, values, report
