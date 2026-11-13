@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.5 · 2026-11-13</p>
+    <p class="version">v0.2.6 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -106,10 +106,12 @@
       </li>
     
       <li><a href="../terminals/" aria-current="page">Terminals</a>
+      
+        <ul class="toc"><li class="l2"><a href="#your-own-way">Your own way</a></li></ul>
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.5.zip">Download v0.2.5</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.6.zip">Download v0.2.6</a>
   </nav>
   <article>
     <h1>Terminals</h1>
@@ -143,6 +145,10 @@ prompt do, needs one: give its Job a <code>host</code>.</p>
 <td><code>hc</code></td>
 <td>A terminal in hc, here or on another machine.</td>
 </tr>
+<tr>
+<td><code>command</code></td>
+<td>Whatever your own command opens: WezTerm, kitty, another multiplexer.</td>
+</tr>
 </tbody>
 </table>
 <p>In any of these, Boiler Room keeps what the Script prints, and notices when it seems to be <strong>waiting for you</strong>: at a
@@ -154,8 +160,24 @@ question.</p>
 own terminal for <code>pty</code> (Ctrl-\ leaves it running), or the multiplexer's own attach for the rest.</li>
 <li><strong>Type into it</strong> without attaching: <code>boiler-room send &lt;run&gt; &quot;yes&quot;</code> (and Return; <code>--no-enter</code> for without).</li>
 </ul>
-<p>The multiplexers' settings, such as which session, are in the daemon's settings: see
-<a href="../command-line/">The command line and agents</a>.</p>
+<h2 id="your-own-way">Your own way <a class="header-anchor" href="#your-own-way">#</a></h2>
+<p>In the daemon's settings (<code>~/.config/boiler-room/daemon.toml</code>), <code>host = &quot;tmux&quot;</code> makes every Job that doesn't name a
+Host run there. Each multiplexer's <code>open</code> and <code>attach</code> replace how Boiler Room opens a pane and gets you to it, and the
+<code>command</code> Host runs only yours, for a terminal Boiler Room doesn't know:</p>
+<pre><code class="language-toml">host = &quot;tmux&quot;
+
+[hosts.tmux]
+session = &quot;work&quot;
+open = &quot;tmux new-window -d -t work: -n {title} -P -F '#{window_id}' {command}&quot;
+attach = &quot;tmux attach -t work&quot;
+
+[hosts.command]
+open = &quot;wezterm cli spawn -- {command}&quot;
+attach = &quot;open -a WezTerm&quot;
+</code></pre>
+<p><code>{command}</code> is what the pane runs (Boiler Room's own wrapper, which reports the Run back), <code>{title}</code> the Job and
+Run, and <code>{address}</code> whatever <code>open</code> printed; each is quoted for the shell. See
+<a href="../command-line/">The command line and agents</a> for the rest of the daemon's settings.</p>
 
     <nav class="pager" aria-label="Pages">
       <span><a href="../jobs/"><small>Previous</small>Jobs</a></span>

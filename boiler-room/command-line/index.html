@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.5 · 2026-11-13</p>
+    <p class="version">v0.2.6 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -111,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.5.zip">Download v0.2.5</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.6.zip">Download v0.2.6</a>
   </nav>
   <article>
     <h1>The command line and agents</h1>
@@ -124,7 +124,9 @@ anything. By hand, that's:</p>
 <h2 id="looking">Looking <a class="header-anchor" href="#looking">#</a></h2>
 <pre><code class="language-sh">boiler-room status               # the service, and what to install
 boiler-room service status       # running, which version, and whether it starts at login
-boiler-room service restart      # restart it; start, stop and login-items too
+boiler-room service restart      # restart it, saying each step; start, stop and login-items too
+boiler-room service run          # without a login item, until you log out: for a Mac IT manages
+boiler-room service test --slaps # a test notification, and a test Slaps alert
 boiler-room service settings     # daemon.toml's path, made if missing; --edit opens it
 boiler-room jobs                 # every Job and Errand, and how it went
 boiler-room runs aws-case-1234   # its newest Runs
@@ -158,6 +160,7 @@ Tools that change something say so. To add it to Claude Code:</p>
 defaults are used meanwhile.</p>
 <pre><code class="language-toml"># What reads a Job's `run` line: your login shell, or a program, as &quot;/bin/sh&quot;
 shell = &quot;login&quot;
+host = &quot;tmux&quot;              # where a Job runs that doesn't say; &quot;pipes&quot;, no terminal, if left out
 
 [hosts.tmux]
 session = &quot;boiler-room&quot;    # the session tmux Runs open windows in
