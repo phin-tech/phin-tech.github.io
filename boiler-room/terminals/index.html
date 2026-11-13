@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.6 · 2026-11-13</p>
+    <p class="version">v0.2.7 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -111,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.6.zip">Download v0.2.6</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.7.zip">Download v0.2.7</a>
   </nav>
   <article>
     <h1>Terminals</h1>
@@ -161,7 +161,7 @@ own terminal for <code>pty</code> (Ctrl-\ leaves it running), or the multiplexer
 <li><strong>Type into it</strong> without attaching: <code>boiler-room send &lt;run&gt; &quot;yes&quot;</code> (and Return; <code>--no-enter</code> for without).</li>
 </ul>
 <h2 id="your-own-way">Your own way <a class="header-anchor" href="#your-own-way">#</a></h2>
-<p>In the daemon's settings (<code>~/.config/boiler-room/daemon.toml</code>), <code>host = &quot;tmux&quot;</code> makes every Job that doesn't name a
+<p>In Settings › Where Jobs Run, or the daemon's settings file (<code>~/.config/boiler-room/daemon.toml</code>), <code>host = &quot;tmux&quot;</code> makes every Job that doesn't name a
 Host run there. Each multiplexer's <code>open</code> and <code>attach</code> replace how Boiler Room opens a pane and gets you to it, and the
 <code>command</code> Host runs only yours, for a terminal Boiler Room doesn't know:</p>
 <pre><code class="language-toml">host = &quot;tmux&quot;

@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.6 · 2026-11-13</p>
+    <p class="version">v0.2.7 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -111,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.6.zip">Download v0.2.6</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.7.zip">Download v0.2.7</a>
   </nav>
   <article>
     <h1>The command line and agents</h1>
@@ -128,6 +128,7 @@ boiler-room service restart      # restart it, saying each step; start, stop and
 boiler-room service run          # without a login item, until you log out: for a Mac IT manages
 boiler-room service test --slaps # a test notification, and a test Slaps alert
 boiler-room service settings     # daemon.toml's path, made if missing; --edit opens it
+boiler-room settings host tmux   # set one of the daemon's settings; with only a name, its value; --unset
 boiler-room jobs                 # every Job and Errand, and how it went
 boiler-room runs aws-case-1234   # its newest Runs
 boiler-room show 42              # one Run: output, errors, values, report
@@ -157,7 +158,8 @@ Tools that change something say so. To add it to Claude Code:</p>
 <code>~/.claude/skills/boiler-room/SKILL.md</code>.</p>
 <h2 id="the-daemons-settings">The daemon's settings <a class="header-anchor" href="#the-daemons-settings">#</a></h2>
 <p><code>~/.config/boiler-room/daemon.toml</code>, read as it changes. <code>boiler-room status</code> says if it can't be read, and the
-defaults are used meanwhile.</p>
+defaults are used meanwhile. Settings › Where Jobs Run changes each of them, as <code>boiler-room settings &lt;name&gt; &lt;value&gt;</code>
+does (<code>boiler-room settings hosts.tmux.session work</code>), keeping any comments in the file.</p>
 <pre><code class="language-toml"># What reads a Job's `run` line: your login shell, or a program, as &quot;/bin/sh&quot;
 shell = &quot;login&quot;
 host = &quot;tmux&quot;              # where a Job runs that doesn't say; &quot;pipes&quot;, no terminal, if left out
