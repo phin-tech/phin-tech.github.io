@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.7 · 2026-11-13</p>
+    <p class="version">v0.2.8 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -111,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.7.zip">Download v0.2.7</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.8.zip">Download v0.2.8</a>
   </nav>
   <article>
     <h1>Jobs</h1>
@@ -136,7 +136,7 @@ host = &quot;pty&quot;                    # where it runs: see Terminals
 </code></pre>
 <p>A new Job runs at once, then on its schedule. A Mac asleep runs nothing; at wake, a Job that missed its time runs
 once, not once for each time it missed.</p>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png?v=0.2.7" alt="Change Schedule, with the next three times it would run" /></p>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png?v=0.2.8" alt="Change Schedule, with the next three times it would run" /></p>
 <p>Pause a Job, or start it again, with its switch in the window's list (or ⌘P). Change its schedule from the window
 (⇧⌘S, or click the schedule under its name), with <code>boiler-room schedule aws-case-1234 &quot;0 9 * * mon-fri&quot;</code>, or in its
 file. The window and the command line change only that line and keep your comments.</p>
@@ -159,6 +159,10 @@ remember.</p>
 <p>So the simplest script just prints what it found, and Boiler Room compares. A Script can also give the Run a report
 in Markdown, shown in the window (<code>boiler-room report summary.md</code>, or <code>-</code> to read it from stdin), and say what it's
 doing (<code>boiler-room progress &quot;3 of 5&quot;</code>).</p>
+<p>A Script can name its steps as it goes, as a Prefect or Dagster run shows them: <code>boiler-room step &quot;Check for updates&quot;</code> starts one and ends the step before, and the Run's output shows in its steps, each with how it went. It's
+the line <code>{&quot;step&quot;: &quot;Check for updates&quot;}</code> in the output, which a Script can print itself. <code>boiler-room</code> answers in
+every Run, the Daemon's own, whether or not the command line is installed. The example Homebrew Job checks, asks which
+updates to upgrade, then upgrades them, a step each.</p>
 <p>A Script can say when it wants to run next: <code>boiler-room again 3m</code>, or the line <code>{&quot;again&quot;: &quot;3m&quot;}</code>. It's for the next
 Run only, so a Run that says nothing puts the Job back on its schedule: check every three minutes while something's
 wrong, and every half hour once it's fine, as the example Job for GitHub's status does.</p>
@@ -175,7 +179,7 @@ every = &quot;3h&quot;
 case = { about = &quot;The support case's ID&quot; }
 profile = { about = &quot;The AWS profile&quot;, default = &quot;work&quot; }
 </code></pre>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/new-job.png?v=0.2.7" alt="New Job from a Template: its Params, each with what it's for" /></p>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/new-job.png?v=0.2.8" alt="New Job from a Template: its Params, each with what it's for" /></p>
 <p>Make a Job from it in the window (⌘N), with <code>boiler-room new aws-case case=1234</code>, or run it once without a Job:
 <code>boiler-room run aws-case case=9999 --wait</code>. A value filled into <code>run</code> is always quoted for the shell, so whatever's
 typed stays one word. Changing a Template changes every Job made from it.</p>

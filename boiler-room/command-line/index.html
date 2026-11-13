@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.7 · 2026-11-13</p>
+    <p class="version">v0.2.8 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -111,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.7.zip">Download v0.2.7</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.8.zip">Download v0.2.8</a>
   </nav>
   <article>
     <h1>The command line and agents</h1>
@@ -145,8 +145,8 @@ boiler-room answer 3 yes                # a question
 boiler-room submit --every 30s -- gh pr checks 123
 </code></pre>
 <h2 id="from-a-script">From a Script <a class="header-anchor" href="#from-a-script">#</a></h2>
-<p>Inside a Run, a Script reports with <code>notify</code>, <code>changed</code>, <code>unchanged</code>, <code>value</code>, <code>report</code> and <code>progress</code>, and asks with
-<code>ask</code>, <code>confirm</code> and <code>wait</code> (<a href="../being-told/">Being told</a>). Outside a Run they refuse, unless given <code>--job</code> to try a
+<p>Inside a Run, a Script reports with <code>notify</code>, <code>changed</code>, <code>unchanged</code>, <code>value</code>, <code>report</code>, <code>progress</code> and <code>step</code>, and
+asks with <code>ask</code>, <code>confirm</code>, <code>wait</code> and <code>choose</code> (<a href="../being-told/">Being told</a>). Outside a Run they refuse, unless given <code>--job</code> to try a
 Script by hand.</p>
 <h2 id="agents">Agents <a class="header-anchor" href="#agents">#</a></h2>
 <p><code>boiler-room mcp</code> is an MCP server, for Claude Code or any agent: it lists and reads Jobs, Runs and Templates, makes

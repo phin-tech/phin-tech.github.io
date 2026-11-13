@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.7 · 2026-11-13</p>
+    <p class="version">v0.2.8 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -92,7 +92,7 @@
     
       <li><a href="../being-told/" aria-current="page">Being told</a>
       
-        <ul class="toc"><li class="l2"><a href="#questions">Questions</a></li><li class="l2"><a href="#slaps">Slaps</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#questions">Questions</a></li><li class="l3"><a href="#with-gum">With gum</a></li><li class="l2"><a href="#slaps">Slaps</a></li></ul>
       </li>
     
       <li><a href="../command-line/">The command line and agents</a>
@@ -111,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.7.zip">Download v0.2.7</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.8.zip">Download v0.2.8</a>
   </nav>
   <article>
     <h1>Being told</h1>
@@ -130,8 +130,29 @@ if boiler-room confirm &quot;Rotate the backup key?&quot;; then …
 
 # Something to do, on a page: waits until you say Done.
 boiler-room wait &quot;Click Allow in the browser&quot; --open https://…
+
+# One of several, or with --many, any of them: prints what you chose, a line each. You choose in the window, where
+# a long list has a box to filter it. The options can come on stdin, a line each, as gum's do; --limit 3 allows at
+# most three, and --selected ticks one to begin with.
+picked=$(brew outdated --quiet | boiler-room choose --many &quot;Upgrade which?&quot;)
+
+# More than a line, with a hint in the empty box; --value puts something there to begin with.
+why=$(boiler-room ask --multiline --placeholder &quot;What changed?&quot; &quot;Notes for the log&quot;)
+
+# Yes or no, in its own words.
+boiler-room confirm --yes Upgrade --no Skip &quot;Upgrade 3 formulae?&quot;
 </code></pre>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/waiting.png?v=0.2.7" alt="A question waiting for you, answered in the window" /></p>
+<h3 id="with-gum">With gum <a class="header-anchor" href="#with-gum">#</a></h3>
+<p>A Script written with <a href="https://github.com/charmbracelet/gum">gum</a>'s prompts runs as it is in Boiler Room and in your
+terminal. In a Run, <code>gum</code> is Boiler Room's: <code>gum choose</code>, <code>filter</code>, <code>input</code>, <code>write</code>, <code>confirm</code>, <code>file</code> and <code>table</code>
+ask in the window and print what you answered as gum would; <code>gum spin --title &quot;Upgrading&quot; -- brew upgrade</code> is a step;
+<code>style</code>, <code>format</code>, <code>join</code>, <code>log</code> and <code>pager</code> print their text plainly, and gum's colours and borders are left alone.
+Run the Script in a terminal and the real gum asks there.</p>
+<pre><code class="language-sh">pick=$(brew outdated --quiet | gum choose --no-limit --header &quot;Upgrade which?&quot;)
+gum confirm &quot;Upgrade $(echo $pick | wc -w) formulae?&quot; --affirmative Upgrade --negative Skip || exit 0
+gum spin --title &quot;Upgrading&quot; --show-output -- brew upgrade $pick
+</code></pre>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/waiting.png?v=0.2.8" alt="A question waiting for you, answered in the window" /></p>
 <p>The Run is <strong>Waiting for you</strong> meanwhile, and its time waiting doesn't count against its <code>timeout</code>; <code>wait_timeout</code>
 (an hour unless the Job says) is how long it waits. Answer from the notification's buttons, in the window, or with
 <code>boiler-room answer &lt;question&gt; yes</code>. <code>boiler-room questions</code> lists what's waiting. An agent can't answer a hidden
