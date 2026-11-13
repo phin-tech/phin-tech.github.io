@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.1.1 · 2026-11-13</p>
+    <p class="version">v0.2.0 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -101,6 +101,9 @@
         <ul class="toc"><li class="l2"><a href="#from-a-template">From a Template</a></li><li class="l2"><a href="#how-its-kept">How it&#39;s kept</a></li></ul>
       </li>
     
+      <li><a href="../examples/">Examples</a>
+      </li>
+    
       <li><a href="../jobs/">Jobs</a>
       </li>
     
@@ -108,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.1.1.zip">Download v0.1.1</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.0.zip">Download v0.2.0</a>
   </nav>
   <article>
     <h1>Errands</h1>
@@ -130,6 +133,7 @@ A day later it's cleared away; its Runs are kept.</p>
 <p><code>boiler-room await gh-pr-checks-123</code> waits until it's done and exits 0 if it was, 1 if it gave up; <code>submit --wait</code> does
 both at once. <code>boiler-room jobs</code> lists Errands with the Jobs.</p>
 <h2 id="from-a-template">From a Template <a class="header-anchor" href="#from-a-template">#</a></h2>
+<p>Boiler Room's own <a href="../examples/">examples</a> include Errands for CI and pull requests.</p>
 <p>A Template can be an Errand, and can say how often and when it's done:</p>
 <pre><code class="language-toml"># templates/pr-checks.toml
 run = &quot;gh pr checks {{pr}}&quot;
@@ -148,7 +152,7 @@ same way: <code>until = &quot;exit 0&quot;</code> in its file, and Boiler Room w
 
     <nav class="pager" aria-label="Pages">
       <span><a href="../command-line/"><small>Previous</small>The command line and agents</a></span>
-      <span><a href="../jobs/"><small>Next</small>Jobs</a></span>
+      <span><a href="../examples/"><small>Next</small>Examples</a></span>
     </nav>
   </article>
 </div>

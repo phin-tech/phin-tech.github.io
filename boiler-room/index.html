@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.1.1 · 2026-11-13</p>
+    <p class="version">v0.2.0 · 2026-11-13</p>
     <ul>
     
       <li><a href="" aria-current="page">Boiler Room</a>
@@ -101,6 +101,9 @@
       <li><a href="errands/">Errands</a>
       </li>
     
+      <li><a href="examples/">Examples</a>
+      </li>
+    
       <li><a href="jobs/">Jobs</a>
       </li>
     
@@ -108,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.1.1.zip">Download v0.1.1</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.0.zip">Download v0.2.0</a>
   </nav>
   <article>
     <h1>Boiler Room</h1>
@@ -141,7 +144,10 @@ hear back.</li>
 unzip it, and move it to Applications. Open it once: it starts its background service and asks to send
 notifications. It updates itself.</p>
 <h2 id="a-first-job">A first Job <a class="header-anchor" href="#a-first-job">#</a></h2>
-<p>Make <code>~/.config/boiler-room/jobs/aws-case-1234.toml</code>:</p>
+<p>A new install comes with one, paused: <strong>Example: GitHub's status</strong>, which reads GitHub's status page every half hour.
+Turn it on with its switch in the list, and it runs at once. ⌘N makes a Job from one of the
+<a href="examples/">example Templates</a> beside it.</p>
+<p>Or write your own. Make <code>~/.config/boiler-room/jobs/aws-case-1234.toml</code>:</p>
 <pre><code class="language-toml">name = &quot;AWS case 1234&quot;
 run = &quot;~/bin/check-support-case 1234&quot;
 every = &quot;3h&quot;
@@ -152,6 +158,7 @@ every = &quot;3h&quot;
 <ul>
 <li><a href="jobs/">Jobs</a>: everything a Job file can say, and Templates.</li>
 <li><a href="errands/">Errands</a>: one-off checks that end themselves.</li>
+<li><a href="examples/">Examples</a>: Templates for GitHub and Forgejo CI, AWS support cases and outdated agent skills.</li>
 <li><a href="being-told/">Being told</a>: notifications, questions, and Slaps.</li>
 <li><a href="terminals/">Terminals</a>: scripts that prompt, and tmux, zellij and hc.</li>
 <li><a href="command-line/">The command line and agents</a>: <code>boiler-room</code>, MCP, the Skill, and the daemon's settings.</li>

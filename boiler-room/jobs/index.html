@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.1.1 · 2026-11-13</p>
+    <p class="version">v0.2.0 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -99,6 +99,9 @@
       <li><a href="../errands/">Errands</a>
       </li>
     
+      <li><a href="../examples/">Examples</a>
+      </li>
+    
       <li><a href="../jobs/" aria-current="page">Jobs</a>
       
         <ul class="toc"><li class="l2"><a href="#a-job-file">A Job file</a></li><li class="l2"><a href="#what-it-runs-in">What it runs in</a></li><li class="l2"><a href="#what-changed">What changed</a></li><li class="l2"><a href="#templates">Templates</a></li></ul>
@@ -108,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.1.1.zip">Download v0.1.1</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.0.zip">Download v0.2.0</a>
   </nav>
   <article>
     <h1>Jobs</h1>
@@ -134,8 +137,9 @@ host = &quot;pty&quot;                    # where it runs: see Terminals
 <p>A new Job runs at once, then on its schedule. A Mac asleep runs nothing; at wake, a Job that missed its time runs
 once, not once for each time it missed.</p>
 <p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png" alt="Change Schedule, with the next three times it would run" /></p>
-<p>Change a Job's schedule from the window (⇧⌘S, or click the schedule under its name), with <code>boiler-room schedule aws-case-1234 &quot;0 9 * * mon-fri&quot;</code>, or in its file. The window and the command line change only that line and keep
-your comments.</p>
+<p>Pause a Job, or start it again, with its switch in the window's list (or ⌘P). Change its schedule from the window
+(⇧⌘S, or click the schedule under its name), with <code>boiler-room schedule aws-case-1234 &quot;0 9 * * mon-fri&quot;</code>, or in its
+file. The window and the command line change only that line and keep your comments.</p>
 <h2 id="what-it-runs-in">What it runs in <a class="header-anchor" href="#what-it-runs-in">#</a></h2>
 <p>A Script runs as it would in your terminal: your login shell's environment, so <code>PATH</code>, Homebrew and your credentials
 are there. A <code>run</code> line goes to your login shell (fish, if that's yours) unless the Job or the daemon's settings name
@@ -174,7 +178,7 @@ profile = { about = &quot;The AWS profile&quot;, default = &quot;work&quot; }
 typed stays one word. Changing a Template changes every Job made from it.</p>
 
     <nav class="pager" aria-label="Pages">
-      <span><a href="../errands/"><small>Previous</small>Errands</a></span>
+      <span><a href="../examples/"><small>Previous</small>Examples</a></span>
       <span><a href="../terminals/"><small>Next</small>Terminals</a></span>
     </nav>
   </article>
