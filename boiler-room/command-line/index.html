@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.1 · 2026-11-13</p>
+    <p class="version">v0.2.2 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -111,18 +111,19 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.1.zip">Download v0.2.1</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.2.zip">Download v0.2.2</a>
   </nav>
   <article>
     <h1>The command line and agents</h1>
-    <p>Everything the window does, <code>boiler-room</code> does in a terminal, and agents use it too. It's in the app:
-<code>/Applications/Boiler Room.app/Contents/MacOS/Boiler Room</code>, which answers a command line before opening anything. Link
-it as <code>boiler-room</code> somewhere on your <code>PATH</code>:</p>
+    <p>Everything the window does, <code>boiler-room</code> does in a terminal, and agents use it too. Help › Install Command Line Tool
+(or Welcome) puts it in <code>~/.local/bin</code>: a link to the app's own binary, which answers a command line before opening
+anything. By hand, that's:</p>
 <pre><code class="language-sh">ln -s &quot;/Applications/Boiler Room.app/Contents/MacOS/Boiler Room&quot; \
     ~/.local/bin/boiler-room
 </code></pre>
 <h2 id="looking">Looking <a class="header-anchor" href="#looking">#</a></h2>
 <pre><code class="language-sh">boiler-room status               # the service, and what to install
+boiler-room service restart      # restart the service (or Help › Restart)
 boiler-room jobs                 # every Job and Errand, and how it went
 boiler-room runs aws-case-1234   # its newest Runs
 boiler-room show 42              # one Run: output, errors, values, report

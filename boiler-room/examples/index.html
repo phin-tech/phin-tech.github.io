@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.1 · 2026-11-13</p>
+    <p class="version">v0.2.2 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -101,7 +101,7 @@
     
       <li><a href="../examples/" aria-current="page">Examples</a>
       
-        <ul class="toc"><li class="l2"><a href="#waiting-for-something-to-finish">Waiting for something to finish</a></li><li class="l2"><a href="#keeping-an-eye-on-something">Keeping an eye on something</a></li><li class="l2"><a href="#writing-your-own">Writing your own</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#waiting-for-something-to-finish">Waiting for something to finish</a></li><li class="l2"><a href="#keeping-an-eye-on-something">Keeping an eye on something</a></li><li class="l2"><a href="#the-example-jobs">The example Jobs</a></li><li class="l2"><a href="#writing-your-own">Writing your own</a></li></ul>
       </li>
     
       <li><a href="../jobs/">Jobs</a>
@@ -111,13 +111,13 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.1.zip">Download v0.2.1</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.2.zip">Download v0.2.2</a>
   </nav>
   <article>
     <h1>Examples</h1>
     <p>Boiler Room comes with Templates for things worth checking on, and a new install puts them in your templates folder
-(<code>~/.config/boiler-room/templates/</code>) the first time it starts, with one example Job, paused, to switch on. List
-them, or put them back if you've removed some:</p>
+(<code>~/.config/boiler-room/templates/</code>) the first time it starts, with some example Jobs, paused, to switch on. List
+the Templates, or put them back if you've removed some:</p>
 <pre><code class="language-sh">boiler-room examples              # what there is
 boiler-room examples install      # all of them; or name the ones you want
 </code></pre>
@@ -185,6 +185,46 @@ boiler-room submit --template github-branch-ci repo=owner/name --wait
 <pre><code class="language-sh">boiler-room new aws-support-case case=case-123456789012-abc profile=work
 boiler-room new agent-skills-outdated
 </code></pre>
+<h2 id="the-example-jobs">The example Jobs <a class="header-anchor" href="#the-example-jobs">#</a></h2>
+<p>A new install's Jobs folder starts with these, paused. Switch one on in the list to try it:</p>
+<table>
+<thead>
+<tr>
+<th>Job</th>
+<th>Every</th>
+<th>Tells you</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Example: GitHub's status</td>
+<td>30m</td>
+<td>GitHub's status changes</td>
+</tr>
+<tr>
+<td>Example: Is the internet up?</td>
+<td>5m</td>
+<td>Your connection drops, and when it's back</td>
+</tr>
+<tr>
+<td>Example: Disk space</td>
+<td>6h</td>
+<td>Your startup disk is over 90% full</td>
+</tr>
+<tr>
+<td>Example: macOS updates</td>
+<td>1d</td>
+<td>Software Update has something new</td>
+</tr>
+<tr>
+<td>Example: Homebrew updates</td>
+<td>1d</td>
+<td><code>brew outdated</code> has something new</td>
+</tr>
+</tbody>
+</table>
+<p>They're files in <code>~/.config/boiler-room/jobs/</code>, worth reading for how a Job reports: each prints what it found, a
+line of JSON to tell you something, and keeps what it saw last in its own folder, <code>$BOILER_ROOM_STATE</code>.</p>
 <h2 id="writing-your-own">Writing your own <a class="header-anchor" href="#writing-your-own">#</a></h2>
 <p>Each is a few lines of <code>/bin/sh</code> that checks once and prints what it found as a line of JSON:
 <code>{&quot;values&quot;: {&quot;status&quot;: &quot;…&quot;}}</code> for something to compare with the last Run, <code>{&quot;notify&quot;: &quot;…&quot;, &quot;link&quot;: &quot;…&quot;}</code> for something

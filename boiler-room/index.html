@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.2.1 · 2026-11-13</p>
+    <p class="version">v0.2.2 · 2026-11-13</p>
     <ul>
     
       <li><a href="" aria-current="page">Boiler Room</a>
@@ -111,7 +111,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.1.zip">Download v0.2.1</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.2.2.zip">Download v0.2.2</a>
   </nav>
   <article>
     <h1>Boiler Room</h1>
@@ -144,9 +144,9 @@ hear back.</li>
 unzip it, and move it to Applications. Open it once: it starts its background service and asks to send
 notifications. It updates itself.</p>
 <h2 id="a-first-job">A first Job <a class="header-anchor" href="#a-first-job">#</a></h2>
-<p>A new install comes with one, paused: <strong>Example: GitHub's status</strong>, which reads GitHub's status page every half hour.
-Turn it on with its switch in the list, and it runs at once. ⌘N makes a Job from one of the
-<a href="examples/">example Templates</a> beside it.</p>
+<p>A new install comes with a few, paused: GitHub's status, whether the internet's up, disk space, and macOS and Homebrew
+updates. Turn one on with its switch in the list, and it runs at once. ⌘N makes a Job from one of the
+<a href="examples/">example Templates</a> beside them.</p>
 <p>Or write your own. Make <code>~/.config/boiler-room/jobs/aws-case-1234.toml</code>:</p>
 <pre><code class="language-toml">name = &quot;AWS case 1234&quot;
 run = &quot;~/bin/check-support-case 1234&quot;
