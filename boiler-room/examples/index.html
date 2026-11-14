@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.4.0 · 2026-11-14</p>
+    <p class="version">v0.5.0 · 2026-11-14</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -101,7 +101,7 @@
     
       <li><a href="../examples/" aria-current="page">Examples</a>
       
-        <ul class="toc"><li class="l2"><a href="#waiting-for-something-to-finish">Waiting for something to finish</a></li><li class="l2"><a href="#keeping-an-eye-on-something">Keeping an eye on something</a></li><li class="l2"><a href="#the-example-jobs">The example Jobs</a></li><li class="l2"><a href="#writing-your-own">Writing your own</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#waiting-for-something-to-finish">Waiting for something to finish</a></li><li class="l2"><a href="#keeping-an-eye-on-something">Keeping an eye on something</a></li><li class="l3"><a href="#other-peoples-services">Other people&#39;s services</a></li><li class="l2"><a href="#the-example-jobs">The example Jobs</a></li><li class="l2"><a href="#writing-your-own">Writing your own</a></li></ul>
       </li>
     
       <li><a href="../jobs/">Jobs</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.4.0.zip">Download v0.4.0</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.5.0.zip">Download v0.5.0</a>
   </nav>
   <article>
     <h1>Examples</h1>
@@ -183,11 +183,51 @@ boiler-room submit --template github-branch-ci repo=owner/name --wait
 <td>1d</td>
 <td>Which skills installed with <code>npx skills</code> have updates</td>
 </tr>
+<tr>
+<td><code>service-status</code></td>
+<td>2m</td>
+<td>A public status page's word changes: &quot;All Systems Operational&quot;, &quot;Partial System Outage&quot;</td>
+</tr>
+<tr>
+<td><code>datadog-monitors</code></td>
+<td>2m</td>
+<td>How many monitors with a tag are alerting, or have a warning or no data</td>
+</tr>
+<tr>
+<td><code>grafana-alerts</code></td>
+<td>2m</td>
+<td>How many of a Grafana's alert rules are firing or pending</td>
+</tr>
+<tr>
+<td><code>newrelic-nrql</code></td>
+<td>2m</td>
+<td>A NRQL query's number, red or amber past limits you give</td>
+</tr>
 </tbody>
 </table>
 <pre><code class="language-sh">boiler-room new aws-support-case case=case-123456789012-abc profile=work
 boiler-room new agent-skills-outdated
 </code></pre>
+<h3 id="other-peoples-services">Other people's services <a class="header-anchor" href="#other-peoples-services">#</a></h3>
+<p>These four give each Job one Gauge: its tone is the colour and its icon what it's about, so a page of them reads as a
+grid of lights. Put them on a Dashboard page as a status grid, and a Job's <code>open_in</code> says where clicking one opens.
+<code>service-status</code> needs no key and works for any site on Atlassian Statuspage; the others need keys kept in the
+Keychain, which the Script receives as environment variables.</p>
+<pre><code class="language-sh">boiler-room new service-status site=www.githubstatus.com service=GitHub icon=github
+boiler-room new service-status site=www.cloudflarestatus.com service=Cloudflare icon=cloud
+
+boiler-room secret set datadog-api-key
+boiler-room secret set datadog-app-key
+boiler-room new datadog-monitors tag=service:checkout
+
+boiler-room secret set grafana-token
+boiler-room new grafana-alerts url=https://grafana.example.com
+
+boiler-room secret set newrelic-key
+boiler-room new newrelic-nrql account=1234567 nrql=&quot;SELECT percentage(count(*), WHERE error IS true) FROM Transaction SINCE 5 minutes ago&quot; bad=5 unit=%
+</code></pre>
+<p>A site that can't be reached is a failed Run, which isn't the same as the service being down, so a broken check doesn't
+turn a light red; its last answer just goes stale, and the status grid says so.</p>
 <h2 id="the-example-jobs">The example Jobs <a class="header-anchor" href="#the-example-jobs">#</a></h2>
 <p>A new install's Jobs folder starts with these, paused. Switch one on in the list to try it:</p>
 <table>
