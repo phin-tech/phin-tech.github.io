@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.3.0 · 2026-11-13</p>
+    <p class="version">v0.3.1 · 2026-11-13</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.3.0.zip">Download v0.3.0</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.3.1.zip">Download v0.3.1</a>
   </nav>
   <article>
     <h1>Jobs</h1>
@@ -139,7 +139,7 @@ host = &quot;pty&quot;                    # where it runs: see Terminals
 </code></pre>
 <p>A new Job runs at once, then on its schedule. A Mac asleep runs nothing; at wake, a Job that missed its time runs
 once, not once for each time it missed.</p>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png?v=0.3.0" alt="Change Schedule, with the next three times it would run" /></p>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png?v=0.3.1" alt="Change Schedule, with the next three times it would run" /></p>
 <p>Pause a Job, or start it again, with its switch in the window's list (or ⌘P). Change its schedule from the window
 (⇧⌘S, or click the schedule under its name), with <code>boiler-room schedule aws-case-1234 &quot;0 9 * * mon-fri&quot;</code>, or in its
 file. The window and the command line change only that line and keep your comments.</p>
@@ -189,7 +189,7 @@ every = &quot;3h&quot;
 case = { about = &quot;The support case's ID&quot; }
 profile = { about = &quot;The AWS profile&quot;, default = &quot;work&quot; }
 </code></pre>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/new-job.png?v=0.3.0" alt="New Job from a Template: its Params, each with what it's for" /></p>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/new-job.png?v=0.3.1" alt="New Job from a Template: its Params, each with what it's for" /></p>
 <p>Make a Job from it in the window (⌘N), with <code>boiler-room new aws-case case=1234</code>, or run it once without a Job:
 <code>boiler-room run aws-case case=9999 --wait</code>. A value filled into <code>run</code> is always quoted for the shell, so whatever's
 typed stays one word. Changing a Template changes every Job made from it.</p>
