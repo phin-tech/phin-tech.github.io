@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Microfiche docs">
     <h2>Microfiche</h2>
-    <p class="version">v0.8.6 · 2026-11-13</p>
+    <p class="version">v0.8.7 · 2026-11-14</p>
     <ul>
     
       <li><a href="../">Microfiche</a>
@@ -96,7 +96,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.6.zip">Download v0.8.6</a>
+    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.7.zip">Download v0.8.7</a>
   </nav>
   <article>
     <h1>Using Microfiche from the keyboard</h1>
@@ -194,7 +194,7 @@
 <td>Previous and next Heading, at any level</td>
 </tr>
 <tr>
-<td><code>ctrl-cmd-up</code> <code>ctrl-cmd-down</code></td>
+<td><code>ctrl-cmd-up</code> <code>ctrl-cmd-down</code>, <code>SPC g k</code> <code>SPC g j</code></td>
 <td>The same, and these also work while typing</td>
 </tr>
 <tr>
@@ -202,7 +202,7 @@
 <td>Search, next match, previous match</td>
 </tr>
 <tr>
-<td><code>cmd-f</code></td>
+<td><code>cmd-f</code>, <code>SPC s s</code></td>
 <td>Search</td>
 </tr>
 <tr>
@@ -210,7 +210,7 @@
 <td>Go to line 12</td>
 </tr>
 <tr>
-<td><code>za</code></td>
+<td><code>za</code>, <code>SPC t z</code></td>
 <td>Fold or unfold here</td>
 </tr>
 <tr>
@@ -624,12 +624,12 @@ beneath it stays, so nothing open is hidden, and one that moves takes its subtre
 <td>Ask for calendar access again</td>
 </tr>
 <tr>
-<td><code>SPC a C</code></td>
+<td><code>SPC c c</code></td>
 <td>Calendars: the settings window, on its Calendars section, where a switch shows or hides each one</td>
 </tr>
 <tr>
-<td><code>SPC f m</code></td>
-<td>Copy the MCP server's setup for an agent: <code>j</code> and <code>k</code> move, <code>y</code> copies</td>
+<td><code>SPC c m</code></td>
+<td>Settings, on its MCP Server page: each agent's setup for this window's folder, with a button to copy it</td>
 </tr>
 <tr>
 <td><code>SPC c</code></td>
@@ -681,7 +681,7 @@ beneath it stays, so nothing open is hidden, and one that moves takes its subtre
 </tr>
 </tbody>
 </table>
-<p>The Launcher lists Commands, and the first character you type can change the list: <code>#</code> for Headings, <code>/</code> for Notes, <code>!</code> for the Agenda and <code>&gt;</code> for Commands, which is also where it starts. <code>gf</code>, <code>cmd-o</code> and <code>SPC f f</code> start it with <code>/</code> already typed; backspace returns to Commands. The Agenda also shows today's Events and the next week's from the Calendar app, once you allow it, and <code>enter</code> on one opens Calendar. Typing a Tag in either the Agenda or the Launcher's <code>!</code> list keeps its date order and leaves out Events; backspace removes the Tag filter. In the Outline, <code>tab</code> goes into the selected Heading to show only what's beneath it. In a list of Headings, <code>C-l</code> inserts a Link instead of going there.</p>
+<p>The Launcher lists Commands: everything in the leader menu and the menu bar, each with its group, its leader keys and its shortcut, and typing a group such as <code>task</code> or keys such as <code>fs</code> finds them too. Moving through Notes, Headings or the Agenda shows the start of the one selected. A click outside the Launcher closes it, as <code>escape</code> does. The first character you type can change the list: <code>#</code> for Headings, <code>/</code> for Notes, <code>!</code> for the Agenda and <code>&gt;</code> for Commands, which is also where it starts. <code>gf</code>, <code>cmd-o</code> and <code>SPC f f</code> start it with <code>/</code> already typed; backspace returns to Commands. The Agenda also shows today's Events and the next week's from the Calendar app, once you allow it, and <code>enter</code> on one opens Calendar. Typing a Tag in either the Agenda or the Launcher's <code>!</code> list keeps its date order and leaves out Events; backspace removes the Tag filter. In the Outline, <code>tab</code> goes into the selected Heading to show only what's beneath it. In a list of Headings, <code>C-l</code> inserts a Link instead of going there.</p>
 <h3 id="71-writing-a-query">7.1 Writing a Query <a class="header-anchor" href="#71-writing-a-query">#</a></h3>
 <p>A Query is words that must all match, written as they are in a Note. The query box, a live list, an agenda Block, <code>microfiche query</code> and the MCP server all read it the same way.</p>
 <table>
@@ -891,7 +891,7 @@ relative_line_numbers = true
 </tbody>
 </table>
 <h2 id="9-files-and-windows">9. Files and windows <a class="header-anchor" href="#9-files-and-windows">#</a></h2>
-<p><code>cmd-,</code> opens the settings window, a window of its own with a section for Appearance, General, Editor, Tasks, Git, Agent and Calendars. A change is saved in the config file as you make it, a typed one when you press <code>enter</code> or move away from it, and every window shows it at once, except that a window keeps its own <code>SPC t h</code> and <code>SPC t n</code> until the setting changes. A Reset button appears at the top of a section once something on it differs from its default. Keys of your own go in the config file's <code>[keys]</code> sections, which the window doesn't edit: its Config file section, <code>SPC c f</code> and the Microfiche menu open the file, and saving it changes the window too. The Capture key is read when the Capture agent starts.</p>
+<p><code>cmd-,</code> opens the settings window, a window of its own with a section for General, Appearance, Editor, Tasks, Git, Agent, MCP Server, Apps and Calendars, and a search box that finds any setting by its name, what it says or a word for it. A change is saved in the config file as you make it, a typed one when you press <code>enter</code> or move away from it, and every window shows it at once, except that a window keeps its own <code>SPC t h</code> and <code>SPC t n</code> until the setting changes. A Reset button appears at the top of a section once something on it differs from its default. Keys of your own go in the config file's <code>[keys]</code> sections, which the window doesn't edit: the Config File button under General, <code>SPC c f</code> and the Microfiche menu open the file, and saving it changes the window too. The Capture key is read when the Capture agent starts. General also has Sparkle's automatic checking for updates, and a button to check now.</p>
 <table>
 <thead>
 <tr>
@@ -917,7 +917,7 @@ relative_line_numbers = true
 <td>Save over a file that changed on disk</td>
 </tr>
 <tr>
-<td><code>cmd-n</code></td>
+<td><code>cmd-n</code>, <code>SPC f n</code></td>
 <td>New Note: a list like <code>gf</code>'s, where you type a path from the folder's root such as <code>essays/chapter-one</code>. The top row makes the Note there, and its folders when it's saved; the rest are Notes that already match, to open instead. <code>tab</code> finishes a folder's name</td>
 </tr>
 <tr>
@@ -925,11 +925,11 @@ relative_line_numbers = true
 <td>The same, typed. <code>:note</code> alone starts an untitled Note</td>
 </tr>
 <tr>
-<td><code>cmd-shift-n</code>, <code>SPC f n</code>, <code>:new</code></td>
+<td><code>cmd-shift-n</code>, <code>SPC w n</code>, <code>:new</code></td>
 <td>New window on the same folder, at its list of Notes, so Microfiche can sit in more than one Space. A Note is open in one window at a time: opening it from another brings the first forward. <code>cmd-q</code> closes every window, and one with unsaved changes stays open and says so</td>
 </tr>
 <tr>
-<td><code>SPC o</code>, <code>:e path</code></td>
+<td><code>SPC f p</code>, <code>:e path</code></td>
 <td>Open a file or folder by path. A new Note's missing folders are made when it's saved</td>
 </tr>
 <tr>
@@ -941,8 +941,12 @@ relative_line_numbers = true
 <td>Open the Image here</td>
 </tr>
 <tr>
-<td><code>cmd-w</code></td>
+<td><code>cmd-w</code>, <code>SPC w c</code></td>
 <td>Close the window</td>
+</tr>
+<tr>
+<td><code>cmd-m</code>, <code>SPC w m</code></td>
+<td>Minimize the window. <code>SPC w z</code> zooms it and <code>ctrl-cmd-f</code>, <code>SPC w f</code>, makes it full screen</td>
 </tr>
 <tr>
 <td><code>SPC q q</code>, <code>:q</code>, <code>cmd-q</code></td>
@@ -957,8 +961,12 @@ relative_line_numbers = true
 <td>Quit without saving</td>
 </tr>
 <tr>
-<td><code>cmd-,</code></td>
+<td><code>cmd-,</code>, <code>SPC c s</code></td>
 <td>Open the settings window</td>
+</tr>
+<tr>
+<td><code>SPC c u</code></td>
+<td>Check for updates</td>
 </tr>
 <tr>
 <td><code>ctrl-cmd-f</code></td>
@@ -1076,7 +1084,7 @@ relative_line_numbers = true
 </tr>
 </tbody>
 </table>
-<p>About and Check for Updates are in the app menu, and About is in the Launcher too. Updates come through Sparkle, which checks on its own and asks before installing.</p>
+<p>About and Check for Updates are in the app menu, and in the Launcher too, as is everything else in the menu bar. Updates come through Sparkle, which checks on its own and asks before installing.</p>
 <h2 id="13-helix-keys-and-your-own">13. Helix keys, and your own <a class="header-anchor" href="#13-helix-keys-and-your-own">#</a></h2>
 <p>Choose Helix for Keys under Editor in the settings window (<code>cmd-,</code>), or set <code>keymap = &quot;helix&quot;</code> under <code>[editor]</code> in the config file (<code>SPC c f</code>) and save it: the keys change at once. Helix selects first and acts after: <code>w</code> selects a word, and <code>d</code> deletes what's selected. With nothing selected, <code>d</code> deletes the character under the cursor. The Leader menu, Reading and the app's shortcuts are the same with either keymap.</p>
 <table>
