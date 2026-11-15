@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Microfiche docs">
     <h2>Microfiche</h2>
-    <p class="version">v0.8.7 · 2026-11-14</p>
+    <p class="version">v0.8.8 · 2026-11-15</p>
     <ul>
     
       <li><a href="../">Microfiche</a>
@@ -96,7 +96,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.7.zip">Download v0.8.7</a>
+    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.8.zip">Download v0.8.8</a>
   </nav>
   <article>
     <h1>Using Microfiche from the keyboard</h1>
@@ -1169,13 +1169,14 @@ relative_line_numbers = true
 </tr>
 </tbody>
 </table>
-<p>To change single keys, with either keymap, add sections to the config file. Each mode that has its own keys has a section: <code>normal</code>, <code>visual</code>, <code>reading</code> and <code>placing</code>. A key names a command or a Leader action, and the names complete after the <code>=</code>. <code>&quot;script.name&quot;</code> runs the Script <code>name</code>, and <code>&quot;none&quot;</code> takes a key away.</p>
+<p>To change single keys, with either keymap, add sections to the config file. Each mode that has its own keys has a section: <code>normal</code>, <code>visual</code>, <code>reading</code> and <code>placing</code>. A key names a command or a Leader action, and the names complete after the <code>=</code>. <code>&quot;script.name&quot;</code> runs the Script <code>name</code>, <code>&quot;extension.name.command&quot;</code> runs a Command an Extension offers, such as <code>&quot;extension.clock.in&quot;</code>, and <code>&quot;none&quot;</code> takes a key away.</p>
 <pre><code class="language-toml">[keys.normal]
 &quot;ctrl-s&quot; = &quot;file.save&quot;
 Q = &quot;edit.delete-line&quot;
 g = { a = &quot;cursor.top&quot; }
 x = &quot;none&quot;
 &quot;ctrl-t&quot; = &quot;script.today&quot;
+&quot;ctrl-i&quot; = &quot;extension.clock.in&quot;
 </code></pre>
 <p>Keys are written as characters, or as <code>space</code>, <code>esc</code>, <code>enter</code> or <code>backspace</code>, with <code>ctrl-</code> or <code>alt-</code> in front for a chord. A sequence runs together, as <code>gg</code>, or comes apart, as <code>g g</code>. A key of your own replaces any sequence it would get in the way of, so binding <code>g</code> alone takes away <code>gg</code>. A key that can't be read, or names nothing, is left out, and the status bar says so. Insert mode, the command line and the Leader menu keep their keys.</p>
 
