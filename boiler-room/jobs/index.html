@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.6.6 · 2026-11-16</p>
+    <p class="version">v0.6.7 · 2026-11-16</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -104,7 +104,7 @@
     
       <li><a href="../jobs/" aria-current="page">Jobs</a>
       
-        <ul class="toc"><li class="l2"><a href="#a-job-file">A Job file</a></li><li class="l2"><a href="#what-it-runs-in">What it runs in</a></li><li class="l2"><a href="#code-in-the-job-file">Code in the Job file</a></li><li class="l2"><a href="#what-changed">What changed</a></li><li class="l2"><a href="#templates">Templates</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#a-job-file">A Job file</a></li><li class="l2"><a href="#what-it-runs-in">What it runs in</a></li><li class="l2"><a href="#code-in-the-job-file">Code in the Job file</a></li><li class="l2"><a href="#what-changed">What changed</a></li><li class="l2"><a href="#many-gauges-from-one-run">Many Gauges from one Run</a></li><li class="l2"><a href="#templates">Templates</a></li></ul>
       </li>
     
       <li><a href="../other-macs/">Other Macs</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.6.zip">Download v0.6.6</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.7.zip">Download v0.6.7</a>
   </nav>
   <article>
     <h1>Jobs</h1>
@@ -139,7 +139,7 @@ host = &quot;pty&quot;                    # where it runs: see Terminals
 </code></pre>
 <p>A new Job runs at once, then on its schedule. A Mac asleep runs nothing; at wake, a Job that missed its time runs
 once, not once for each time it missed.</p>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png?v=0.6.6" alt="Change Schedule, with the next three times it would run" /></p>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png?v=0.6.7" alt="Change Schedule, with the next three times it would run" /></p>
 <p>Pause a Job, or start it again, with its switch in the window's list (or ⌘P). Change its schedule from the window
 (⇧⌘S, or click the schedule under its name), with <code>boiler-room schedule aws-case-1234 &quot;0 9 * * mon-fri&quot;</code>, or in its
 file. The window and the command line change only that line and keep your comments.</p>
@@ -212,6 +212,38 @@ Run only, so a Run that says nothing puts the Job back on its schedule: check ev
 wrong, and every half hour once it's fine, as the example Job for GitHub's status does.</p>
 <p><code>notify</code> says when you're told: on a Change and when it starts failing or works again (<code>on-change</code>), only about
 failures, every Run, or never.</p>
+<h2 id="many-gauges-from-one-run">Many Gauges from one Run <a class="header-anchor" href="#many-gauges-from-one-run">#</a></h2>
+<p>A Run can report as many Gauges as it likes, so one query can light up a whole page of tiles instead of one Job per
+tile. Each name is its own Gauge (<code>job/name</code>), compared with the same name in the last Run, so every one notices its own
+change. Give every Gauge each Run, with the tone it has now: a Job's Gauges are those of its latest Run that gave any.</p>
+<p>From the command line, call <code>value</code> once per Gauge:</p>
+<pre><code class="language-sh"># One New Relic query, a Gauge per service
+nrql='SELECT percentile(duration, 95) FROM Transaction FACET appName SINCE 5 minutes ago'
+./query.sh &quot;$nrql&quot; | jq -r '.[] | &quot;\(.appName) \(.p95)&quot;' | while read -r app ms; do
+  boiler-room value &quot;$app-p95&quot; &quot;${ms}ms&quot; --max 500 --warn-above 300 --bad-above 450 --icon gauge --group Latency
+done
+</code></pre>
+<p>From Python, loop over <code>br.value</code>:</p>
+<pre><code class="language-python">import boiler_room as br
+
+for app, ms in results.items():
+    br.value(f&quot;{app}-p95&quot;, f&quot;{ms:.0f}ms&quot;, max=500, warn_above=300, bad_above=450, icon=&quot;gauge&quot;)
+</code></pre>
+<p>Or print one line of JSON, with a key for each Gauge:</p>
+<pre><code class="language-sh">jq -c '{values: (map({key: &quot;\(.appName)-p95&quot;, value: {value: &quot;\(.p95)ms&quot;, tone: (if .p95 &gt; 450 then &quot;bad&quot; elif .p95 &gt; 300 then &quot;warn&quot; else &quot;good&quot; end), icon: &quot;gauge&quot;}}) | from_entries)}'
+</code></pre>
+<p>Declare the ones you know in the Job's file, so they show, waiting, before the first Run and say what they measure:</p>
+<pre><code class="language-toml">[gauges.checkout-p95]
+about = &quot;95th percentile latency of checkout&quot;
+icon = &quot;gauge&quot;
+max = 500
+warn_above = 300
+bad_above = 450
+</code></pre>
+<p>One Run is still one Job: the Job has one schedule, one history and one Change. If each thing needs its own schedule or
+its own Run history, make a Job for each from a <a href="#templates">Template</a> instead, and put the Jobs' Gauges on one page.
+A Gauge has to be let in for each Job before it shows on a page, so a name that's new in a later Run waits for you to
+let it in. <a href="../examples/#many-gauges-from-one-query">Examples</a> has a full one.</p>
 <h2 id="templates">Templates <a class="header-anchor" href="#templates">#</a></h2>
 <p>A Template is a Job with blanks, in <code>~/.config/boiler-room/templates/</code>:</p>
 <pre><code class="language-toml"># templates/aws-case.toml
@@ -223,7 +255,7 @@ every = &quot;3h&quot;
 case = { about = &quot;The support case's ID&quot; }
 profile = { about = &quot;The AWS profile&quot;, default = &quot;work&quot; }
 </code></pre>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/new-job.png?v=0.6.6" alt="New Job from a Template: its Params, each with what it's for" /></p>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/new-job.png?v=0.6.7" alt="New Job from a Template: its Params, each with what it's for" /></p>
 <p>Make a Job from it in the window (⌘N), with <code>boiler-room new aws-case case=1234</code>, or run it once without a Job:
 <code>boiler-room run aws-case case=9999 --wait</code>. A value filled into <code>run</code> is always quoted for the shell, so whatever's
 typed stays one word. A <code>script</code>, <code>runner</code> or <code>runner_args</code> in a Template is never filled in at all; the script reads

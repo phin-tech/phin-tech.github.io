@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.6.6 · 2026-11-16</p>
+    <p class="version">v0.6.7 · 2026-11-16</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -101,7 +101,7 @@
     
       <li><a href="../examples/" aria-current="page">Examples</a>
       
-        <ul class="toc"><li class="l2"><a href="#waiting-for-something-to-finish">Waiting for something to finish</a></li><li class="l2"><a href="#keeping-an-eye-on-something">Keeping an eye on something</a></li><li class="l3"><a href="#other-peoples-services">Other people&#39;s services</a></li><li class="l2"><a href="#the-example-jobs">The example Jobs</a></li><li class="l2"><a href="#writing-your-own">Writing your own</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#waiting-for-something-to-finish">Waiting for something to finish</a></li><li class="l2"><a href="#keeping-an-eye-on-something">Keeping an eye on something</a></li><li class="l3"><a href="#other-peoples-services">Other people&#39;s services</a></li><li class="l3"><a href="#many-gauges-from-one-query">Many Gauges from one query</a></li><li class="l2"><a href="#the-example-jobs">The example Jobs</a></li><li class="l2"><a href="#writing-your-own">Writing your own</a></li></ul>
       </li>
     
       <li><a href="../jobs/">Jobs</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.6.zip">Download v0.6.6</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.7.zip">Download v0.6.7</a>
   </nav>
   <article>
     <h1>Examples</h1>
@@ -228,6 +228,71 @@ boiler-room new newrelic-nrql account=1234567 nrql=&quot;SELECT percentage(count
 </code></pre>
 <p>A site that can't be reached is a failed Run, which isn't the same as the service being down, so a broken check doesn't
 turn a light red; its last answer just goes stale, and the status grid says so.</p>
+<h3 id="many-gauges-from-one-query">Many Gauges from one query <a class="header-anchor" href="#many-gauges-from-one-query">#</a></h3>
+<p>The Templates above give a Job one Gauge. When one query answers for many things, report them all from a single Job,
+so an observability platform is asked once, not once per tile. This Job asks New Relic for error rate by service and
+gives each its own Gauge:</p>
+<pre><code class="language-toml">name = &quot;Error rate by service&quot;
+every = &quot;2m&quot;
+shell = &quot;/bin/sh&quot;
+secrets = [&quot;newrelic-key&quot;]
+run = '''
+query='query($a: Int!, $q: Nrql!) { actor { account(id: $a) { nrql(query: $q) { results } } } }'
+q='SELECT percentage(count(*), WHERE error IS true) AS rate FROM Transaction FACET appName SINCE 5 minutes ago'
+body=$(jq -n --arg query &quot;$query&quot; --arg q &quot;$q&quot; --argjson a 1234567 '{query: $query, variables: {a: $a, q: $q}}') || exit 2
+curl -fsS https://api.newrelic.com/graphql -H &quot;API-Key: $NEWRELIC_KEY&quot; -H &quot;Content-Type: application/json&quot; -d &quot;$body&quot; |
+  jq -r '.data.actor.account.nrql.results[] | &quot;\(.appName) \(.rate)&quot;' |
+  while read -r app rate; do
+    boiler-room value &quot;$app&quot; &quot;$rate%&quot; --max 100 --warn-above 2 --bad-above 5 --icon activity --group &quot;Error rate&quot;
+  done
+'''
+</code></pre>
+<p>A few more, each one call and many tiles:</p>
+<p><strong>Every check of a pull request</strong>, a light per check, from <code>gh</code>:</p>
+<pre><code class="language-sh">gh pr checks &quot;$BOILER_ROOM_PARAM_PR&quot; --json name,bucket |
+  jq -r '.[] | &quot;\(.name)\t\(.bucket)&quot;' |
+  while IFS=&quot;$(printf '\t')&quot; read -r check bucket; do
+    case $bucket in pass) tone=good ;; fail) tone=bad ;; *) tone=warn ;; esac
+    boiler-room value &quot;$check&quot; &quot;$bucket&quot; --tone &quot;$tone&quot; --icon git-pull-request --group &quot;PR checks&quot;
+  done
+</code></pre>
+<p><strong>Disk use of every volume</strong>, a dial each:</p>
+<pre><code class="language-sh">df -P -k | awk 'NR&gt;1 &amp;&amp; $1 ~ /^\/dev\// {gsub(&quot;%&quot;,&quot;&quot;,$5); print $6, $5}' |
+  while read -r mount used; do
+    name=$(basename &quot;$mount&quot;); [ &quot;$name&quot; = / ] &amp;&amp; name=root
+    boiler-room value &quot;disk-$name&quot; &quot;$used%&quot; --max 100 --show ring \
+      --warn-above 75 --bad-above 90 --icon hard-drive --group Disks
+  done
+</code></pre>
+<p><strong>This month's AWS spend by service</strong>, which is one Cost Explorer call (they're billed) that you'd not want ten of:</p>
+<pre><code class="language-sh">aws ce get-cost-and-usage --time-period Start=$(date +%Y-%m-01),End=$(date -v+1d +%Y-%m-%d) \
+    --granularity MONTHLY --metrics UnblendedCost --group-by Type=DIMENSION,Key=SERVICE \
+    --query 'ResultsByTime[0].Groups[].[Keys[0],Metrics.UnblendedCost.Amount]' --output text |
+  while IFS=&quot;$(printf '\t')&quot; read -r service amount; do
+    boiler-room value &quot;$service&quot; &quot;$(printf '$%.2f' &quot;$amount&quot;)&quot; --icon dollar-sign --group &quot;AWS spend&quot;
+  done
+</code></pre>
+<p><strong>Pods that aren't running, per namespace</strong>, from <code>kubectl</code>, with a Python script that does the sums:</p>
+<pre><code class="language-toml">name = &quot;Pods by namespace&quot;
+every = &quot;1m&quot;
+runner = &quot;python3&quot;
+script = '''
+import json, subprocess
+import boiler_room as br
+
+pods = json.loads(subprocess.check_output([&quot;kubectl&quot;, &quot;get&quot;, &quot;pods&quot;, &quot;-A&quot;, &quot;-o&quot;, &quot;json&quot;]))[&quot;items&quot;]
+bad = {}
+for pod in pods:
+    ns = pod[&quot;metadata&quot;][&quot;namespace&quot;]
+    bad.setdefault(ns, 0)
+    if pod[&quot;status&quot;][&quot;phase&quot;] not in (&quot;Running&quot;, &quot;Succeeded&quot;):
+        bad[ns] += 1
+for ns, n in bad.items():
+    br.value(ns, n, tone=&quot;bad&quot; if n else &quot;good&quot;, icon=&quot;box&quot;, group=&quot;Not running&quot;)
+'''
+</code></pre>
+<p>Put the Gauges on a Dashboard page as a status grid. How a Job reports them is in
+<a href="../jobs/#many-gauges-from-one-run">Many Gauges from one Run</a>.</p>
 <h2 id="the-example-jobs">The example Jobs <a class="header-anchor" href="#the-example-jobs">#</a></h2>
 <p>A new install's Jobs folder starts with these, paused. Switch one on in the list to try it:</p>
 <table>
