@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.6.10 · 2026-11-16</p>
+    <p class="version">v0.6.11 · 2026-11-16</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.10.zip">Download v0.6.10</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.11.zip">Download v0.6.11</a>
   </nav>
   <article>
     <h1>Examples</h1>
@@ -351,7 +351,8 @@ curl -fsSG &quot;https://api.datadoghq.com/api/v1/query&quot; \
 '''
 </code></pre>
 <p><strong>A checklist of SLOs</strong>, one Gauge that lists them, from a Python script that does the sums. <code>--item</code> gives each line
-its own tone:</p>
+its own tone, and a link too, <code>--item &quot;checkout=bad=https://slo.example.com/checkout&quot;</code>, which opens when the line is
+clicked (in Python, <code>items=[(&quot;checkout&quot;, &quot;bad&quot;, &quot;https://…&quot;)]</code>):</p>
 <pre><code class="language-toml">name = &quot;SLOs&quot;
 every = &quot;10m&quot;
 runner = &quot;python3&quot;
