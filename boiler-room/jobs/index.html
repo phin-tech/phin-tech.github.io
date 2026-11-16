@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.6.7 · 2026-11-16</p>
+    <p class="version">v0.6.8 · 2026-11-16</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.7.zip">Download v0.6.7</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.8.zip">Download v0.6.8</a>
   </nav>
   <article>
     <h1>Jobs</h1>
@@ -139,10 +139,15 @@ host = &quot;pty&quot;                    # where it runs: see Terminals
 </code></pre>
 <p>A new Job runs at once, then on its schedule. A Mac asleep runs nothing; at wake, a Job that missed its time runs
 once, not once for each time it missed.</p>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png?v=0.6.7" alt="Change Schedule, with the next three times it would run" /></p>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png?v=0.6.8" alt="Change Schedule, with the next three times it would run" /></p>
 <p>Pause a Job, or start it again, with its switch in the window's list (or ⌘P). Change its schedule from the window
 (⇧⌘S, or click the schedule under its name), with <code>boiler-room schedule aws-case-1234 &quot;0 9 * * mon-fri&quot;</code>, or in its
 file. The window and the command line change only that line and keep your comments.</p>
+<p><strong>Archive</strong> a Job you're finished with instead of deleting its file: <strong>Job ▸ Archive or Unarchive</strong>, or
+<code>boiler-room archive aws-case-1234</code> (and <code>unarchive</code>). It writes <code>archived = true</code> into the Job's file, keeping your
+comments, so git and agents see it too. An archived Job never runs and leaves the window's list, but its file and every
+Run are kept. To see the archived ones, filter the list with <code>is:archived</code>. Its Gauges stay on any Dashboard page that
+has them, shown as stale, since nothing is checking them any more.</p>
 <h2 id="what-it-runs-in">What it runs in <a class="header-anchor" href="#what-it-runs-in">#</a></h2>
 <p>A Script runs as it would in your terminal: your login shell's environment, so <code>PATH</code>, Homebrew and your credentials
 are there. A <code>run</code> line goes to your login shell (fish, if that's yours) unless the Job or the daemon's settings name
@@ -193,7 +198,8 @@ made safe to paste into code; the script reads it as <code>BOILER_ROOM_PARAM_&lt
 <p>After each Run, Boiler Room decides whether it's a Change, in this order:</p>
 <ol>
 <li>What the Script said: <code>boiler-room changed</code> or <code>boiler-room unchanged</code>, or a Notice (<code>boiler-room notify &quot;AWS replied&quot;</code>).</li>
-<li>A value that's different from the last Run's: <code>boiler-room value status &quot;Pending customer action&quot;</code>.</li>
+<li>A value that's different from the last Run's: <code>boiler-room value status &quot;Pending customer action&quot;</code>. (A number
+toned by its thresholds is different only when its tone is; see <a href="#many-gauges-from-one-run">Many Gauges</a>.)</li>
 <li>Output that's different from the last Run's.</li>
 </ol>
 <p>So the simplest script just prints what it found, and Boiler Room compares. A Script can also give the Run a report
@@ -240,10 +246,16 @@ max = 500
 warn_above = 300
 bad_above = 450
 </code></pre>
+<p><strong>Just watching numbers.</strong> A number whose Gauge has thresholds (<code>--warn-above</code>, <code>--bad-above</code>, <code>warn_below</code>, … on the
+command line or under <code>[gauges.x]</code>) and no tone the Script chose changes only when its <em>tone</em> does: 212ms to 214ms is
+green to green and not a Change, and 320ms going amber is. So a metrics Job with thresholds only tells you when something
+crosses one. Without thresholds, or with a tone the Script gave, any different Value is a Change, and a latency or a
+count differs nearly every time. For those, set <code>notify = &quot;never&quot;</code> to hear nothing, or <code>&quot;on-failure&quot;</code> to hear only when
+the query itself breaks. Runs and Gauges are kept either way. A Script that does want some Changes can say so for the Run with <code>boiler-room changed</code> or <code>unchanged</code>.</p>
 <p>One Run is still one Job: the Job has one schedule, one history and one Change. If each thing needs its own schedule or
 its own Run history, make a Job for each from a <a href="#templates">Template</a> instead, and put the Jobs' Gauges on one page.
-A Gauge has to be let in for each Job before it shows on a page, so a name that's new in a later Run waits for you to
-let it in. <a href="../examples/#many-gauges-from-one-query">Examples</a> has a full one.</p>
+A Job's Gauges are let in once, for the whole Job, so a service that first appears in a later Run shows up on its own.
+<a href="../examples/#many-gauges-from-one-query">Examples</a> has a full one.</p>
 <h2 id="templates">Templates <a class="header-anchor" href="#templates">#</a></h2>
 <p>A Template is a Job with blanks, in <code>~/.config/boiler-room/templates/</code>:</p>
 <pre><code class="language-toml"># templates/aws-case.toml
@@ -255,7 +267,7 @@ every = &quot;3h&quot;
 case = { about = &quot;The support case's ID&quot; }
 profile = { about = &quot;The AWS profile&quot;, default = &quot;work&quot; }
 </code></pre>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/new-job.png?v=0.6.7" alt="New Job from a Template: its Params, each with what it's for" /></p>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/new-job.png?v=0.6.8" alt="New Job from a Template: its Params, each with what it's for" /></p>
 <p>Make a Job from it in the window (⌘N), with <code>boiler-room new aws-case case=1234</code>, or run it once without a Job:
 <code>boiler-room run aws-case case=9999 --wait</code>. A value filled into <code>run</code> is always quoted for the shell, so whatever's
 typed stays one word. A <code>script</code>, <code>runner</code> or <code>runner_args</code> in a Template is never filled in at all; the script reads

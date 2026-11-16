@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.6.7 · 2026-11-16</p>
+    <p class="version">v0.6.8 · 2026-11-16</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -101,7 +101,7 @@
     
       <li><a href="../examples/" aria-current="page">Examples</a>
       
-        <ul class="toc"><li class="l2"><a href="#waiting-for-something-to-finish">Waiting for something to finish</a></li><li class="l2"><a href="#keeping-an-eye-on-something">Keeping an eye on something</a></li><li class="l3"><a href="#other-peoples-services">Other people&#39;s services</a></li><li class="l3"><a href="#many-gauges-from-one-query">Many Gauges from one query</a></li><li class="l2"><a href="#the-example-jobs">The example Jobs</a></li><li class="l2"><a href="#writing-your-own">Writing your own</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#waiting-for-something-to-finish">Waiting for something to finish</a></li><li class="l2"><a href="#keeping-an-eye-on-something">Keeping an eye on something</a></li><li class="l3"><a href="#other-peoples-services">Other people&#39;s services</a></li><li class="l3"><a href="#many-gauges-from-one-query">Many Gauges from one query</a></li><li class="l3"><a href="#just-watching-numbers">Just watching numbers</a></li><li class="l2"><a href="#the-example-jobs">The example Jobs</a></li><li class="l2"><a href="#writing-your-own">Writing your own</a></li></ul>
       </li>
     
       <li><a href="../jobs/">Jobs</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.7.zip">Download v0.6.7</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.8.zip">Download v0.6.8</a>
   </nav>
   <article>
     <h1>Examples</h1>
@@ -293,6 +293,81 @@ for ns, n in bad.items():
 </code></pre>
 <p>Put the Gauges on a Dashboard page as a status grid. How a Job reports them is in
 <a href="../jobs/#many-gauges-from-one-run">Many Gauges from one Run</a>.</p>
+<h3 id="just-watching-numbers">Just watching numbers <a class="header-anchor" href="#just-watching-numbers">#</a></h3>
+<p>These Jobs only feed Gauges. A Gauge with thresholds is a Change only when its tone changes, so the Jobs with
+<code>--warn-above</code> and <code>--bad-above</code> tell you only when a number crosses one; the others, whose numbers have no thresholds,
+say <code>notify = &quot;never&quot;</code>, since a number that moved isn't news. Use <code>&quot;on-failure&quot;</code> instead to be told when the query
+itself stops working. Each one asks its platform once and gives
+every series its own Gauge.</p>
+<p><strong>Prometheus</strong>, a Gauge per job from one instant query:</p>
+<pre><code class="language-toml">name = &quot;Prometheus up&quot;
+every = &quot;1m&quot;
+shell = &quot;/bin/sh&quot;
+notify = &quot;never&quot;
+run = '''
+curl -fsS &quot;http://prometheus.example.com:9090/api/v1/query&quot; \
+    --data-urlencode 'query=sum by (job) (up)' |
+  jq -r '.data.result[] | &quot;\(.metric.job) \(.value[1])&quot;' |
+  while read -r job up; do
+    boiler-room value &quot;up-$job&quot; &quot;$up&quot; --max 10 --icon server --group Prometheus
+  done
+'''
+</code></pre>
+<p><strong>CloudWatch</strong>, Lambda errors over the last fifteen minutes for a few functions. <code>get-metric-statistics</code> has no data
+for a quiet function, which is zero errors, not a broken check:</p>
+<pre><code class="language-toml">name = &quot;Lambda errors&quot;
+every = &quot;5m&quot;
+shell = &quot;/bin/sh&quot;
+notify = &quot;on-failure&quot;
+run = '''
+from=$(date -u -v-15M +%Y-%m-%dT%H:%M:%SZ); to=$(date -u +%Y-%m-%dT%H:%M:%SZ)
+for fn in checkout-api orders-worker emailer; do
+  n=$(aws cloudwatch get-metric-statistics --namespace AWS/Lambda --metric-name Errors \
+        --dimensions Name=FunctionName,Value=$fn --start-time &quot;$from&quot; --end-time &quot;$to&quot; \
+        --period 900 --statistics Sum --query 'Datapoints[0].Sum' --output text) || exit 2
+  case $n in None|&quot;&quot;) n=0 ;; esac
+  boiler-room value &quot;$fn-errors&quot; &quot;$n&quot; --warn-above 1 --bad-above 10 --icon zap --group &quot;Lambda errors&quot;
+done
+'''
+</code></pre>
+<p><strong>Datadog</strong>, one metrics query with a Gauge for each host it groups by. Keep the keys in the Keychain
+(<code>boiler-room secret set datadog-api-key</code>, and <code>datadog-app-key</code>):</p>
+<pre><code class="language-toml">name = &quot;CPU by host&quot;
+every = &quot;2m&quot;
+shell = &quot;/bin/sh&quot;
+notify = &quot;never&quot;
+secrets = [&quot;datadog-api-key&quot;, &quot;datadog-app-key&quot;]
+run = '''
+now=$(date +%s)
+curl -fsSG &quot;https://api.datadoghq.com/api/v1/query&quot; \
+    -H &quot;DD-API-KEY: $DATADOG_API_KEY&quot; -H &quot;DD-APPLICATION-KEY: $DATADOG_APP_KEY&quot; \
+    --data-urlencode &quot;from=$((now - 300))&quot; --data-urlencode &quot;to=$now&quot; \
+    --data-urlencode &quot;query=avg:system.cpu.user{*} by {host}&quot; |
+  jq -r '.series[] | &quot;\(.scope | sub(&quot;host:&quot;; &quot;&quot;)) \(.pointlist[-1][1])&quot;' |
+  while read -r host cpu; do
+    boiler-room value &quot;cpu-$host&quot; &quot;$(printf '%.0f' &quot;$cpu&quot;)%&quot; --max 100 --show ring \
+      --warn-above 70 --bad-above 90 --icon cpu --group &quot;CPU&quot;
+  done
+'''
+</code></pre>
+<p><strong>A checklist of SLOs</strong>, one Gauge that lists them, from a Python script that does the sums. <code>--item</code> gives each line
+its own tone:</p>
+<pre><code class="language-toml">name = &quot;SLOs&quot;
+every = &quot;10m&quot;
+runner = &quot;python3&quot;
+notify = &quot;never&quot;
+script = '''
+import json, subprocess
+import boiler_room as br
+
+slos = json.loads(subprocess.check_output([&quot;./slo-report.sh&quot;], text=True))  # {&quot;checkout&quot;: 99.95, &quot;search&quot;: 99.2}
+items = {name: (&quot;good&quot; if pct &gt;= 99.9 else &quot;warn&quot; if pct &gt;= 99.0 else &quot;bad&quot;) for name, pct in slos.items()}
+worst = min(slos.values())
+br.value(&quot;slos&quot;, f&quot;{worst:.2f}% worst&quot;, show=&quot;list&quot;, items=items, icon=&quot;target&quot;, group=&quot;SLOs&quot;)
+'''
+</code></pre>
+<p><strong>One Job per service</strong>, when each needs its own schedule and history, is a Template: make it once and
+<code>boiler-room new</code> a Job for each, then put their Gauges on one page. See <a href="../jobs/#templates">Jobs</a>.</p>
 <h2 id="the-example-jobs">The example Jobs <a class="header-anchor" href="#the-example-jobs">#</a></h2>
 <p>A new install's Jobs folder starts with these, paused. Switch one on in the list to try it:</p>
 <table>

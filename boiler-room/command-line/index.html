@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.6.7 · 2026-11-16</p>
+    <p class="version">v0.6.8 · 2026-11-16</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.7.zip">Download v0.6.7</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.8.zip">Download v0.6.8</a>
   </nav>
   <article>
     <h1>The command line and agents</h1>
@@ -144,6 +144,7 @@ boiler-room questions            # what's waiting for you
 boiler-room new aws-case case=1234      # a Job from a Template
 boiler-room schedule aws-case-1234 3h   # or a cron line in quotes
 boiler-room pause aws-case-1234         # and resume; stop &lt;run&gt;
+boiler-room archive aws-case-1234       # put a Job away, file and Runs kept; unarchive brings it back
 boiler-room answer 3 yes                # a question
 boiler-room submit --every 30s -- gh pr checks 123
 </code></pre>
