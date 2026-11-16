@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.6.3 · 2026-11-16</p>
+    <p class="version">v0.6.6 · 2026-11-16</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -95,7 +95,7 @@
     
       <li><a href="../command-line/" aria-current="page">The command line and agents</a>
       
-        <ul class="toc"><li class="l2"><a href="#looking">Looking</a></li><li class="l2"><a href="#doing">Doing</a></li><li class="l2"><a href="#from-a-script">From a Script</a></li><li class="l3"><a href="#in-python-or-javascript">In Python or JavaScript</a></li><li class="l2"><a href="#agents">Agents</a></li><li class="l2"><a href="#the-daemons-settings">The daemon&#39;s settings</a></li><li class="l2"><a href="#where-things-are">Where things are</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#looking">Looking</a></li><li class="l2"><a href="#doing">Doing</a></li><li class="l2"><a href="#from-alfred">From Alfred</a></li><li class="l2"><a href="#from-a-script">From a Script</a></li><li class="l3"><a href="#in-python-or-javascript">In Python or JavaScript</a></li><li class="l2"><a href="#agents">Agents</a></li><li class="l2"><a href="#the-daemons-settings">The daemon&#39;s settings</a></li><li class="l2"><a href="#where-things-are">Where things are</a></li></ul>
       </li>
     
       <li><a href="../errands/">Errands</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.3.zip">Download v0.6.3</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.6.zip">Download v0.6.6</a>
   </nav>
   <article>
     <h1>The command line and agents</h1>
@@ -147,6 +147,13 @@ boiler-room pause aws-case-1234         # and resume; stop &lt;run&gt;
 boiler-room answer 3 yes                # a question
 boiler-room submit --every 30s -- gh pr checks 123
 </code></pre>
+<h2 id="from-alfred">From Alfred <a class="header-anchor" href="#from-alfred">#</a></h2>
+<p>Settings ▸ Integrations (or Help ▸ Install Alfred Workflow) packs the workflow and opens it, and Alfred (with its
+Powerpack) asks you to import it. <code>just alfred</code> does the same into <code>target/Boiler Room.alfredworkflow</code>. Type <code>br</code> and part of a Job's name: ⏎ runs it now, ⌘⏎ shows it in the app. <code>br</code> also lists
+Show the Dashboard and New Job, and <code>brd</code> opens the Dashboard directly. It runs the command line, so install that
+first; the workflow looks for <code>~/.local/bin/boiler-room</code>, then the app's own copy, and a workflow variable named
+<code>boiler_room</code> overrides both. It opens the app through <code>boiler-room://dashboard</code>, <code>…://new</code> and <code>…://job/&lt;id&gt;</code>; running a
+Job is the command line's, never a link's, as a web page can open a link.</p>
 <h2 id="from-a-script">From a Script <a class="header-anchor" href="#from-a-script">#</a></h2>
 <p>Inside a Run, a Script reports with <code>notify</code>, <code>changed</code>, <code>unchanged</code>, <code>value</code>, <code>report</code>, <code>progress</code> and <code>step</code>, and
 asks with <code>ask</code>, <code>confirm</code>, <code>wait</code> and <code>choose</code> (<a href="../being-told/">Being told</a>); <code>gum file</code> and <code>gum table</code> ask for a path or a row
