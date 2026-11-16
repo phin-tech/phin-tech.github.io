@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.6.0 · 2026-11-15</p>
+    <p class="version">v0.6.1 · 2026-11-15</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -95,7 +95,7 @@
     
       <li><a href="../command-line/" aria-current="page">The command line and agents</a>
       
-        <ul class="toc"><li class="l2"><a href="#looking">Looking</a></li><li class="l2"><a href="#doing">Doing</a></li><li class="l2"><a href="#from-a-script">From a Script</a></li><li class="l2"><a href="#agents">Agents</a></li><li class="l2"><a href="#the-daemons-settings">The daemon&#39;s settings</a></li><li class="l2"><a href="#where-things-are">Where things are</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#looking">Looking</a></li><li class="l2"><a href="#doing">Doing</a></li><li class="l2"><a href="#from-a-script">From a Script</a></li><li class="l3"><a href="#in-python-or-javascript">In Python or JavaScript</a></li><li class="l2"><a href="#agents">Agents</a></li><li class="l2"><a href="#the-daemons-settings">The daemon&#39;s settings</a></li><li class="l2"><a href="#where-things-are">Where things are</a></li></ul>
       </li>
     
       <li><a href="../errands/">Errands</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.0.zip">Download v0.6.0</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.1.zip">Download v0.6.1</a>
   </nav>
   <article>
     <h1>The command line and agents</h1>
@@ -149,8 +149,34 @@ boiler-room submit --every 30s -- gh pr checks 123
 </code></pre>
 <h2 id="from-a-script">From a Script <a class="header-anchor" href="#from-a-script">#</a></h2>
 <p>Inside a Run, a Script reports with <code>notify</code>, <code>changed</code>, <code>unchanged</code>, <code>value</code>, <code>report</code>, <code>progress</code> and <code>step</code>, and
-asks with <code>ask</code>, <code>confirm</code>, <code>wait</code> and <code>choose</code> (<a href="../being-told/">Being told</a>). Outside a Run they refuse, unless given <code>--job</code> to try a
+asks with <code>ask</code>, <code>confirm</code>, <code>wait</code> and <code>choose</code> (<a href="../being-told/">Being told</a>); <code>gum file</code> and <code>gum table</code> ask for a path or a row
+(the Python and JavaScript libraries have <code>file</code> and <code>table</code> too, below). Outside a Run they refuse, unless given <code>--job</code> to try a
 Script by hand.</p>
+<h3 id="in-python-or-javascript">In Python or JavaScript <a class="header-anchor" href="#in-python-or-javascript">#</a></h3>
+<p>A Python or JavaScript Script can report with a library instead of starting <code>boiler-room</code> for each call. Each is one
+file with no dependencies, and talks straight to the Daemon.</p>
+<pre><code class="language-python">import boiler_room as br
+
+br.step(&quot;Check the case&quot;)
+br.value(&quot;status&quot;, &quot;Pending AWS&quot;, tone=&quot;warn&quot;, icon=&quot;clock&quot;)
+if br.confirm(&quot;Rotate the key?&quot;):
+    br.notify(&quot;Rotating&quot;, loud=True)
+</code></pre>
+<pre><code class="language-js">import { pathToFileURL } from &quot;node:url&quot;;
+const br = await import(pathToFileURL(process.env.BOILER_ROOM_JS).href);
+
+await br.step(&quot;Check the case&quot;);
+await br.value(&quot;status&quot;, &quot;Pending AWS&quot;, { tone: &quot;warn&quot;, icon: &quot;clock&quot; });
+</code></pre>
+<p>Both have <code>notify</code>, <code>changed</code>, <code>unchanged</code>, <code>value</code> (with its Gauge look), <code>report</code>, <code>progress</code>, <code>step</code>, <code>again</code>,
+<code>ask</code>, <code>confirm</code>, <code>wait</code>, <code>choose</code>, <code>file</code> and <code>table</code>, and <code>param</code>, <code>state_dir</code>, <code>job</code> and <code>forced</code> for where the
+Script is (<code>param</code>, <code>stateDir</code>, <code>job</code>, <code>forced</code> in JavaScript, where each call is awaited). In a Run, Python's
+<code>import boiler_room</code> just works, and <code>$BOILER_ROOM_JS</code> names the JavaScript file. Outside a Run the report calls
+refuse, and <code>BOILER_ROOM_DRY_RUN=1</code> prints what they would have sent, to try a Script by hand.</p>
+<p>To use them in a Script that runs elsewhere, <code>boiler-room python</code> and <code>boiler-room js</code> print the files. With uv, a
+Script can declare the library in its own header, or you can try one with
+<code>uv run --with /path/to/Boilerroom/crates/cli/python check.py</code>; for JavaScript, save <code>boiler-room js</code> beside the
+Script as <code>boiler-room.mjs</code>.</p>
 <h2 id="agents">Agents <a class="header-anchor" href="#agents">#</a></h2>
 <p><code>boiler-room mcp</code> is an MCP server, for Claude Code or any agent: it lists and reads Jobs, Runs and Templates, makes
 Jobs, runs them, changes schedules, hands over Errands and waits for them, and answers questions (never a hidden one).
@@ -175,6 +201,18 @@ session = &quot;boiler-room&quot;
 
 [hosts.hc]
 machine = &quot;vps&quot;            # hc Runs start there, as `hc run --on vps`
+</code></pre>
+<p><code>[runners.&lt;name&gt;]</code> says what reads a Job's <code>script</code> (<code>runner = &quot;&lt;name&gt;&quot;</code>). uv, python3, node, bun and deno come with
+the app; a key here replaces theirs, and a new name adds a runner. These are edited in the file, not with
+<code>boiler-room settings</code>.</p>
+<pre><code class="language-toml">[runners.deno]
+command = [&quot;deno&quot;, &quot;run&quot;, &quot;--allow-net&quot;, &quot;{file}&quot;]   # {file} is the script's path
+ext = &quot;ts&quot;                                           # the script file's extension, which Deno and Node read
+
+[runners.tsx]
+command = [&quot;npx&quot;, &quot;tsx&quot;, &quot;{file}&quot;]
+ext = &quot;ts&quot;
+env = { NODE_NO_WARNINGS = &quot;1&quot; }                      # variables its Scripts get; a Job's env is over them
 </code></pre>
 <h2 id="where-things-are">Where things are <a class="header-anchor" href="#where-things-are">#</a></h2>
 <table>

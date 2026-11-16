@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Boiler Room docs">
     <h2>Boiler Room</h2>
-    <p class="version">v0.6.0 · 2026-11-15</p>
+    <p class="version">v0.6.1 · 2026-11-15</p>
     <ul>
     
       <li><a href="../">Boiler Room</a>
@@ -104,7 +104,7 @@
     
       <li><a href="../jobs/" aria-current="page">Jobs</a>
       
-        <ul class="toc"><li class="l2"><a href="#a-job-file">A Job file</a></li><li class="l2"><a href="#what-it-runs-in">What it runs in</a></li><li class="l2"><a href="#what-changed">What changed</a></li><li class="l2"><a href="#templates">Templates</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#a-job-file">A Job file</a></li><li class="l2"><a href="#what-it-runs-in">What it runs in</a></li><li class="l2"><a href="#code-in-the-job-file">Code in the Job file</a></li><li class="l2"><a href="#what-changed">What changed</a></li><li class="l2"><a href="#templates">Templates</a></li></ul>
       </li>
     
       <li><a href="../other-macs/">Other Macs</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.0.zip">Download v0.6.0</a>
+    <a class="get" href="https://apps.phin.tech/boiler-room/boiler-room-0.6.1.zip">Download v0.6.1</a>
   </nav>
   <article>
     <h1>Jobs</h1>
@@ -123,7 +123,7 @@
 pull with git or have an agent write is picked up at once. A file it can't read shows in the window with the reason.</p>
 <h2 id="a-job-file">A Job file <a class="header-anchor" href="#a-job-file">#</a></h2>
 <pre><code class="language-toml">name = &quot;AWS case 1234&quot;          # shown in the window; the file's name if not
-run = &quot;~/bin/check-case 1234&quot;   # a line for your login shell, or a list
+run = &quot;~/bin/check-case 1234&quot;   # a line for your login shell, or a list; or `script`, below
 every = &quot;3h&quot;                    # or cron = &quot;0 9 * * mon-fri&quot;
 jitter = &quot;5m&quot;                   # spread it out by up to this
 timeout = &quot;2m&quot;                  # 10 minutes if not given
@@ -139,14 +139,15 @@ host = &quot;pty&quot;                    # where it runs: see Terminals
 </code></pre>
 <p>A new Job runs at once, then on its schedule. A Mac asleep runs nothing; at wake, a Job that missed its time runs
 once, not once for each time it missed.</p>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png?v=0.6.0" alt="Change Schedule, with the next three times it would run" /></p>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/schedule.png?v=0.6.1" alt="Change Schedule, with the next three times it would run" /></p>
 <p>Pause a Job, or start it again, with its switch in the window's list (or ⌘P). Change its schedule from the window
 (⇧⌘S, or click the schedule under its name), with <code>boiler-room schedule aws-case-1234 &quot;0 9 * * mon-fri&quot;</code>, or in its
 file. The window and the command line change only that line and keep your comments.</p>
 <h2 id="what-it-runs-in">What it runs in <a class="header-anchor" href="#what-it-runs-in">#</a></h2>
 <p>A Script runs as it would in your terminal: your login shell's environment, so <code>PATH</code>, Homebrew and your credentials
 are there. A <code>run</code> line goes to your login shell (fish, if that's yours) unless the Job or the daemon's settings name
-another <code>shell</code>. A <code>run</code> list (<code>[&quot;/usr/bin/python3&quot;, &quot;check.py&quot;]</code>) runs the program as it is.</p>
+another <code>shell</code>. A <code>run</code> list (<code>[&quot;/usr/bin/python3&quot;, &quot;check.py&quot;]</code>) runs the program as it is. A <code>script</code> is read by
+its runner, its shebang or your shell, as <a href="#code-in-the-job-file">Code in the Job file</a> says.</p>
 <p>Each Job has a folder of its own that's kept between Runs, as <code>$BOILER_ROOM_STATE</code>, for anything it wants to
 remember.</p>
 <p>A Run you start yourself, with Run Now or <code>boiler-room run</code>, has <code>$BOILER_ROOM_FORCE</code> set to <code>1</code>, which one on its
@@ -155,6 +156,39 @@ asks which updates to upgrade whenever you press Run Now.</p>
 <p>Secrets: <code>boiler-room secret set aws-support-token</code> keeps one in the Keychain (typed unseen, or piped in), and
 <code>secrets = [&quot;aws-support-token&quot;]</code> gives it to the Script as <code>$AWS_SUPPORT_TOKEN</code>. An <code>op://</code> value in <code>env</code>, or an
 <code>op_environment</code>, runs the Script through 1Password's <code>op run</code>.</p>
+<h2 id="code-in-the-job-file">Code in the Job file <a class="header-anchor" href="#code-in-the-job-file">#</a></h2>
+<p>Instead of <code>run</code>, a Job can carry its code as a <code>script</code>, so one file holds the Job and the script it runs, and
+git, Export Page and an agent move them together:</p>
+<pre><code class="language-toml">name = &quot;AWS case 1234&quot;
+every = &quot;3h&quot;
+runner = &quot;uv&quot;                   # what reads the script: uv, python3, node, bun, deno, or your own
+script = '''
+# /// script
+# dependencies = [&quot;boto3&quot;]
+# ///
+import boiler_room as br
+
+br.value(&quot;status&quot;, &quot;Pending AWS&quot;)
+'''
+</code></pre>
+<p>Boiler Room writes the text to a file of its own and runs that, so a runner can read the script's own header (uv's
+<code>dependencies</code> above), and an error shows real line numbers. What reads it:</p>
+<ul>
+<li><strong><code>runner</code></strong>, if the Job names one. <code>uv</code> runs <code>uv run --script</code>, and <code>python3</code>, <code>node</code>, <code>bun</code> and <code>deno</code> do what
+they say. <code>runner_args = [&quot;--quiet&quot;]</code> adds arguments before the file, and <code>runner = [&quot;deno&quot;, &quot;run&quot;, &quot;{file}&quot;]</code> gives
+the whole command, with <code>{file}</code> where the script goes. A runner that isn't installed fails the Run with a message
+saying so.</li>
+<li><strong>A shebang</strong>, if there's no <code>runner</code>: <code>#!/usr/bin/env bash</code> as the first line runs the script as bash, whatever
+your login shell is.</li>
+<li><strong>Your shell</strong>, if there's neither, which reads it as a file.</li>
+</ul>
+<p><code>run</code> and <code>script</code> are alternatives; a Job has one. <code>shell</code> is only for a <code>run</code> line, and was <code>runner</code>'s name there
+before <code>script</code> existed, so a Job that says it still works.</p>
+<p>You can add runners or change a built-in one in the <a href="../command-line/#the-daemons-settings">daemon's settings</a>. A
+Template's params are never put into <code>script</code>, <code>runner</code> or <code>runner_args</code>, since a value an agent supplies can't be
+made safe to paste into code; the script reads it as <code>BOILER_ROOM_PARAM_&lt;NAME&gt;</code> (<code>br.param(&quot;case&quot;)</code>) instead.</p>
+<p>Python and JavaScript scripts report back with a small library that needs nothing installed:
+<a href="../command-line/#from-a-script">From a Script</a>.</p>
 <h2 id="what-changed">What changed <a class="header-anchor" href="#what-changed">#</a></h2>
 <p>After each Run, Boiler Room decides whether it's a Change, in this order:</p>
 <ol>
@@ -189,10 +223,11 @@ every = &quot;3h&quot;
 case = { about = &quot;The support case's ID&quot; }
 profile = { about = &quot;The AWS profile&quot;, default = &quot;work&quot; }
 </code></pre>
-<p><img src="https://apps.phin.tech/boiler-room/docs/media/new-job.png?v=0.6.0" alt="New Job from a Template: its Params, each with what it's for" /></p>
+<p><img src="https://apps.phin.tech/boiler-room/docs/media/new-job.png?v=0.6.1" alt="New Job from a Template: its Params, each with what it's for" /></p>
 <p>Make a Job from it in the window (⌘N), with <code>boiler-room new aws-case case=1234</code>, or run it once without a Job:
 <code>boiler-room run aws-case case=9999 --wait</code>. A value filled into <code>run</code> is always quoted for the shell, so whatever's
-typed stays one word. Changing a Template changes every Job made from it.</p>
+typed stays one word. A <code>script</code>, <code>runner</code> or <code>runner_args</code> in a Template is never filled in at all; the script reads
+the value as <code>BOILER_ROOM_PARAM_&lt;NAME&gt;</code>. Changing a Template changes every Job made from it.</p>
 
     <nav class="pager" aria-label="Pages">
       <span><a href="../examples/"><small>Previous</small>Examples</a></span>
