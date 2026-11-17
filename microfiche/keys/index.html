@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Microfiche docs">
     <h2>Microfiche</h2>
-    <p class="version">v0.8.10 · 2026-11-16</p>
+    <p class="version">v0.8.11 · 2026-11-17</p>
     <ul>
     
       <li><a href="../">Microfiche</a>
@@ -96,7 +96,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.10.zip">Download v0.8.10</a>
+    <a class="get" href="https://apps.phin.tech/Microfiche/Microfiche-0.8.11.zip">Download v0.8.11</a>
   </nav>
   <article>
     <h1>Using Microfiche from the keyboard</h1>
@@ -296,7 +296,7 @@
 </tr>
 <tr>
 <td><code>cmd-.</code></td>
-<td>List fixes for the spelling or grammar under the cursor</td>
+<td>List fixes for the spelling or grammar under the cursor. <code>tab</code> and <code>shift-tab</code> move through them, <code>enter</code> takes one</td>
 </tr>
 </tbody>
 </table>
@@ -313,7 +313,7 @@ Editor in the settings window can wait for <code>C-space</code> every time:</p>
 completion = &quot;on-demand&quot;
 </code></pre>
 <p>Prose is proofed as you write, by Harper: a misspelt word gets a wavy underline in the error colour and clumsy grammar
-one in the link colour, a moment after you stop typing. Press <code>cmd-.</code> with the cursor on one, or right-click it and choose Show Code Actions, for what's wrong and a list of fixes you can click.
+one in the link colour, a moment after you stop typing. Press <code>cmd-.</code> with the cursor on one, or right-click it and choose Show Code Actions, for what's wrong and a list of fixes you can click. With the menu open, <code>tab</code> and <code>shift-tab</code> move down and up it and round the ends, as <code>down</code>, <code>up</code>, <code>j</code>, <code>k</code>, <code>ctrl-n</code> and <code>ctrl-p</code> do, <code>enter</code> makes the fix on the row chosen and <code>escape</code> closes the menu. Fix menu text size under Editor in the settings window, <code>fix_menu_size</code>, sets the size of its text in points, where 0 is the default, 12. Fix menu on the text grid, <code>fix_menu_snap = true</code>, gives the menu the Note's own text size and line height in whole pixels instead, so its rows line up with the lines beside it as a terminal's do.
 Fields, tags, mentions, Links and code are never read as prose, and Writing is proofed like everything else. Spelling
 under Editor in the settings window turns it off, or picks a dialect:</p>
 <pre><code class="language-toml">[editor]
