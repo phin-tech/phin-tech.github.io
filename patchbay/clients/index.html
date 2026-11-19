@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Patchbay docs">
     <h2>Patchbay</h2>
-    <p class="version">v0.2.1 · 2026-11-19</p>
+    <p class="version">v0.2.2 · 2026-11-19</p>
     <ul>
     
       <li><a href="../">Patchbay</a>
@@ -92,7 +92,7 @@
     
       <li><a href="../clients/" aria-current="page">Your tools: clients and layouts</a>
       
-        <ul class="toc"><li class="l2"><a href="#what-each-tool-gets">What each tool gets</a></li><li class="l2"><a href="#the-patch-bay">The patch bay</a></li><li class="l2"><a href="#servers-a-tool-already-has">Servers a tool already has</a></li><li class="l2"><a href="#skills">Skills</a></li><li class="l2"><a href="#a-server-that-isnt-ready">A server that isn&#39;t ready</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#what-each-tool-gets">What each tool gets</a></li><li class="l2"><a href="#the-patch-bay">The patch bay</a></li><li class="l2"><a href="#servers-a-tool-already-has">Servers a tool already has</a></li><li class="l2"><a href="#importing-what-your-tools-have">Importing what your tools have</a></li><li class="l2"><a href="#skills">Skills</a></li><li class="l2"><a href="#a-server-that-isnt-ready">A server that isn&#39;t ready</a></li></ul>
       </li>
     
       <li><a href="../servers/">Your servers: patchbay.toml</a>
@@ -102,7 +102,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/patchbay/patchbay-0.2.1.zip">Download v0.2.1</a>
+    <a class="get" href="https://apps.phin.tech/patchbay/patchbay-0.2.2.zip">Download v0.2.2</a>
   </nav>
   <article>
     <h1>Your tools: clients and layouts</h1>
@@ -110,7 +110,7 @@
 writes Patchbay's entries there, and only those, keeping a copy of the file as it was beside it
 (<code>&lt;file&gt;.patchbay-backup</code>). <strong>Disconnect</strong> takes them out again. Restart a tool after connecting it, or after changing
 what it gets.</p>
-<p><img src="https://apps.phin.tech/patchbay/docs/media/clients.png?v=0.2.1" alt="Choosing what Codex gets" /></p>
+<p><img src="https://apps.phin.tech/patchbay/docs/media/clients.png?v=0.2.2" alt="Choosing what Codex gets" /></p>
 <table>
 <thead>
 <tr>
@@ -195,7 +195,9 @@ what a tool gets; its <strong>Connected</strong> switch says whether it has Patc
 and the buttons beside it choose its layout. Each of those is in the Clients menu too, for the tool chosen. Skills hang
 below the servers and are patched to tools the same way; one of your own is hard-wired, and stays as it is until it's
 taken over.</p>
-<p>Turn it off in <strong>Settings ▸ General</strong> to open on Servers instead.</p>
+<p>Turn it off in <strong>Settings ▸ General</strong> to open on Servers instead. <strong>View ▸ Servers on the Patch Bay</strong> and <strong>Skills on
+the Patch Bay</strong> hide either part of it and show it again; hiding one only takes it off the rack, and every tool keeps
+what it's given.</p>
 <h2 id="servers-a-tool-already-has">Servers a tool already has <a class="header-anchor" href="#servers-a-tool-already-has">#</a></h2>
 <p>A tool that already has servers of its own shows them under <strong>Its own</strong>, and the first time you connect it, Patchbay
 offers to take them over. <strong>Take Over</strong> (or <strong>Take Over the Client's
@@ -206,7 +208,17 @@ Patchbay from then on. Every other tool you connect gets them too. The tool's co
 <code>&lt;file&gt;.patchbay-take-over-backup</code>.</p>
 <p>Only the servers you add leave the tool: one you delete from the paste before choosing <strong>Add</strong> stays where it is. So
 does one Patchbay already has a server by the same name for, rather than replacing yours. Only a tool's user-level
-servers are taken over; a Claude Code project's own servers stay with the project.</p>
+servers are taken over this way; <strong>Import</strong> brings in a Claude Code project's too.</p>
+<h2 id="importing-what-your-tools-have">Importing what your tools have <a class="header-anchor" href="#importing-what-your-tools-have">#</a></h2>
+<p><strong>Import from Your Clients…</strong> in the Servers menu lists every server your tools keep of their own: for you, in each
+Claude Code project (its local servers, and a project's <code>.mcp.json</code>), and your own skills. Nothing is ticked to begin
+with: tick each one to bring in, and where a server is set up differently in two places, tick which one. Under each,
+tick the tools to take it out of; a copy you leave unticked stays where it is. One Patchbay already has is shown, and
+can't be brought in twice. A key in a server is shown only by its name.</p>
+<p><strong>Import</strong> opens the servers in Add Server, as Take Over does, so you see what's added and which keys go to the
+Keychain. Choose <strong>Add</strong>, and they're taken out where you ticked, each file backed up first, as it was:
+<code>&lt;file&gt;.patchbay-take-over-backup</code> beside it, and a project's <code>.mcp.json</code> in Patchbay's own folder, so nothing is left
+in its repository. A tool a server leaves is connected to Patchbay, so it still has it.</p>
 <h2 id="skills">Skills <a class="header-anchor" href="#skills">#</a></h2>
 <p>Tools that read agent skills get the ones you install in Patchbay too, each from its own skills folder: see
 <a href="../skills/">Your skills</a>.</p>
