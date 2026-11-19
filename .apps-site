@@ -21,6 +21,7 @@ patchbay/clients/index.html
 patchbay/index.html
 patchbay/servers/index.html
 patchbay/skills/index.html
+patchbay/teams/index.html
 redpen/adr/0001-several-forges-in-one-queue/index.html
 redpen/adr/0002-local-changes-read-with-git-and-kept-here/index.html
 redpen/agentrun-code-review/agent/index.html

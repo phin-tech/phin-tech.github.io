@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Patchbay docs">
     <h2>Patchbay</h2>
-    <p class="version">v0.2.2 · 2026-11-19</p>
+    <p class="version">v0.3.0 · 2026-11-19</p>
     <ul>
     
       <li><a href="" aria-current="page">Patchbay</a>
@@ -101,8 +101,11 @@
       <li><a href="skills/">Your skills</a>
       </li>
     
+      <li><a href="teams/">Your team&#39;s servers and skills</a>
+      </li>
+    
     </ul>
-    <a class="get" href="https://apps.phin.tech/patchbay/patchbay-0.2.2.zip">Download v0.2.2</a>
+    <a class="get" href="https://apps.phin.tech/patchbay/patchbay-0.3.0.zip">Download v0.3.0</a>
   </nav>
   <article>
     <h1>Patchbay</h1>
@@ -112,7 +115,7 @@ them to every tool that reads them. Then it points your AI tools at all of it: C
 Cursor, VS Code, Gemini CLI, opencode, pi, omp and PiG.</p>
 <p>Add a server once and every tool has it. Change a key once and every tool uses the new one, and none of them ever
 sees it. Add a skill once and every tool that reads skills has it too.</p>
-<p><img src="https://apps.phin.tech/patchbay/docs/media/servers.png?v=0.2.2" alt="Patchbay's servers, one waiting for its key" /></p>
+<p><img src="https://apps.phin.tech/patchbay/docs/media/servers.png?v=0.3.0" alt="Patchbay's servers, one waiting for its key" /></p>
 <h2 id="what-it-does">What it does <a class="header-anchor" href="#what-it-does">#</a></h2>
 <ul>
 <li><strong>Paste a server in.</strong> Copy what a server's README gives you (a Claude Desktop block, a <code>claude mcp add</code> command, an
@@ -145,8 +148,8 @@ tools that can change something and are turned off.</li>
 <li><strong>Stays out of the way.</strong> Close the window and the gateway keeps running from the menu bar, out of the Dock. Turn on
 Open at login in Settings and it's there whenever your tools are.</li>
 </ul>
-<p><img src="https://apps.phin.tech/patchbay/docs/media/clients.png?v=0.2.2" alt="Choosing what Codex gets" /></p>
-<p><img src="https://apps.phin.tech/patchbay/docs/media/skills.png?v=0.2.2" alt="Your skills, and which tools have each one" /></p>
+<p><img src="https://apps.phin.tech/patchbay/docs/media/clients.png?v=0.3.0" alt="Choosing what Codex gets" /></p>
+<p><img src="https://apps.phin.tech/patchbay/docs/media/skills.png?v=0.3.0" alt="Your skills, and which tools have each one" /></p>
 <h2 id="getting-it">Getting it <a class="header-anchor" href="#getting-it">#</a></h2>
 <p>From <a href="https://apps.phin.tech">apps.phin.tech</a>, or with Homebrew, which also puts <code>patchbay</code> on your PATH:</p>
 <pre><code class="language-sh">brew install --cask phin-tech/tap/patchbay
@@ -163,12 +166,15 @@ patchbay bridge server/linear           # a server over stdio, for a tool that o
 patchbay skills add vercel-labs/agent-skills --skill web-design-guidelines
 patchbay skills list                    # every skill, where it's from, and which tools have it
 patchbay skills update                  # fetch what's changed at each skill's source
+patchbay teams add git@git.example.com:acme/patchbay-team.git   # a team's servers and skills
+patchbay teams check                    # which teams have changes to look at
 </code></pre>
 <h2 id="more">More <a class="header-anchor" href="#more">#</a></h2>
 <ul>
 <li><a href="servers/">Your servers: patchbay.toml</a></li>
 <li><a href="clients/">Your tools: clients and layouts</a></li>
 <li><a href="skills/">Your skills</a></li>
+<li><a href="teams/">Your team's servers and skills</a></li>
 <li>Building and releasing Patchbay</li>
 </ul>
 <p>Patchbay is made by Phin Tech, in Rust on <a href="https://gpui.rs">GPUI</a>, <a href="https://gpui-kit.com">gpui-kit</a> and
