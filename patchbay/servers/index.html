@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Patchbay docs">
     <h2>Patchbay</h2>
-    <p class="version">v0.3.0 · 2026-11-19</p>
+    <p class="version">v0.3.1 · 2026-11-19</p>
     <ul>
     
       <li><a href="../">Patchbay</a>
@@ -105,7 +105,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/patchbay/patchbay-0.3.0.zip">Download v0.3.0</a>
+    <a class="get" href="https://apps.phin.tech/patchbay/patchbay-0.3.1.zip">Download v0.3.1</a>
   </nav>
   <article>
     <h1>Your servers: patchbay.toml</h1>
@@ -115,7 +115,7 @@
 <p>The buttons beside the chosen server are in the Servers menu too, and so in the palette (⌘K): <strong>Edit Server…</strong>,
 <strong>Turn Server On</strong> and <strong>Off</strong>, <strong>Restart Server</strong>, <strong>Sign In to Server…</strong>, <strong>Sign Out of Server</strong>, <strong>Change Server's
 Key…</strong> and <strong>Remove Server</strong>.</p>
-<p><img src="https://apps.phin.tech/patchbay/docs/media/add-server.png?v=0.3.0" alt="Adding a server by pasting it" /></p>
+<p><img src="https://apps.phin.tech/patchbay/docs/media/add-server.png?v=0.3.1" alt="Adding a server by pasting it" /></p>
 <h2 id="a-server">A server <a class="header-anchor" href="#a-server">#</a></h2>
 <p>A server either runs as a command on your Mac, or is reached at a URL.</p>
 <pre><code class="language-toml"># A command, which talks MCP on its stdin and stdout.
@@ -162,6 +162,10 @@ server's tools reach your AI tools named after it: <code>fetch</code>'s <code>fe
 <tr>
 <td><code>namespace</code></td>
 <td>The prefix of its tools' names, if not the server's own name</td>
+</tr>
+<tr>
+<td><code>tool_prefix</code></td>
+<td>A prefix the server already puts on its own tools' names, which Patchbay takes off (<code>tool_prefix = &quot;github-&quot;</code> makes <code>github-search</code> reach your AI tools as <code>github__search</code>)</td>
 </tr>
 <tr>
 <td><code>tools.allow</code>, <code>tools.deny</code></td>

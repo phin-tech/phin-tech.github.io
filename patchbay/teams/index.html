@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Patchbay docs">
     <h2>Patchbay</h2>
-    <p class="version">v0.3.0 · 2026-11-19</p>
+    <p class="version">v0.3.1 · 2026-11-19</p>
     <ul>
     
       <li><a href="../">Patchbay</a>
@@ -101,18 +101,18 @@
     
       <li><a href="../teams/" aria-current="page">Your team&#39;s servers and skills</a>
       
-        <ul class="toc"><li class="l2"><a href="#the-teams-repository">The team&#39;s repository</a></li><li class="l2"><a href="#subscribing">Subscribing</a></li><li class="l2"><a href="#changes">Changes</a></li><li class="l2"><a href="#from-a-terminal">From a terminal</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#the-teams-repository">The team&#39;s repository</a></li><li class="l2"><a href="#subscribing">Subscribing</a></li><li class="l2"><a href="#changes">Changes</a></li><li class="l2"><a href="#a-litellm-proxy">A LiteLLM proxy</a></li><li class="l2"><a href="#from-a-terminal">From a terminal</a></li></ul>
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/patchbay/patchbay-0.3.0.zip">Download v0.3.0</a>
+    <a class="get" href="https://apps.phin.tech/patchbay/patchbay-0.3.1.zip">Download v0.3.1</a>
   </nav>
   <article>
     <h1>Your team&#39;s servers and skills</h1>
     <p>A team keeps its servers and skills in a git repository, in a <code>patchbay.toml</code> at its top. Each person subscribes to
 it, and Patchbay checks it for changes. Its servers run on your Mac with your own keys, and anything you add stays
 yours.</p>
-<p><img src="https://apps.phin.tech/patchbay/docs/media/team-changes.png?v=0.3.0" alt="A team's changes, waiting to be looked at" /></p>
+<p><img src="https://apps.phin.tech/patchbay/docs/media/team-changes.png?v=0.3.1" alt="A team's changes, waiting to be looked at" /></p>
 <h2 id="the-teams-repository">The team's repository <a class="header-anchor" href="#the-teams-repository">#</a></h2>
 <pre><code class="language-toml"># patchbay.toml, at the top of git.example.com/acme/patchbay-team
 [team]
@@ -159,7 +159,7 @@ them.</p>
 key your ssh-agent holds, or clone the repository once in a terminal so git's credential helper saves your sign-in.
 The same goes for skills from a private repository.</p>
 <h2 id="changes">Changes <a class="header-anchor" href="#changes">#</a></h2>
-<p>Patchbay checks each team when it opens and every hour after that, unless you turn that off in <strong>Settings ▸ Teams</strong>,
+<p>Patchbay checks each team when it opens and every hour after that, unless you turn that off in <strong>Settings ▸ Subscriptions</strong>,
 which lists the teams you're subscribed to. <strong>Check Teams for Changes</strong> checks at once. A team
 with changes is listed above your servers. <strong>Review</strong> shows what changed: servers added, removed or changed, field by
 field, with the old and new value of each. Nothing changes until you choose <strong>Accept</strong>, which takes in exactly the
@@ -169,6 +169,32 @@ if you don't want it. A skill of your own with the same name as one of the team'
 team's skills come through <strong>Check for Skill Updates</strong>, like any other skill.</p>
 <p>Removing a team (<strong>Remove Team</strong> on one of its servers) takes out its servers and its subscription. Its keys stay in
 your Keychain, so subscribing again doesn't ask for them.</p>
+<h2 id="a-litellm-proxy">A LiteLLM proxy <a class="header-anchor" href="#a-litellm-proxy">#</a></h2>
+<p>If your organisation keeps its MCP servers in a <a href="https://docs.litellm.ai/docs/mcp">LiteLLM</a> proxy, subscribe to that
+instead: <strong>Subscribe to LiteLLM…</strong> in the Servers menu. Give the proxy's URL (its <code>/ui</code> admin page's works too) and
+your LiteLLM key, the <code>sk-…</code> it gave you. Patchbay asks LiteLLM for the MCP servers your key can use and lists them
+before anything is kept, as it does a team's.</p>
+<p>Each server is reached through LiteLLM, at its own path, with your key:</p>
+<pre><code class="language-toml">[servers.github_mcp]
+url = &quot;https://litellm.example.com/GitHub_MCP/mcp&quot;
+headers = { x-litellm-api-key = &quot;Bearer ${secret:litellm-key}&quot; }
+tool_prefix = &quot;GitHub_MCP-&quot;
+</code></pre>
+<p>So the servers run where LiteLLM runs, never on your Mac, and LiteLLM keeps their own keys and decides what your key
+may use. LiteLLM puts each server's name before its tools' (<code>GitHub_MCP-search_issues</code>); Patchbay takes it off, so
+your AI tools see <code>github_mcp__search_issues</code>. Your LiteLLM key is kept in your Keychain, under the team's name
+(<code>litellm/litellm-key</code>).</p>
+<p>To replace your key, paste the new one under the LiteLLM in <strong>Settings ▸ Subscriptions</strong>, which lists it beside your
+teams, and choose <strong>Replace Key</strong>. Every one of its servers uses that key, so they all start again with it.</p>
+<p>Checking teams asks LiteLLM again. A server added, taken out or renamed there waits above your servers to be
+reviewed like any team's change, and nothing changes until you accept. Change the servers in LiteLLM, not in
+Patchbay's copy, which it writes again. A server waiting for an admin's approval in LiteLLM isn't listed until it's
+approved.</p>
+<pre><code class="language-sh">patchbay teams litellm https://litellm.example.com            # asks for your key, shows the servers
+patchbay teams litellm https://litellm.example.com --accept &lt;version&gt;   # keeps them
+</code></pre>
+<p><code>PATCHBAY_LITELLM_KEY</code> gives the key without asking for it. <code>patchbay teams check</code> and <code>patchbay teams update</code>
+work for it as for any team, with the version shown in place of a commit.</p>
 <h2 id="from-a-terminal">From a terminal <a class="header-anchor" href="#from-a-terminal">#</a></h2>
 <pre><code class="language-sh">patchbay teams add git@git.example.com:acme/patchbay-team.git   # shows what it adds
 patchbay teams add git@git.example.com:acme/patchbay-team.git --accept &lt;commit&gt;   # keeps it

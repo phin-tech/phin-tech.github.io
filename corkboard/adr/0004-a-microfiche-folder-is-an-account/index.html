@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Corkboard docs">
     <h2>Corkboard</h2>
-    <p class="version">v0.2.4 · 2026-11-17</p>
+    <p class="version">v0.2.5 · 2026-11-19</p>
     <ul>
     
       <li><a href="../../">Corkboard</a>
@@ -114,7 +114,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.2.4.zip">Download v0.2.4</a>
+    <a class="get" href="https://apps.phin.tech/corkboard/corkboard-0.2.5.zip">Download v0.2.5</a>
   </nav>
   <article>
     <h1>A Microfiche folder is an Account, reached through Microfiche&#39;s API</h1>
@@ -122,12 +122,21 @@
 <h2 id="status-proposed">status: proposed <a class="header-anchor" href="#status-proposed">#</a></h2>
 <h1>A Microfiche folder is an Account, reached through Microfiche's API</h1>
 <p>Corkboard shows the Tasks in a Microfiche folder as Issues, following 0002: the folder is an Account, its prefix is
-the Account's one Team, a Task is an Issue named by the prefix and the Task's random <code>id:</code> (<code>HOME-k3f9</code>), its child Tasks are Sub-issues
-and a <code>depends:</code> is a <code>blocked-by</code> Link. A top-level folder inside it is a Project, and every Note
+the Account's one Team, and a Task is an Issue named by the prefix and the Task's <code>id:</code> (<code>HOME-k3f9</code>). Its child Tasks
+are Sub-issues and each <code>depends:</code> is a <code>blocked-by</code> Link. A top-level folder inside it is a Project, and every Note
 beneath that folder, however deep, is one of its Milestones, named by its path; Notes outside any folder hold Issues in
-no Project, as the Inbox does. Corkboard reaches the folder only through Microfiche's API, as it reaches
-Linear only through Linear's, and keeps a Local copy of it the same way. Both apps are ours, so what doesn't fit is
-added to Microfiche rather than made optional here: an Issue still always has a Team and an identifier.</p>
+no Project, as the Inbox does.</p>
+<p>Corkboard reaches the folder only through Microfiche's API, which Microfiche's Capture agent serves on a socket
+(Microfiche's ADR 0003), as it reaches Linear only through Linear's, with the <code>microfiche-api</code> crate for its wire. The
+agent is required: when it isn't running, the Account says so, and Changes wait as they do for Linear when it can't be
+reached. Each sync reads the whole folder and replaces the Account's Local copy, since Microfiche's index makes that
+cheap, and a watch on the folder syncs the Account whenever a Note changes, by hand or otherwise.</p>
+<p>Changes go from the one queue, the same as Linear's, to the agent. A Task has no place for a priority, assignee,
+estimate, Cycle or Comment, so those edits are refused before they're made, and the window says why. An Issue's
+description is the Task's Description, the lines written beneath it in its Note. A Task with no <code>id:</code> is named
+by its Note and title until it's first changed, when Microfiche writes an id onto it, so only Tasks you change are
+touched. Both apps are ours, so what doesn't fit is added to Microfiche rather than made optional here: an Issue still
+always has a Team and an identifier.</p>
 <p>The model's words stay Linear's, but each screen shows one Source and uses its words, so a Microfiche Issue shows as a
 Task and its Milestone as a Note. Lists and Searches span the Accounts of one Source and never two, because a list of
 Issues beside Tasks would need words for neither.</p>
@@ -147,8 +156,10 @@ folder is written by hand, by agents and on several Macs, so a counter could giv
 identifiers turn out hard to say, an alias Field can name a Task as well.</li>
 <li><strong>Linking Microfiche's crates.</strong> No process to run, but the two workspaces would have to agree on their shared
 dependencies' versions and be released together.</li>
-<li><strong>Running <code>microfiche</code> for each Change.</strong> Independent, but every Change waits for a process to start, and nothing
-says when a Note is edited by hand.</li>
+<li><strong>Running <code>microfiche</code> for each Change, and <code>microfiche query</code> to sync.</strong> Corkboard's first, read-only slice did. It
+needs no agent, but every call starts a process, and nothing says when a Note is edited by hand.</li>
+<li><strong>Writing an <code>id:</code> onto every Task when the folder is added.</strong> Simplest afterwards, but it rewrites every Note in the
+folder before you've changed anything.</li>
 </ul>
 
     <nav class="pager" aria-label="Pages">
