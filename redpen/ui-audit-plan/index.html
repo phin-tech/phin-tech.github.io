@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>UI Audit &amp; Consistency Plan · Red Pen docs</title>
+<meta name="description" content="Pull requests waiting on your review, and yours waiting on others">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/redpen/index.html">Red Pen in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Red Pen docs">
+    <h2>Red Pen</h2>
+    <p class="version">v0.11.4 · 2026-11-21</p>
+    <ul>
+    
+      <li><a href="../">Red Pen</a>
+      </li>
+    
+      <li><a href="../adr/0001-several-forges-in-one-queue/">Several Forges, merged into one queue</a>
+      </li>
+    
+      <li><a href="../adr/0002-local-changes-read-with-git-and-kept-here/">Local Changes, read with git and kept here</a>
+      </li>
+    
+      <li><a href="../agentrun-code-review/">How AgentRun reviews pull requests</a>
+      </li>
+    
+      <li><a href="../agentrun-code-review/">AgentRun&#39;s code-review prompts, verbatim</a>
+      </li>
+    
+      <li><a href="../agentrun-code-review/agent/">A computer with a shell first, else none. With a shell, bash runs from the run&#39;s work folder, where AgentRun has</a>
+      </li>
+    
+      <li><a href="../agentrun-code-review/rules/CODEREVIEW/">CODEREVIEW.md: the reviewer&#39;s baseline</a>
+      </li>
+    
+      <li><a href="../agentrun-code-review/skills/review/DEEP/">Deep reviewer</a>
+      </li>
+    
+      <li><a href="../agentrun-code-review/skills/review/REVIEWER/">Reviewer</a>
+      </li>
+    
+      <li><a href="../agentrun-code-review/skills/review/SKILL/">Review</a>
+      </li>
+    
+      <li><a href="../hooks/">Hooks</a>
+      </li>
+    
+      <li><a href="../multi-agent-review-design/">Multi-agent review: design draft</a>
+      </li>
+    
+      <li><a href="../pr-agent-prompts/">PR-Agent&#39;s review prompts, verbatim</a>
+      </li>
+    
+      <li><a href="../review-prompt-comparison/">Review prompts compared: AgentRun, roborev, and Red Pen&#39;s agent</a>
+      </li>
+    
+      <li><a href="../roborev-prompts/">roborev&#39;s review prompts, verbatim</a>
+      </li>
+    
+      <li><a href="../roborev-prompts/skills/">roborev Skills</a>
+      </li>
+    
+      <li><a href="../roborev-prompts/skills/roborev-design-review/">/roborev-design-review</a>
+      </li>
+    
+      <li><a href="../roborev-prompts/skills/roborev-fix/">/roborev-fix</a>
+      </li>
+    
+      <li><a href="../roborev-prompts/skills/roborev-respond/">/roborev-respond</a>
+      </li>
+    
+      <li><a href="../roborev-prompts/skills/roborev-snooze/">roborev-snooze</a>
+      </li>
+    
+      <li><a href="../ui-audit-plan/" aria-current="page">UI Audit &amp; Consistency Plan</a>
+      
+        <ul class="toc"><li class="l2"><a href="#goal">Goal</a></li><li class="l2"><a href="#system-rules-to-standardize">System Rules to Standardize</a></li><li class="l2"><a href="#phase-1-visual-defects--broken-interactions">Phase 1: Visual Defects &amp; Broken Interactions</a></li><li class="l2"><a href="#phase-2-relative-scaling-rems-cursors--accessibility">Phase 2: Relative Scaling (`rems`), Cursors, &amp; Accessibility</a></li><li class="l2"><a href="#phase-3-component-dialog-tooltip--feedback-consistency">Phase 3: Component, Dialog, Tooltip, &amp; Feedback Consistency</a></li><li class="l2"><a href="#phase-4-layout-information-architecture--workflow-polish">Phase 4: Layout, Information Architecture, &amp; Workflow Polish</a></li><li class="l2"><a href="#phase-5-copy-lexicon--upstream-typecase-follow-ups">Phase 5: Copy, Lexicon, &amp; Upstream Typecase Follow-ups</a></li><li class="l3"><a href="#in-red-pen-cratesappsrc-and-localesapptoml">In Red Pen (`crates/app/src/` and `locales/app.toml`)</a></li><li class="l3"><a href="#upstream-in-typecase-tracked-separately">Upstream in `typecase` (tracked separately)</a></li><li class="l2"><a href="#verification">Verification</a></li></ul>
+      </li>
+    
+      <li><a href="../web/">Red Pen on the web</a>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/redpen/redpen-0.11.4.zip">Download v0.11.4</a>
+  </nav>
+  <article>
+    <h1>UI Audit &amp; Consistency Plan</h1>
+    <p>Status: planned. Based on a visual and code audit of <code>crates/app/src/</code> across light, dark, and narrow captures (<code>main</code>,
+<code>description</code>, <code>changes</code>, <code>checks</code>, <code>tabs</code>, <code>settings</code>, <code>palette</code>, <code>keys</code>, <code>pick</code>, <code>mark</code>, <code>leader</code>, <code>composer</code>, and
+<code>tour</code>).</p>
+<h2 id="goal">Goal <a class="header-anchor" href="#goal">#</a></h2>
+<p>Improve Red Pen's day-to-day polish and make its surfaces follow one coherent system:</p>
+<ol>
+<li>Fix concrete visual and interaction defects spotted in rendered frames.</li>
+<li>Enforce consistent component roles, scaling (<code>rems</code>), feedback channels, tooltips, accessibility, and copy across
+every screen and dialog.</li>
+<li>Reduce redundant chrome and friction in the highest-traffic workflows (Queue, Description, Changes, Checks, and
+Settings).</li>
+</ol>
+<p>All changes follow the domain lexicon in <a href="../CONTEXT.md"><code>CONTEXT.md</code></a> and the GPUI Kit Design Guides.</p>
+<h2 id="system-rules-to-standardize">System Rules to Standardize <a class="header-anchor" href="#system-rules-to-standardize">#</a></h2>
+<p>Before touching individual views, align on five invariants:</p>
+<ul>
+<li><strong>One <code>.primary()</code> commit per decision area.</strong> Reserve <code>.primary()</code> for the default commit (usually invoked by Return
+or ⌘Return). Active toggles and filters use <code>.selected(true).toggled(true)</code>. Navigation and peer actions use default
+or <code>.outline()</code>. Irreversible destructive commits use <code>.danger()</code>.</li>
+<li><strong>Relative scale everywhere.</strong> Dialog widths, max-heights, input heights, and layout offsets use <code>rems(...)</code> (not
+<code>px(...)</code>), leaving <code>px</code> only for 1px hairlines, raster assets, and window bounds.</li>
+<li><strong>One feedback channel per kind of message.</strong>
+<ul>
+<li>Transient command outcomes &amp; async errors → <code>typecase::Toast</code>.</li>
+<li>Failed pane loads (Conversation, Checks, Diff) → <code>Alert::error</code>.</li>
+<li>Form validation → inline message directly beside the field (or disabled commit button).</li>
+<li>Persistent background queue state (refreshing, hidden counts, specialists running) → sidebar/bottom <code>Footer</code>.</li>
+</ul>
+</li>
+<li><strong>Native desktop pointer &amp; tooltip conventions.</strong> Arrow cursor for buttons, rows, chips, and toggles; pointing hand
+only for external links. All toolbar/icon shortcuts use <code>Kbd</code> badges inside tooltips, never parenthetical text.</li>
+<li><strong>Consistent lexicon &amp; casing.</strong> Follow <code>CONTEXT.md</code> strictly; Title Case for menus and short button labels, sentence
+case for Settings labels, descriptions, and help prose.</li>
+</ul>
+<hr />
+<h2 id="phase-1-visual-defects--broken-interactions">Phase 1: Visual Defects &amp; Broken Interactions <a class="header-anchor" href="#phase-1-visual-defects--broken-interactions">#</a></h2>
+<p>Small, self-contained fixes with immediate visible payoff.</p>
+<ol>
+<li>
+<p><strong>Fix Review/Note composer verdict wrapping and add explicit actions</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/changes.rs</code> (<code>composer</code>, around lines 3177–3245)</li>
+<li><em>Problem:</em> Placing the long status sentence, <code>flex_1()</code>, and the three verdict pills in one <code>h_flex().flex_wrap()</code>
+causes <code>Request Changes</code> to wrap onto a second line on the far left by itself. Regular notes also have no Cancel or
+Save button, and Reviews have no Cancel button.</li>
+<li><em>Fix:</em> Put the verdict/ink choices in a non-splitting <code>h_flex().flex_none()</code> (or dedicated row below the target
+heading). Add a <code>Cancel</code> button (<code>ghost().small()</code>) to all composer modes and a <code>Save Note</code> (<code>primary().small()</code>)
+button for non-review notes so mouse users aren't relying on prose instructions.</li>
+</ul>
+</li>
+<li>
+<p><strong>Fix Tour gutter badge collision and <code>Ask</code> button behavior</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/changes.rs</code> (<code>render_gutter_marker</code> ~4878–4891, <code>stop_content</code> ~3548–3561)</li>
+<li><em>Problem:</em> The <code>size_4()</code> numbered circle <code>(1)</code> collides with the <code>+</code> diff marker on added lines. Inside the tour
+stop card, the <code>Ask</code> button sits right below an already-visible <code>&quot;Ask about this stop…&quot;</code> textarea, yet clicking it
+only focuses the textarea instead of sending.</li>
+<li><em>Fix:</em> Size/inset the tour gutter badge so it sits cleanly within the gutter without overlapping <code>+</code>/<code>-</code>. Wire
+<code>Ask</code> to submit the question (disabled when empty) or place a compact send button beside the textarea.</li>
+</ul>
+</li>
+<li>
+<p><strong>Soften <code>mark_chip</code> visual weight</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/view.rs</code> (<code>mark_chip</code>, ~4058–4064)</li>
+<li><em>Problem:</em> <code>Tag::custom(theme.foreground, theme.foreground, theme.foreground).outline()</code> draws a high-contrast ring
+that outshouts PR titles and labels, especially in dark mode.</li>
+<li><em>Fix:</em> Use <code>Tag::secondary().outline()</code> (matching <code>Topics</code> at ~3600) or border with <code>theme.border</code> and muted/normal
+foreground text.</li>
+</ul>
+</li>
+<li>
+<p><strong>Match Settings note preview to real notes &amp; fix inline tour elevation</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/settings.rs</code> (~2282–2295), <code>crates/app/src/changes.rs</code> (<code>pinned_stop</code>, ~3579–3592)</li>
+<li><em>Problem:</em> Settings › Reviewing › Note Text renders a vertical <code>border_l_2()</code> stripe, even though real notes on a
+diff render a horizontal wavy/straight rule above the note. Meanwhile <code>pinned_stop</code> puts <code>shadow_lg()</code> and
+<code>bg(theme.popover)</code> on an inline in-flow diff annotation.</li>
+<li><em>Fix:</em> Render the Settings preview with the same <code>rule(...)</code> helper used on the diff (so toggling Wavy vs Straight
+updates the live preview too). Remove <code>shadow_lg()</code> from <code>pinned_stop</code> and use a recessed/bordered inline surface
+(<code>group_box</code> + <code>border_1()</code>) when pinned, reserving <code>popover</code> + <code>shadow_lg()</code> for floating cards.</li>
+</ul>
+</li>
+<li>
+<p><strong>Fix <code>Get beta versions</code> disabled state and stale leader hint</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/settings.rs</code> (~1952–1968), <code>crates/app/src/view.rs</code> (~2944)</li>
+<li><em>Fix:</em> Disable <code>Get beta versions</code> when <code>!sparkle</code>, matching the surrounding update controls. Update
+<code>&quot;(, s l)&quot;</code> to <code>&quot;(Space s l)&quot;</code>.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="phase-2-relative-scaling-rems-cursors--accessibility">Phase 2: Relative Scaling (<code>rems</code>), Cursors, &amp; Accessibility <a class="header-anchor" href="#phase-2-relative-scaling-rems-cursors--accessibility">#</a></h2>
+<p>Make every dialog and control survive text zoom (125%–150%) and follow native pointer/a11y rules.</p>
+<ol>
+<li>
+<p><strong>Replace hardcoded <code>px(...)</code> in dialogs, inputs, and layout offsets with <code>rems(...)</code></strong></p>
+<ul>
+<li><code>crates/app/src/about.rs</code>: <code>w(px(340.))</code>, <code>w(px(420.))</code>, <code>max_h(px(420.))</code> → <code>rems(...)</code> (keep <code>px(96.)</code> for the
+raster logo).</li>
+<li><code>crates/app/src/searches.rs</code>: <code>w(px(360.))</code>, <code>w(px(480.))</code>, <code>max_h(px(320.))</code>, <code>Input::h(px(32.))</code> → <code>rems(...)</code>.</li>
+<li><code>crates/app/src/palette.rs</code>: <code>w(px(560.))</code> → <code>rems(...)</code>.</li>
+<li><code>crates/app/src/picks.rs</code>, <code>crates/app/src/marks.rs</code>: <code>Input::h(px(32.))</code> → <code>h(rems(2.))</code> (or shared helper).</li>
+<li><code>crates/app/src/settings.rs</code>: host input <code>w(px(170.))</code> (~1195) → <code>w(rems(11.))</code>.</li>
+<li><code>crates/app/src/changes.rs</code>: <code>rule(...).ml(px(-16.))</code> (~3306) → <code>.ml(rems(-1.))</code> to stay locked to <code>pl_4()</code>.</li>
+<li><code>crates/app/src/view.rs</code>: DatePrompt <code>.pt(px(72.))</code> (~4753) → <code>.pt(rems(4.5))</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Remove <code>.cursor_pointer()</code> from non-link controls</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/changes.rs</code> (~3131, 3153, 4630, 4677, 4770, 4904), <code>crates/app/src/conflicts.rs</code> (~1347).</li>
+<li>Keep <code>.cursor_pointer()</code> strictly on external URL links (<code>view.rs</code> <code>preview-link</code> ~3477 and <code>check-link</code> ~3344), and
+give those links a subtle external-link icon or rest underline so they read clearly as links.</li>
+</ul>
+</li>
+<li>
+<p><strong>Add accessible names and proper controls for icon-only actions</strong></p>
+<ul>
+<li>Convert <code>viewed-box</code> (<code>changes.rs</code> ~4674) from a clickable <code>div</code> into a proper <code>Button::ghost().xsmall()</code> (or
+<code>Checkbox</code>) with <code>.aria_label(...)</code>.</li>
+<li>Add <code>.aria_label(...)</code> to all icon-only buttons (<code>close-tab</code>, <code>copy-branch</code>, <code>copy-path</code>, <code>split</code>, <code>whitespace</code>,
+<code>conflict-prev</code>, <code>conflict-next</code>, <code>close-changes</code>) and interactive gutter dots/chips.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="phase-3-component-dialog-tooltip--feedback-consistency">Phase 3: Component, Dialog, Tooltip, &amp; Feedback Consistency <a class="header-anchor" href="#phase-3-component-dialog-tooltip--feedback-consistency">#</a></h2>
+<p>Bring Changes, Conflicts, Description, Settings, and Dialogs onto one shared vocabulary.</p>
+<ol>
+<li>
+<p><strong>Enforce single-<code>.primary()</code> discipline and toggled states</strong></p>
+<ul>
+<li><code>changes.rs</code> (~883): Change <code>On the Diff (N hidden)</code> from <code>.primary()</code> to <code>.selected(hidden &gt; 0).toggled(hidden &gt; 0)</code>.</li>
+<li><code>changes.rs</code> (~1296): Give <code>Tour</code> <code>.selected(self.tour_shown()).toggled(self.tour_shown())</code>, matching <code>Agent</code>.</li>
+<li><code>changes.rs</code> (~4544): Demote the heading <code>Review…</code> button to <code>.outline()</code> (or <code>.selected(true)</code>) while the review
+composer is open so <code>Post Review</code> is the sole <code>.primary()</code> commit.</li>
+<li><code>view.rs</code> (~3511): Demote <code>Review Changes</code> in Description from <code>.primary()</code> to default/outline (see Phase 4).</li>
+<li><code>conflicts.rs</code> (~1171, 1491, 1545, 1599, 1824, 1881): Ensure at most one <code>.primary()</code> is visible at a time (e.g.,
+when a special-conflict banner or inline editor is active, keep the secondary CTA <code>.outline()</code>, and style
+<code>Confirm Delete</code> / <code>Delete File</code> with <code>.danger()</code>).</li>
+<li><code>settings.rs</code> (~1199): Change Accounts <code>Add</code> from <code>.primary()</code> to <code>.outline()</code>, matching <code>Follow</code>, <code>Exclude</code>, and
+<code>Show Only These</code>.</li>
+</ul>
+</li>
+<li>
+<p><strong>Standardize dialog anatomy, validation, and confirmations</strong></p>
+<ul>
+<li>Extract a small dialog form helper (or shared convention) so <code>picks.rs</code>, <code>marks.rs</code>, <code>searches.rs</code>, <code>pull_actions.rs</code>,
+<code>validate.rs</code>, and <code>conflicts.rs</code> all include:
+<ul>
+<li>Visible field labels (<code>text_xs().font_medium().text_color(muted)</code> above inputs).</li>
+<li>Double-Enter submit guard (add to <code>searches.rs</code>, matching <code>picks.rs</code> / <code>marks.rs</code> / <code>pull_actions.rs</code>).</li>
+<li>Disabled commit button or inline validation error when required input is empty instead of silent no-ops.</li>
+</ul>
+</li>
+<li>Decide whether destructive confirmations (<code>pull_actions.rs</code> merge, <code>conflicts.rs</code> abort &amp; push, and optionally note
+deletion / account removal) should use themed in-app <code>open_dialog</code> alerts or native <code>window.prompt</code> sheets—and use
+one consistently across the app.</li>
+<li>Add either confirmation or undo for irreversible <code>Delete</code> on notes (<code>changes.rs</code> ~3941) and <code>Remove</code> on accounts
+(<code>settings.rs</code> ~1162).</li>
+</ul>
+</li>
+<li>
+<p><strong>Unify tooltips and shortcut formatting</strong></p>
+<ul>
+<li>Move <code>Hinted</code> (or a simpler <code>tooltip_with_key(label, command)</code> helper) to a shared module so <code>conflicts.rs</code>
+(<code>Previous Conflict ([)</code> → <code>Tooltip::new(&quot;Previous Conflict&quot;).key_binding(...)</code>), <code>changes.rs</code> file controls, and
+<code>view.rs</code> buttons all render shortcuts uniformly as <code>Kbd</code> badges.</li>
+<li>Standardize shortcut prose to one notation everywhere (<code>⇧S</code>, <code>⌘↩</code>, <code>⇧↩</code>, <code>⌥I</code>, <code>⎋</code> via <code>shortcuts::symbols</code> /
+<code>shortcuts::key_for</code> rather than hand-written <code>&quot;Shift-S&quot;</code> or <code>&quot;⌘Return&quot;</code>).</li>
+</ul>
+</li>
+<li>
+<p><strong>Unify feedback &amp; error channels</strong></p>
+<ul>
+<li>Use <code>typecase::Toast</code> for transient actions currently written into <code>MainView::said</code> / <code>ChangesView::said</code> (copied
+link/branch/command, review posted, snoozed, dismissed, errors from posting/diff actions).</li>
+<li>Use <code>Alert::error</code> for <code>Showing::Failed</code> in <code>changes.rs</code> (~4586), matching <code>conversation</code> and <code>checks_pane</code>.</li>
+<li>Keep <code>Footer</code> focused on persistent queue/background status (refreshing, last refreshed, hidden/excluded counts,
+specialists running).</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="phase-4-layout-information-architecture--workflow-polish">Phase 4: Layout, Information Architecture, &amp; Workflow Polish <a class="header-anchor" href="#phase-4-layout-information-architecture--workflow-polish">#</a></h2>
+<p>Higher-impact UX upgrades that simplify dense screens and improve discoverability.</p>
+<ol>
+<li>
+<p><strong>Auto-select the first pull request on load</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/view.rs</code></li>
+<li>When the queue populates and <code>self.selected</code> is <code>None</code> (and not showing examples/tour setup that explicitly clears
+it), select row 0 with <code>engaged = false</code> so the middle column opens ready to read without falsely marking it seen.</li>
+</ul>
+</li>
+<li>
+<p><strong>Move global diff toggles out of per-file headers</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/changes.rs</code> (<code>file_controls</code> ~4407–4500, <code>heading</code> ~4504–4562)</li>
+<li>Remove <code>split</code> (<code>Show Side by Side</code>) and <code>whitespace</code> (<code>Hide Whitespace Changes</code>) from every per-file header.</li>
+<li>Add them once in the Changes toolbar (as icon toggles or inside an expanded <code>View</code> / <code>On the Diff</code> dropdown alongside
+<code>Whole Files</code>), leaving per-file headers strictly file-scoped (<code>Viewed</code>, <code>Copy Path</code>).</li>
+</ul>
+</li>
+<li>
+<p><strong>Streamline Changes header chrome &amp; align middle-column spines</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/view.rs</code> (<code>tab_strip</code> ~1895, <code>switcher</code> ~3191, <code>preview_pane</code> ~3459, <code>checks_pane</code> ~3359),
+<code>crates/app/src/changes.rs</code> (<code>heading</code> ~4504, <code>tour_offer</code> ~1308)</li>
+<li>Align the leading edge of <code>tab_strip</code>, <code>switcher</code>, <code>preview_pane</code>, <code>checks_pane</code>, and <code>ChangesView</code> heading to one
+shared spine (<code>px_4</code>).</li>
+<li>Reduce vertical stacking in Changes: avoid repeating the PR title when already in the title bar/tab, or fold the
+tour offer into a compact inline pill/badge on the <code>Tour</code> button so the diff starts higher up.</li>
+</ul>
+</li>
+<li>
+<p><strong>Consolidate Description actions &amp; enrich metadata</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/view.rs</code> (<code>preview_pane</code> ~3467–3608, <code>status_badges</code> ~3954–4033)</li>
+<li>Move <code>Resolve Conflicts…</code> out of <code>status_badges</code> onto the main action row at <code>.small()</code> size so there is only one
+action bar.</li>
+<li>Re-evaluate redundant navigation (<code>Review Changes</code> directly under the <code>Changes</code> tab; <code>Open in Browser</code> directly
+under the clickable <code>repo#num</code> link).</li>
+<li>Render status icons next to <code>Checks</code> and chips for <code>Marked</code> inside the metadata block so it matches the queue's
+visual language.</li>
+<li>Make <code>&quot;1 from bots hidden · b shows them&quot;</code> (<code>view.rs</code> ~3069) a clickable ghost toggle button.</li>
+</ul>
+</li>
+<li>
+<p><strong>Polish Changed Files &amp; Conflict Files sidebars</strong></p>
+<ul>
+<li><em>Where:</em> <code>crates/app/src/changes.rs</code> (~4609–4805), <code>crates/app/src/conflicts.rs</code> (~1286–1437)</li>
+<li>Match the inset rounded row styling (<code>px_2</code> container + <code>rounded_md</code> rows) used in the Queue and main Sidebar.</li>
+<li>Keep the <code>Viewed</code> indicator in a consistent trailing lane.</li>
+</ul>
+</li>
+<li>
+<p><strong>Upgrade Checks pane, Mark dialog, FilterBar, Keys dialog, and Command Palette</strong></p>
+<ul>
+<li><strong>Checks</strong> (<code>view.rs</code> ~3277–3387): Format commit SHA in monospace; separate check name and state cleanly (e.g.,
+muted status badge instead of <code>test success</code>); bring <code>Details</code> closer or style with an external-link icon.</li>
+<li><strong>Mark dialog</strong> (<code>marks.rs</code> ~63–88): Turn <code>&quot;On it&quot;</code> and <code>&quot;In use&quot;</code> into clickable toggle chips above/below the input.</li>
+<li><strong>FilterBar</strong> (<code>view.rs</code> ~377): Shorten placeholder to <code>&quot;Filter pull requests…&quot;</code> so it never truncates at default
+queue width.</li>
+<li><strong>Keys dialog</strong> (<code>about.rs</code> ~51–107): Attach <code>.vertical_scrollbar(...)</code>, render shortcuts with <code>Kbd</code> badges (matching
+Welcome), add a quick search input, and give unlisted commands (like <code>window.fullscreen</code>) real display labels
+instead of raw IDs.</li>
+<li><strong>Command Palette</strong> (<code>palette.rs</code> ~86–145): Put <code>Pull Request</code> / <code>View</code> / <code>File</code> commands before <code>Red Pen</code> app-menu
+boilerplate (<code>Hide Others</code>, <code>Show All</code>, <code>About Red Pen</code>), and replace <code>&quot;run&quot;</code> placeholder with
+<code>&quot;Type a command, or # for pull requests…&quot;</code>.</li>
+</ul>
+</li>
+</ol>
+<hr />
+<h2 id="phase-5-copy-lexicon--upstream-typecase-follow-ups">Phase 5: Copy, Lexicon, &amp; Upstream Typecase Follow-ups <a class="header-anchor" href="#phase-5-copy-lexicon--upstream-typecase-follow-ups">#</a></h2>
+<h3 id="in-red-pen-cratesappsrc-and-localesapptoml">In Red Pen (<code>crates/app/src/</code> and <code>locales/app.toml</code>) <a class="header-anchor" href="#in-red-pen-cratesappsrc-and-localesapptoml">#</a></h3>
+<ul>
+<li>Unify verdict wording: pick either <code>Request Changes</code> or <code>Ask for Changes</code> and use it across <code>menus.rs</code>, <code>leader.rs</code>,
+<code>pull_actions.rs</code>, and <code>changes.rs</code>.</li>
+<li>Unify <code>Ask the Agent</code> vs <code>Ask Agent</code> (<code>menus.rs</code>, <code>view.rs</code>, <code>conflicts.rs</code>).</li>
+<li>Standardize capitalization of domain nouns (<code>Forge</code>, <code>Account</code>, <code>Local Changes</code>) per <code>CONTEXT.md</code>.</li>
+<li>Replace <code>Confirm Delete</code> (<code>conflicts.rs</code> ~1601) with <code>Delete File</code>.</li>
+<li>Unify <code>Install the redpen Command</code> (<code>menus.rs</code>) / <code>Install redpen Command</code> (<code>settings.rs</code>).</li>
+<li>Tone down note headers (<code>changes.rs</code> ~3749, 4001, 4108): drop <code>.to_uppercase()</code> where bold + ink color already carry
+emphasis.</li>
+<li>Keep <code>locales/app.toml</code> keys in sync with any updated English strings.</li>
+</ul>
+<h3 id="upstream-in-typecase-tracked-separately">Upstream in <code>typecase</code> (tracked separately) <a class="header-anchor" href="#upstream-in-typecase-tracked-separately">#</a></h3>
+<ul>
+<li><code>SettingsFrame</code>: give the active sidebar section a clear selected surface fill; make disclosure chevrons consistent
+across sections regardless of group count; replace <code>Search...</code> (three dots) with <code>Search…</code> (single ellipsis).</li>
+<li><code>SavedSearches</code>: align heading casing (<code>Saved Searches</code>) with Red Pen's sidebar places (<code>Review Queue</code>, <code>Your Pulls</code>).</li>
+<li><code>Settings</code> window chrome: evaluate aligning Settings' title bar / recessed sidebar treatment with <code>typecase::shell</code> so
+Settings feels part of the same family as the main window.</li>
+</ul>
+<hr />
+<h2 id="verification">Verification <a class="header-anchor" href="#verification">#</a></h2>
+<p>After each phase:</p>
+<ol>
+<li><code>just check</code> (formatting, clippy with and without <code>--features screenshot</code>, and all workspace tests).</li>
+<li>Capture and inspect <code>just shot</code> frames in <strong>both light and dark appearances</strong> for every touched screen:
+<ul>
+<li>Main window (initial launch, selected PR description, PR with conflicts, kept tabs, narrow width <code>REDPEN_WIDTH=860</code>)</li>
+<li>Changes view (normal diff, review composer, note composer, tour offer, active tour stop, floating vs pinned cards)</li>
+<li>Checks view</li>
+<li>Dialogs (<code>cmd-k</code>, <code>cmd-/</code>, <code>cmd-shift-o</code>, <code>m m</code>, <code>cmd-shift-s</code>, <code>pull.comment</code>)</li>
+<li>Settings window across sections</li>
+</ul>
+</li>
+<li>Spot-check dialogs and Changes at <code>text_scale = 1.25</code> via <code>REDPEN_SETTINGS</code> to verify <code>rems</code> scaling and zero
+clipping.</li>
+</ol>
+
+    <nav class="pager" aria-label="Pages">
+      <span><a href="../roborev-prompts/skills/roborev-snooze/"><small>Previous</small>roborev-snooze</a></span>
+      <span><a href="../web/"><small>Next</small>Red Pen on the web</a></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>
