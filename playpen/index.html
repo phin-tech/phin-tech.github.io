@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Playpen · Playpen docs</title>
+<meta name="description" content="Run your agents in OpenShell sandboxes, and decide what they may reach">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/playpen/index.html">Playpen in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Playpen docs">
+    <h2>Playpen</h2>
+    <p class="version">v0.1.1 · 2026-11-22</p>
+    <ul>
+    
+      <li><a href="" aria-current="page">Playpen</a>
+      
+        <ul class="toc"><li class="l2"><a href="#make-a-sandbox">Make a sandbox</a></li><li class="l2"><a href="#decide-what-it-reaches">Decide what it reaches</a></li><li class="l2"><a href="#keys-stay-out-of-the-sandbox">Keys stay out of the sandbox</a></li><li class="l2"><a href="#gateways">Gateways</a></li><li class="l2"><a href="#bring-the-work-back">Bring the work back</a></li><li class="l2"><a href="#ports">Ports</a></li><li class="l2"><a href="#from-the-command-line">From the command line</a></li><li class="l2"><a href="#keys">Keys</a></li><li class="l2"><a href="#requires">Requires</a></li></ul>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/playpen/playpen-0.1.1.zip">Download v0.1.1</a>
+  </nav>
+  <article>
+    <h1>Playpen</h1>
+    <p>Playpen runs your coding agents in <a href="https://github.com/NVIDIA/OpenShell">OpenShell</a> sandboxes on your Mac, and lets
+you decide what each one may reach. An agent works in a sandbox with a copy of your code; it reaches its model and the
+services you attach, and nothing else, until you say so.</p>
+<h2 id="make-a-sandbox">Make a sandbox <a class="header-anchor" href="#make-a-sandbox">#</a></h2>
+<p><strong>File ▸ New Agent…</strong> (⌘N) asks which agent (Claude Code or Codex), a name, the folders to copy in, any kits, and the
+model key to use. Folders are copied into <code>/sandbox</code> with their git history, respecting <code>.gitignore</code>. Open the agent
+in a Herdr terminal, Ghostty or Terminal from the sandbox's <strong>Open</strong> button. A sandbox outlives its sessions:
+close the window and the agent keeps going when Herdr is installed.</p>
+<h2 id="decide-what-it-reaches">Decide what it reaches <a class="header-anchor" href="#decide-what-it-reaches">#</a></h2>
+<p>A sandbox's policy denies everything it doesn't allow. When something in a sandbox tries to reach a host the policy
+doesn't list, OpenShell drafts a rule for it, and Playpen shows it under <strong>Network requests</strong>, with the program that
+made the connection. <strong>Approve</strong> allows it, <strong>Reject</strong> doesn't, and <strong>Approve All</strong> takes the lot. Approved rules take
+a few seconds to reach the sandbox, so run the blocked command again.</p>
+<p><strong>Recent activity</strong> lists what the sandbox has connected to lately, and <strong>Blocked</strong> narrows it to what was stopped.</p>
+<h2 id="keys-stay-out-of-the-sandbox">Keys stay out of the sandbox <a class="header-anchor" href="#keys-stay-out-of-the-sandbox">#</a></h2>
+<p><strong>Providers</strong> lists the credentials OpenShell holds, grouped by gateway: a model key, a Claude or ChatGPT sign-in, or a
+service such as GitHub. The agent sees only a stand-in, which OpenShell swaps for the real key on requests to that
+service. <strong>Add to Gateway…</strong> copies a provider to another gateway, and <strong>Attach service…</strong> on a sandbox gives it one.</p>
+<h2 id="gateways">Gateways <a class="header-anchor" href="#gateways">#</a></h2>
+<p>A gateway is where OpenShell keeps and runs sandboxes: Docker on this Mac, a MicroVM gateway Playpen can set up (each
+sandbox a small virtual machine with its own Linux kernel), or a Kubernetes cluster. Add or remove one from the
+<strong>Gateways</strong> list. Sandboxes are listed under the gateway that made them, and two gateways can each hold a sandbox of
+the same name.</p>
+<h2 id="bring-the-work-back">Bring the work back <a class="header-anchor" href="#bring-the-work-back">#</a></h2>
+<p><strong>Bring Back</strong> fetches what the agent did in a sandbox as a git branch named <code>playpen/&lt;sandbox&gt;</code>, in the repository the
+folder came from. Your working copy is never touched.</p>
+<h2 id="ports">Ports <a class="header-anchor" href="#ports">#</a></h2>
+<p>Forward a sandbox's port to <code>localhost</code> from its detail pane, and open it in the browser from there.</p>
+<h2 id="from-the-command-line">From the command line <a class="header-anchor" href="#from-the-command-line">#</a></h2>
+<p><code>Playpen.app/Contents/MacOS/Playpen</code> answers commands without opening a window, each with <code>--json</code> and <code>--gateway</code>:</p>
+<pre><code class="language-sh">playpen gateways
+playpen sandboxes --gateway microvm
+playpen sandbox stop claude
+playpen sandbox attach claude github
+playpen providers --json
+playpen services show github
+</code></pre>
+<h2 id="keys">Keys <a class="header-anchor" href="#keys">#</a></h2>
+<p>⌘K lists every command. ⌘/ shows every key by its menu. ⌘, opens Settings, where the theme follows the appearance
+and the text size is yours to set.</p>
+<h2 id="requires">Requires <a class="header-anchor" href="#requires">#</a></h2>
+<p>macOS 14 or later, and <a href="https://github.com/NVIDIA/OpenShell">OpenShell</a> with Docker (or its MicroVM driver). Claude
+Code and Codex are run from images Playpen builds or pulls; you sign in to them from Providers.</p>
+
+    <nav class="pager" aria-label="Pages">
+      <span></span>
+      <span></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>

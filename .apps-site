@@ -22,6 +22,7 @@ patchbay/index.html
 patchbay/servers/index.html
 patchbay/skills/index.html
 patchbay/teams/index.html
+playpen/index.html
 rabbit-ears-manager/adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/index.html
 rabbit-ears-manager/adr/0002-the-relay-runs-on-its-own/index.html
 rabbit-ears-manager/adr/0003-antenna-tower-on-linux-with-a-web-manager/index.html
