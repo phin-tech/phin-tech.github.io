@@ -1,0 +1,170 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Later, and left out · Playpen docs</title>
+<meta name="description" content="Run your agents in OpenShell sandboxes, and decide what they may reach">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../../../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/playpen/index.html">Playpen in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Playpen docs">
+    <h2>Playpen</h2>
+    <p class="version">v0.1.2 · 2026-11-23</p>
+    <ul>
+    
+      <li><a href="../../">Playpen</a>
+      </li>
+    
+      <li><a href="../../plans/">What more of OpenShell Playpen could show</a>
+      </li>
+    
+      <li><a href="../../plans/credentials/">Credential trouble: say when a key failed, and what to do</a>
+      </li>
+    
+      <li><a href="../../plans/gateway-health/">Gateway health: who you are, what it runs, and signing out</a>
+      </li>
+    
+      <li><a href="../../plans/gateway-links/">Gateway links: a sandbox&#39;s service at a URL</a>
+      </li>
+    
+      <li><a href="../../plans/later/" aria-current="page">Later, and left out</a>
+      
+        <ul class="toc"><li class="l2"><a href="#workspaces">Workspaces</a></li><li class="l2"><a href="#provider-profile-tools">Provider profile tools</a></li><li class="l2"><a href="#audit-export-and-traces">Audit export and traces</a></li><li class="l2"><a href="#the-prover">The prover</a></li><li class="l2"><a href="#left-out">Left out</a></li></ul>
+      </li>
+    
+      <li><a href="../../plans/lifecycle-and-access/">Suspend, editors and files</a>
+      </li>
+    
+      <li><a href="../../plans/logs/">Logs: the whole log, followed live</a>
+      </li>
+    
+      <li><a href="../../plans/making-options/">Making options: resources and restarts</a>
+      </li>
+    
+      <li><a href="../../plans/policy/">Policy: see it, and allow or deny by hand</a>
+      </li>
+    
+      <li><a href="../../plans/proposals/">Proposals: the rest of the inbox, and letting the agent propose</a>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/playpen/playpen-0.1.2.zip">Download v0.1.2</a>
+  </nav>
+  <article>
+    <h1>Later, and left out</h1>
+    <p>What else OpenShell 0.1.9 has, and why it waits.</p>
+<h2 id="workspaces">Workspaces <a class="header-anchor" href="#workspaces">#</a></h2>
+<p>Workspaces divide a gateway between teams, and the <code>workspace</code> command is hidden. Each has members with roles (Platform
+Admin, Workspace Admin, Workspace User), taken from OIDC claims. Every resource call takes <code>--workspace</code>, and the
+default is <code>default</code> (<a href="https://docs.nvidia.com/openshell/v0.1.9/how-it-works/workspaces">workspaces</a>). A local gateway
+without OIDC treats everyone as Platform Admin, so on this Mac there's only ever <code>default</code>.</p>
+<p><strong>When:</strong> after a real team gateway with OIDC is in use. Then the gateway's sidebar row could gain a workspace picker,
+set as <code>OPENSHELL_WORKSPACE</code> the way <code>OPENSHELL_GATEWAY</code> is set. A sandbox would then be identified by gateway,
+workspace and name, which touches <code>SandboxKey</code> and Herdr's naming, so it needs an ADR of its own. Member management stays
+in the CLI.</p>
+<h2 id="provider-profile-tools">Provider profile tools <a class="header-anchor" href="#provider-profile-tools">#</a></h2>
+<p><code>profile describe</code> shows a profile's credentials, endpoints and default policy. <code>profile lint</code> checks a profile file
+without registering it. Playpen imports and exports profiles already. <code>describe</code> would help Settings ▸ Providers say
+which hosts a provider adds to a policy, which plan 1 also wants for <code>_provider_*</code> rules. Pick it up then.</p>
+<h2 id="audit-export-and-traces">Audit export and traces <a class="header-anchor" href="#audit-export-and-traces">#</a></h2>
+<p><code>ocsf_json_enabled</code> makes the sandbox write its audit events as OCSF JSON, and OTLP sends traces and metrics to a
+collector (<a href="https://docs.nvidia.com/openshell/v0.1.9/observability/overview">observability</a>). Both are for feeding
+another system, not for reading in Playpen. If the log viewer (plan 5) wants structured lines, OCSF JSON may be the
+cleaner source than parsing text, so check that then. Otherwise leave it.</p>
+<h2 id="the-prover">The prover <a class="header-anchor" href="#the-prover">#</a></h2>
+<p><code>openshell-prover</code> checks a policy against a maximum one. Its risk check already runs on every proposal, and Playpen
+should show its findings (plan 2's history has the confidence). Running the boundary check by hand is a policy
+author's tool. Pick it up if plan 1 grows into whole-policy authoring, which ADR 0002 rules out for now.</p>
+<h2 id="left-out">Left out <a class="header-anchor" href="#left-out">#</a></h2>
+<ul>
+<li><strong><code>openshell term</code>.</strong> It's the TUI that Playpen is.</li>
+<li><strong><code>completions</code> and <code>ssh-proxy</code>.</strong> Shell and SSH plumbing.</li>
+<li><strong><code>--driver-config-json</code>.</strong> Gateway-admin territory, and off unless the admin enables <code>allow_driver_config</code>.</li>
+<li><strong><code>forward service</code>.</strong> Forwarding over gRPC instead of SSH. Use it if SSH forwarding proves unreliable on some
+gateway; otherwise it's the same feature as Ports.</li>
+<li><strong>Inference routes.</strong> Removed in 0.1.0.</li>
+</ul>
+
+    <nav class="pager" aria-label="Pages">
+      <span><a href="../../plans/gateway-links/"><small>Previous</small>Gateway links: a sandbox&#39;s service at a URL</a></span>
+      <span><a href="../../plans/lifecycle-and-access/"><small>Next</small>Suspend, editors and files</a></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>

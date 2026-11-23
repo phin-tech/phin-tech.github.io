@@ -84,25 +84,65 @@
 <div class="layout">
   <nav class="side" aria-label="Playpen docs">
     <h2>Playpen</h2>
-    <p class="version">v0.1.1 · 2026-11-22</p>
+    <p class="version">v0.1.2 · 2026-11-23</p>
     <ul>
     
       <li><a href="" aria-current="page">Playpen</a>
       
-        <ul class="toc"><li class="l2"><a href="#make-a-sandbox">Make a sandbox</a></li><li class="l2"><a href="#decide-what-it-reaches">Decide what it reaches</a></li><li class="l2"><a href="#keys-stay-out-of-the-sandbox">Keys stay out of the sandbox</a></li><li class="l2"><a href="#gateways">Gateways</a></li><li class="l2"><a href="#bring-the-work-back">Bring the work back</a></li><li class="l2"><a href="#ports">Ports</a></li><li class="l2"><a href="#from-the-command-line">From the command line</a></li><li class="l2"><a href="#keys">Keys</a></li><li class="l2"><a href="#requires">Requires</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#get-started">Get started</a></li><li class="l2"><a href="#make-a-sandbox">Make a sandbox</a></li><li class="l2"><a href="#decide-what-it-reaches">Decide what it reaches</a></li><li class="l2"><a href="#keys-stay-out-of-the-sandbox">Keys stay out of the sandbox</a></li><li class="l2"><a href="#gateways">Gateways</a></li><li class="l2"><a href="#bring-the-work-back">Bring the work back</a></li><li class="l2"><a href="#ports">Ports</a></li><li class="l2"><a href="#from-the-command-line">From the command line</a></li><li class="l2"><a href="#keys">Keys</a></li><li class="l2"><a href="#requires">Requires</a></li></ul>
+      </li>
+    
+      <li><a href="plans/">What more of OpenShell Playpen could show</a>
+      </li>
+    
+      <li><a href="plans/credentials/">Credential trouble: say when a key failed, and what to do</a>
+      </li>
+    
+      <li><a href="plans/gateway-health/">Gateway health: who you are, what it runs, and signing out</a>
+      </li>
+    
+      <li><a href="plans/gateway-links/">Gateway links: a sandbox&#39;s service at a URL</a>
+      </li>
+    
+      <li><a href="plans/later/">Later, and left out</a>
+      </li>
+    
+      <li><a href="plans/lifecycle-and-access/">Suspend, editors and files</a>
+      </li>
+    
+      <li><a href="plans/logs/">Logs: the whole log, followed live</a>
+      </li>
+    
+      <li><a href="plans/making-options/">Making options: resources and restarts</a>
+      </li>
+    
+      <li><a href="plans/policy/">Policy: see it, and allow or deny by hand</a>
+      </li>
+    
+      <li><a href="plans/proposals/">Proposals: the rest of the inbox, and letting the agent propose</a>
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/playpen/playpen-0.1.1.zip">Download v0.1.1</a>
+    <a class="get" href="https://apps.phin.tech/playpen/playpen-0.1.2.zip">Download v0.1.2</a>
   </nav>
   <article>
     <h1>Playpen</h1>
     <p>Playpen runs your coding agents in <a href="https://github.com/NVIDIA/OpenShell">OpenShell</a> sandboxes on your Mac, and lets
 you decide what each one may reach. An agent works in a sandbox with a copy of your code; it reaches its model and the
 services you attach, and nothing else, until you say so.</p>
+<h2 id="get-started">Get started <a class="header-anchor" href="#get-started">#</a></h2>
+<p>The first time Playpen opens, it offers to set you up or show you around. Setting up asks which agent you'll run,
+where its sandboxes run (OpenShell's own gateway on Docker, a MicroVM, or another) and waits for that gateway to
+answer, then which key it uses: one the gateway holds already, or a new one you sign in to (Claude, ChatGPT) or paste
+(OpenRouter, LiteLLM and the rest). It makes a kit with the key, then a sandbox with the kit, and opens its agent. <strong>Help ▸ Set Up
+Playpen…</strong> and <strong>Help ▸ Tour of the Window</strong> bring either back.</p>
 <h2 id="make-a-sandbox">Make a sandbox <a class="header-anchor" href="#make-a-sandbox">#</a></h2>
-<p><strong>File ▸ New Agent…</strong> (⌘N) asks which agent (Claude Code or Codex), a name, the folders to copy in, any kits, and the
-model key to use. Folders are copied into <code>/sandbox</code> with their git history, respecting <code>.gitignore</code>. Open the agent
+<p><strong>File ▸ New Agent…</strong> (⌘N) asks which agent (Claude Code, Codex, OpenCode, Cursor, Pi, oh-my-pi or PiG), a name, the
+folders to copy in, any kits, and the model key to use. OpenCode, Pi, oh-my-pi and PiG take an API key for OpenRouter,
+Anthropic, OpenAI or a LiteLLM proxy, and the model to start with, which a LiteLLM proxy needs. Cursor takes a Cursor
+API key, which it trades for a token that stays in its sandbox. <strong>File ▸ New Custom Agent…</strong> describes a
+harness of your own: the image it runs in, the command that starts it, the program that reaches its model and the keys
+it reads. In <strong>Agents</strong>, any of Playpen's agents can start from an image of yours instead of the one Playpen builds. Folders are copied into <code>/sandbox</code> with their git history, respecting <code>.gitignore</code>. Open the agent
 in a Herdr terminal, Ghostty or Terminal from the sandbox's <strong>Open</strong> button. A sandbox outlives its sessions:
 close the window and the agent keeps going when Herdr is installed.</p>
 <h2 id="decide-what-it-reaches">Decide what it reaches <a class="header-anchor" href="#decide-what-it-reaches">#</a></h2>
@@ -138,12 +178,12 @@ playpen services show github
 <p>⌘K lists every command. ⌘/ shows every key by its menu. ⌘, opens Settings, where the theme follows the appearance
 and the text size is yours to set.</p>
 <h2 id="requires">Requires <a class="header-anchor" href="#requires">#</a></h2>
-<p>macOS 14 or later, and <a href="https://github.com/NVIDIA/OpenShell">OpenShell</a> with Docker (or its MicroVM driver). Claude
-Code and Codex are run from images Playpen builds or pulls; you sign in to them from Providers.</p>
+<p>macOS 14 or later, and <a href="https://github.com/NVIDIA/OpenShell">OpenShell</a> with Docker (or its MicroVM driver). Every
+agent runs from an image Playpen builds or pulls; you sign in to Claude and ChatGPT, or add an API key, in Providers.</p>
 
     <nav class="pager" aria-label="Pages">
       <span></span>
-      <span></span>
+      <span><a href="plans/"><small>Next</small>What more of OpenShell Playpen could show</a></span>
     </nav>
   </article>
 </div>

@@ -24,6 +24,16 @@ patchbay/servers/index.html
 patchbay/skills/index.html
 patchbay/teams/index.html
 playpen/index.html
+playpen/plans/credentials/index.html
+playpen/plans/gateway-health/index.html
+playpen/plans/gateway-links/index.html
+playpen/plans/index.html
+playpen/plans/later/index.html
+playpen/plans/lifecycle-and-access/index.html
+playpen/plans/logs/index.html
+playpen/plans/making-options/index.html
+playpen/plans/policy/index.html
+playpen/plans/proposals/index.html
 rabbit-ears-manager/adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/index.html
 rabbit-ears-manager/adr/0002-the-relay-runs-on-its-own/index.html
 rabbit-ears-manager/adr/0003-antenna-tower-on-linux-with-a-web-manager/index.html
