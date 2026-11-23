@@ -1,0 +1,456 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>An Android TV box for Dad · Rabbit Ears Manager docs</title>
+<meta name="description" content="Set up the Rabbit Ears station from your Mac: channels, IPTV logins, sports, Plex and the relay.">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/rabbit-ears-manager/index.html">Rabbit Ears Manager in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Rabbit Ears Manager docs">
+    <h2>Rabbit Ears Manager</h2>
+    <p class="version">v1.0.1 · 2026-11-22</p>
+    <ul>
+    
+      <li><a href="../">Rabbit Ears Manager</a>
+      </li>
+    
+      <li><a href="../adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/">Settings come from the Mac mini, with an R2 mirror, not iCloud</a>
+      </li>
+    
+      <li><a href="../adr/0002-the-relay-runs-on-its-own/">The relay runs on its own, as Antenna Tower</a>
+      </li>
+    
+      <li><a href="../adr/0003-antenna-tower-on-linux-with-a-web-manager/">Antenna Tower can run on Linux, managed from a web page</a>
+      </li>
+    
+      <li><a href="../adr/0004-a-tv-at-another-house/">A TV at another house, joined by a scan and reached over Tailscale</a>
+      </li>
+    
+      <li><a href="../adr/0005-the-tower-in-go-behind-a-written-interface/">0005: The tower in Go, behind a written interface</a>
+      </li>
+    
+      <li><a href="../android/" aria-current="page">An Android TV box for Dad</a>
+      
+        <ul class="toc"><li class="l2"><a href="#goal">Goal</a></li><li class="l2"><a href="#the-box">The box</a></li><li class="l2"><a href="#proposed-decisions">Proposed decisions</a></li><li class="l2"><a href="#fit-with-the-adrs">Fit with the ADRs</a></li><li class="l2"><a href="#stages">Stages</a></li><li class="l3"><a href="#0-try-first">0. Try first</a></li><li class="l3"><a href="#1-the-dial-sheet">1. The dial sheet</a></li><li class="l3"><a href="#2-the-app-watches">2. The app watches</a></li><li class="l3"><a href="#3-guide-groups-and-sports">3. Guide, groups and sports</a></li><li class="l3"><a href="#4-at-dads">4. At Dad&#39;s</a></li><li class="l3"><a href="#5-on-demand">5. On Demand</a></li><li class="l3"><a href="#6-later-if-hed-use-it">6. Later, if he&#39;d use it</a></li><li class="l2"><a href="#not-doing">Not doing</a></li><li class="l2"><a href="#considered-options">Considered options</a></li><li class="l2"><a href="#open">Open</a></li></ul>
+      </li>
+    
+      <li><a href="../api/">The station&#39;s interface</a>
+      </li>
+    
+      <li><a href="../channel-feeds/">Channels apart from providers</a>
+      </li>
+    
+      <li><a href="../channel-modules/">Channel modules, and the MBTA channel</a>
+      </li>
+    
+      <li><a href="../getting-started/">Getting started</a>
+      </li>
+    
+      <li><a href="../group-channels/">Group channels</a>
+      </li>
+    
+      <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
+      </li>
+    
+      <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
+      </li>
+    
+      <li><a href="../iptv-channels/">One kind of IPTV channel</a>
+      </li>
+    
+      <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
+      </li>
+    
+      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      </li>
+    
+      <li><a href="../packages/">The station&#39;s packages</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../profiles/">Profiles</a>
+      </li>
+    
+      <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
+      </li>
+    
+      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      </li>
+    
+      <li><a href="../sport-channels/">Sport channels</a>
+      </li>
+    
+      <li><a href="../telemetry/">Telemetry: errors and traces from the screens</a>
+      </li>
+    
+      <li><a href="../themes/">Themes</a>
+      </li>
+    
+      <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
+      </li>
+    
+      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+  </nav>
+  <article>
+    <h1>An Android TV box for Dad</h1>
+    <p>Drafted 2026-10-19. <strong>Speculative: nothing agreed or built.</strong> The wider
+version of this plan (Android phones, a Swift core on Android, everything
+shared) is in git at <code>eb585f0</code>. This is the narrow one: a single Android TV
+box at Dad's, his profile, watching only. If we go ahead, the decisions
+become ADR 0005, amending ADR 0004 (which assumes an Apple TV there).</p>
+<h2 id="goal">Goal <a class="header-anchor" href="#goal">#</a></h2>
+<p>Dad turns on the TV and gets the station: the same numbers, the guide, his
+group and sport channels, live IPTV that fails over between logins, and On
+Demand with his place kept. He
+changes nothing and manages nothing. We change things from our Manager and
+his box follows.</p>
+<h2 id="the-box">The box <a class="header-anchor" href="#the-box">#</a></h2>
+<ul>
+<li><strong>A Google TV box</strong> (the Google TV Streamer, an onn 4K Pro, a Shield):
+the Play Store for Tailscale and for our app's updates.</li>
+<li><strong>Or a Fire TV, if it runs Fire OS.</strong> Fire OS is Android underneath, so
+the same app runs. Two catches:
+<ul>
+<li>Amazon's newer sticks run <strong>Vega OS</strong>, which isn't Android and won't run
+the app. Check the model before buying, or use one he has.</li>
+<li>No Play Store: the app and Tailscale are sideloaded (<code>adb</code>, or the
+Downloader app), unless they're in the Amazon Appstore.</li>
+</ul>
+</li>
+<li>Either way it's cheaper than an Apple TV, and Android lets Tailscale be the
+always-on VPN.</li>
+</ul>
+<h2 id="proposed-decisions">Proposed decisions <a class="header-anchor" href="#proposed-decisions">#</a></h2>
+<ol>
+<li>
+<p><strong>A thin client in plain Kotlin.</strong> Compose for TV for the screens, Media3
+(ExoPlayer) for playback with live captions. No Swift on Android, no
+shared code: for one box, the Swift SDK for Android and moving the
+player's logic into a package (the wider plan) cost more than the box is
+worth.</p>
+</li>
+<li>
+<p><strong>The thinking stays on the Mac: the control room writes Dad's box a
+dial sheet.</strong> The box shouldn't decode Xtream, sort sport folders or
+match guides. Copied into Kotlin, each would drift from the Swift. So the
+Manager running the event jobs (<code>EventRefresher.isControlRoom</code>, ADR 0002
+decision 8) also writes a <strong>dial sheet</strong> per profile with a box that needs
+one, sent to the tower like any change:</p>
+<ul>
+<li>the channels in dial order: number, name, logo, theme colours;</li>
+<li>each channel's entries, each with its playable URLs in failover order
+(login and stream already resolved), and whether it needs Strong's
+redirect resolved first;</li>
+<li>groups with their members, sport channels with their current games
+(from <code>EventGames</code>, which the Manager already sorts) and their URLs;</li>
+<li>catch-up URL templates where the provider has them.</li>
+</ul>
+<p>Changing the lineup, a sport's rules or a feed rewrites the sheet, so the
+box follows without knowing why.</p>
+</li>
+<li>
+<p><strong>The guide comes from the guide relay</strong> (docs/guide-relay.md, not built
+yet): one finished guide per lineup, which the box only shows. Until that
+exists, the dial sheet carries now and next for each channel, and the box
+shows a two-slot guide.</p>
+</li>
+<li>
+<p><strong>It reaches the tower over Tailscale, R2 when it can't</strong> (ADR 0004
+decisions 2, 5). The dial sheet and guide are sealed objects in R2 like
+the settings (<code>screen/&lt;profile&gt;</code>, <code>guide/&lt;lineup&gt;</code>), so with the tunnel
+down the box still gets changes and plays straight from the providers.
+It keeps the last sheet it had and never empties it (ADR 0001 decision 4).</p>
+</li>
+<li>
+<p><strong>It writes almost nothing.</strong> Dad's profile isn't a manager (ADR 0001
+decision 12), and the box has no channel search, no adding channels and
+no settings. It sends what's playing, its errors, its check-ins and his
+On Demand history (to the tower, or its outbox, or the updates Worker).
+It never sends a setting, so it needs no merge.</p>
+</li>
+<li>
+<p><strong>It joins at setup, in person.</strong> We're there anyway to log in to
+Tailscale (ADR 0004 decision 3). From the laptop, <code>adb</code> opens the invite
+on the box (<code>am start -d 'rabbitears://join?…'</code>). That needs no QR code
+and no <code>RemoteControl</code> listener on Android. ADR 0004's scan stays for
+Apple TVs.</p>
+</li>
+<li>
+<p><strong>Updates:</strong> Google TV through the Play Console's internal testing track,
+with Dad's Google account as a tester. Fire TV by <code>adb install</code> over the
+tailnet, with the policy letting our own devices reach <code>tag:tv</code> on 5555
+(ADR 0004 decision 3 lets the box reach only the tower; this is the
+other direction).</p>
+</li>
+<li>
+<p><strong>What's shared is formats, checked by test files</strong>: the dial sheet's
+JSON (written by Swift, read by Kotlin, one example file both test),
+AES-GCM test vectors for <code>Sealed</code> (<code>javax.crypto</code> opens the same bytes),
+the invite, the outbox's signing, the Worker's messages, the On Demand
+routes' answers, and a profile's history.</p>
+</li>
+<li>
+<p><strong>On Demand is the tower's, over Tailscale.</strong> The catalog already lives
+on the tower and is served as routes (docs/vod-relay.md: rows, shelves,
+search, shows, plots, posters, extras), so the box is only a browser and
+a player for them, like dial sheets for live TV:</p>
+<ul>
+<li><strong>Browsing:</strong> the home rows (New, Top Rated), shelves, search (the
+Google TV keyboard and its voice input), a show's seasons and
+episodes, Continue Watching from his history. English-only as the
+Apple apps are. Posters from the tower's poster route.</li>
+<li><strong>Playing, best first:</strong> the title's Plex copy if it has one (kept
+titles, docs/vod-fetch.md); else straight from the provider over Dad's
+own connection; else a job on the Mac mini (<code>POST /v1/vod/jobs</code>), the
+file coming over Tailscale at our upload speed. The tower answers
+which, with a playable address, from a new small route
+(<code>GET /v1/vod/copies/&lt;id&gt;/play</code>), so the box never builds a provider
+URL itself.</li>
+<li><strong>The player:</strong> ExoPlayer plays MP4, MKV and AVI over HTTP ranges by
+itself, so the box needs no read-ahead of its own. Media3's FFmpeg
+extension decodes the audio the box can't (DTS, TrueHD), and libVLC is
+there for files ExoPlayer refuses.</li>
+<li><strong>Subtitles:</strong> the tower's (<code>SubtitleLookup</code>'s files), as side-loaded
+SRT.</li>
+<li><strong>His place:</strong> saved every few seconds and on stop, to the tower's
+<code>history/&lt;key&gt;</code> (ADR 0001), or his outbox when it can't be reached, so
+it's the same history the Apple apps keep for his profile.</li>
+<li><strong>With the tunnel down,</strong> On Demand says it needs the connection home.
+Live TV still plays.</li>
+</ul>
+</li>
+</ol>
+<h2 id="fit-with-the-adrs">Fit with the ADRs <a class="header-anchor" href="#fit-with-the-adrs">#</a></h2>
+<ul>
+<li><strong>0001 (settings from the Mac mini, R2 mirror):</strong> the box joins by
+invite, keeps its keys in the Android Keystore, reads sealed objects by
+ETag and polls R2 on ADR 0004's schedule. It gets the watch-only copy of
+the settings (<code>settings/watch</code>, no relay token), but plays from the dial
+sheet. Until HTTPS at home (decision 18), its plain HTTP to the tower is
+inside Tailscale, and Android's Network Security Config needs to allow it.
+It signs its outbox and, once decision 19 is built, writes it with its
+own credential. His On Demand history goes to <code>history/&lt;key&gt;</code> for his
+profile only (decision 12), and comes back from <code>history/&lt;profile&gt;</code> in R2.</li>
+<li><strong>0002 (the tower runs on its own):</strong> the sheet is logic, so the control
+room builds it and the tower only stores it, serves it and mirrors it.
+The tower gains nothing that changes often.</li>
+<li><strong>0003 (Linux and the web Manager):</strong> unaffected. The box doesn't care
+where the tower runs, and doesn't need the web Manager or Access.</li>
+<li><strong>0004 (a TV at another house):</strong> this is that TV, on Android:
+<ul>
+<li>Tailscale with <code>tag:tv</code>, its policy, UDP 41641 forwarded, the direct
+connection checked with <code>tailscale ping</code>. The policy also needs the job
+file server (<code>ReadAheadServer.relay</code>, which listens on a port it picks
+today, so it gets a fixed one) and Plex's 32400;</li>
+<li>commands (reload, clear the cache, tune) by checking in, and the
+updates Worker's WebSocket (OkHttp) when the tunnel's down;</li>
+<li>the IPTV connection limits: Dad's box counts against a login, so its
+sheet can prefer a login of its own;</li>
+<li>the scan is replaced by <code>adb</code> at setup, TestFlight by Play or <code>adb</code>.</li>
+</ul>
+</li>
+<li><strong>Guide relay:</strong> its CloudKit backup (decision 6) predates ADR 0001.
+With iCloud going, the finished guide should be a sealed object in R2,
+for this box and the Apple TVs alike.</li>
+</ul>
+<h2 id="stages">Stages <a class="header-anchor" href="#stages">#</a></h2>
+<h3 id="0-try-first">0. Try first <a class="header-anchor" href="#0-try-first">#</a></h3>
+<ul>
+<li>The box in hand: ExoPlayer plays a Strong stream (with the redirect
+resolved) and an activelion one, with captions, and a catch-up URL.</li>
+<li>Tailscale on it after sleep, a restart and an update; a direct
+connection from Dad's network; a stream at our upload speed.</li>
+<li>Kotlin opens a real <code>settings/watch</code> from R2 with the household key.</li>
+</ul>
+<h3 id="1-the-dial-sheet">1. The dial sheet <a class="header-anchor" href="#1-the-dial-sheet">#</a></h3>
+<ul>
+<li><code>DialSheet</code> in the Manager (from the station model, the logins and
+<code>EventGames</code>), written per profile that has a box, sent to the tower as a
+setting, mirrored sealed to R2. A golden file and a test on the Swift side.</li>
+<li>The Manager's device list shows when each box last took its sheet.</li>
+</ul>
+<h3 id="2-the-app-watches">2. The app watches <a class="header-anchor" href="#2-the-app-watches">#</a></h3>
+<ul>
+<li><code>Android/</code> in the repo: Gradle, Kotlin, Compose for TV, Media3.</li>
+<li>Join by invite, read the sheet (tower over Tailscale, then R2), the dial
+on the D-pad and number keys, channel up and down, entries and feeds
+failing over, the now/next banner, what's playing and errors back.</li>
+<li>Dad's theme, from his profile (90s Cable or Modern), on those screens.</li>
+</ul>
+<h3 id="3-guide-groups-and-sports">3. Guide, groups and sports <a class="header-anchor" href="#3-guide-groups-and-sports">#</a></h3>
+<ul>
+<li>The TV Guide (the guide relay's, or two slots from the sheet), group
+channels' mini guide, sport channels with their games.</li>
+<li>Checking in for commands, the Worker's socket, R2 polling.</li>
+</ul>
+<h3 id="4-at-dads">4. At Dad's <a class="header-anchor" href="#4-at-dads">#</a></h3>
+<ul>
+<li>Set up in person: Tailscale, the app, the invite by <code>adb</code>.</li>
+<li>Updates through Play's internal track, or <code>adb</code> over the tailnet.</li>
+</ul>
+<h3 id="5-on-demand">5. On Demand <a class="header-anchor" href="#5-on-demand">#</a></h3>
+<ul>
+<li>On the tower: <code>GET /v1/vod/copies/&lt;id&gt;/play</code> (Plex, provider or job,
+best first), and a fixed port for the job file server.</li>
+<li>On the box: the home rows, shelves, search, shows and episodes, the
+title card with its plot and poster; ExoPlayer with the FFmpeg extension,
+libVLC as the fallback; subtitles; Continue Watching.</li>
+<li>His place to and from his history, so a title started on the box resumes
+there tomorrow, and on any other screen his profile is on.</li>
+<li>Try first: a few real titles from each login straight to the box
+(MKV with DTS, an AVI, a long MP4), and one job's file over Tailscale at
+our upload speed.</li>
+</ul>
+<h3 id="6-later-if-hed-use-it">6. Later, if he'd use it <a class="header-anchor" href="#6-later-if-hed-use-it">#</a></h3>
+<ul>
+<li>The weather channel (Open-Meteo is plain HTTP).</li>
+</ul>
+<h2 id="not-doing">Not doing <a class="header-anchor" href="#not-doing">#</a></h2>
+<ul>
+<li>Phones, the manager, the remote, channel search, adding channels, the
+Video Store's aisles, screensavers, the other channels. That's the wider
+plan.</li>
+</ul>
+<h2 id="considered-options">Considered options <a class="header-anchor" href="#considered-options">#</a></h2>
+<ul>
+<li><strong>An Apple TV at Dad's, as ADR 0004 has it.</strong> No new app, everything the
+station has, and the build list is already written. Costs more and needs
+the tvOS Tailscale checks. This is the honest baseline: an Android box is
+worth it only if it's cheaper overall, or he already has one.</li>
+<li><strong>The wider plan's Swift core on Android.</strong> Shares the real logic, but it
+needs the Swift SDK for Android, <code>swift-java</code> and the <code>StationClient</code>
+move, for one box.</li>
+<li><strong>The box does the thinking in Kotlin</strong> (reads the full settings, builds
+stream URLs, sorts games). No dial sheet, but a second copy of the rules
+that drifts every time Strong changes something.</li>
+<li><strong>A web page on the box's browser.</strong> No install, but Android TV browsers
+are poor, captions and TS streams are worse, and it's no TV experience.</li>
+</ul>
+<h2 id="open">Open <a class="header-anchor" href="#open">#</a></h2>
+<ul>
+<li><strong>Which box.</strong> Does he have one already (a Fire TV, a smart TV on Google
+TV)? If it's a Fire TV, which OS.</li>
+<li><strong>How big a sheet gets.</strong> Every entry's URLs for the whole lineup, for
+each login; it may want only his channels, or splitting per group.</li>
+<li><strong>Strong's single session.</strong> Strong ends the old session on each <code>/live</code>
+request (the 40 s stalls); the box must resolve the redirect the way the
+Apple apps do, and a login shared between houses will fight. Likely a
+login of his own.</li>
+<li><strong>Logos and posters:</strong> from the tower over Tailscale, or the providers'
+URLs in the sheet.</li>
+<li><strong>On Demand's logins.</strong> Playing from the provider at Dad's uses a stream
+on a login, as live TV does; with a one-stream login a title at his house
+and one at ours collide. The <code>play</code> route can pick the login no one's on
+(the tower knows what's playing where).</li>
+<li><strong>Our upload for jobs.</strong> A job's file leaves the house at our upload
+speed (ADR 0004 decision 4), so it's the last choice, not the first.
+Whether a 1080p MKV plays smoothly that way is a stage 5 test.</li>
+<li><strong>On Demand with the tunnel down.</strong> The catalog isn't in R2. A sealed
+copy of the rows and Continue Watching could be, if he hits this often.</li>
+</ul>
+
+    <nav class="pager" aria-label="Pages">
+      <span><a href="../adr/0005-the-tower-in-go-behind-a-written-interface/"><small>Previous</small>0005: The tower in Go, behind a written interface</a></span>
+      <span><a href="../api/"><small>Next</small>The station&#39;s interface</a></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>

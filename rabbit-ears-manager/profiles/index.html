@@ -1,0 +1,330 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Profiles · Rabbit Ears Manager docs</title>
+<meta name="description" content="Set up the Rabbit Ears station from your Mac: channels, IPTV logins, sports, Plex and the relay.">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/rabbit-ears-manager/index.html">Rabbit Ears Manager in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Rabbit Ears Manager docs">
+    <h2>Rabbit Ears Manager</h2>
+    <p class="version">v1.0.1 · 2026-11-22</p>
+    <ul>
+    
+      <li><a href="../">Rabbit Ears Manager</a>
+      </li>
+    
+      <li><a href="../adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/">Settings come from the Mac mini, with an R2 mirror, not iCloud</a>
+      </li>
+    
+      <li><a href="../adr/0002-the-relay-runs-on-its-own/">The relay runs on its own, as Antenna Tower</a>
+      </li>
+    
+      <li><a href="../adr/0003-antenna-tower-on-linux-with-a-web-manager/">Antenna Tower can run on Linux, managed from a web page</a>
+      </li>
+    
+      <li><a href="../adr/0004-a-tv-at-another-house/">A TV at another house, joined by a scan and reached over Tailscale</a>
+      </li>
+    
+      <li><a href="../adr/0005-the-tower-in-go-behind-a-written-interface/">0005: The tower in Go, behind a written interface</a>
+      </li>
+    
+      <li><a href="../android/">An Android TV box for Dad</a>
+      </li>
+    
+      <li><a href="../api/">The station&#39;s interface</a>
+      </li>
+    
+      <li><a href="../channel-feeds/">Channels apart from providers</a>
+      </li>
+    
+      <li><a href="../channel-modules/">Channel modules, and the MBTA channel</a>
+      </li>
+    
+      <li><a href="../getting-started/">Getting started</a>
+      </li>
+    
+      <li><a href="../group-channels/">Group channels</a>
+      </li>
+    
+      <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
+      </li>
+    
+      <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
+      </li>
+    
+      <li><a href="../iptv-channels/">One kind of IPTV channel</a>
+      </li>
+    
+      <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
+      </li>
+    
+      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      </li>
+    
+      <li><a href="../packages/">The station&#39;s packages</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../profiles/" aria-current="page">Profiles</a>
+      
+        <ul class="toc"><li class="l2"><a href="#what-a-profile-keeps">What a profile keeps</a></li><li class="l3"><a href="#settings-that-are-each-profiles">Settings that are each profile&#39;s</a></li><li class="l2"><a href="#renaming">Renaming</a></li><li class="l2"><a href="#what-im-watching">What I&#39;m Watching</a></li><li class="l2"><a href="#home">Home</a></li><li class="l2"><a href="#on-demand-and-the-video-store-are-apps">On Demand and the Video Store are apps</a></li><li class="l2"><a href="#switching">Switching</a></li><li class="l2"><a href="#not-yet">Not yet</a></li></ul>
+      </li>
+    
+      <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
+      </li>
+    
+      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      </li>
+    
+      <li><a href="../sport-channels/">Sport channels</a>
+      </li>
+    
+      <li><a href="../telemetry/">Telemetry: errors and traces from the screens</a>
+      </li>
+    
+      <li><a href="../themes/">Themes</a>
+      </li>
+    
+      <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
+      </li>
+    
+      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+  </nav>
+  <article>
+    <h1>Profiles</h1>
+    <p>A profile is a name, a colour and a face (an SF Symbol, or the name's initial),
+and whether it's a manager: one that can change the station (docs/settings-sync.md).
+The list is a synced setting (<code>ProfileStore.key</code>, through <code>SettingsSync</code>). Who's
+watching is each device's own and remembered; with several profiles and none
+remembered, a Who's watching? screen asks over every channel.</p>
+<h2 id="what-a-profile-keeps">What a profile keeps <a class="header-anchor" href="#what-a-profile-keeps">#</a></h2>
+<p>Kept per profile under <code>ProfileStore.scope(base)</code> (the first profile, <code>main</code>,
+keeps the unscoped keys from before profiles) and synced through
+<code>ProfileHistorySync</code> (iCloud key-value, stamped, at most once a minute and when
+a title stops):</p>
+<table>
+<thead>
+<tr>
+<th>base key</th>
+<th>what</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>onDemandResume</code>, <code>onDemandResumeLength</code></td>
+<td>places in titles</td>
+</tr>
+<tr>
+<td><code>onDemandRecent</code></td>
+<td>Recently Watched, and Continue Watching from it</td>
+</tr>
+<tr>
+<td><code>onDemandList</code></td>
+<td>What I'm Watching</td>
+</tr>
+<tr>
+<td><code>channelRecent</code></td>
+<td>Recently Watched Channels, for Home</td>
+</tr>
+<tr>
+<td><code>radioPick</code></td>
+<td>their radio station; without one, the station's (<code>radioStationID</code>), from before</td>
+</tr>
+<tr>
+<td><code>pref.&lt;key&gt;</code></td>
+<td>their own settings (<code>ProfilePrefs</code>): city, screensaver and how it looks, how channels change, the buffer readout, flaky warnings, the World and MBTA channels</td>
+</tr>
+<tr>
+<td><code>pref.videostoreTaste</code></td>
+<td>the Video Store's lowest rating and earliest year (<code>ModuleTaste</code>); how the store looks stays the station's</td>
+</tr>
+</tbody>
+</table>
+<h3 id="settings-that-are-each-profiles">Settings that are each profile's <a class="header-anchor" href="#settings-that-are-each-profiles">#</a></h3>
+<p>Agreed 2026-10-18 after going through every setting: what's a person's taste,
+or about where they live, is theirs; the lineup, logins, keys, what the Mac
+mini works out, ad breaks and On Demand's sources stay the station's.
+<code>ProfilePrefs</code> keeps the usual UserDefaults key on each device holding the value
+of whoever's watching there (so <code>@AppStorage</code> and every reader work as they
+did), no longer synced; switching profile puts theirs in, and a change goes to
+theirs. A profile without its own gets what the device had when the setting
+stopped being shared. A Manager pane for one of these changes the Manager's own
+profile's. A profile that only watches can change these, being history.</p>
+<p>A new key that's a person's goes in <code>ProfileStore.historyBases</code>; that is all it
+takes to scope it, sync it and delete it with its profile.</p>
+<h2 id="renaming">Renaming <a class="header-anchor" href="#renaming">#</a></h2>
+<p>In the Manager (On Demand › Profiles), or on the Who's watching? faces: R on
+the Mac, Play/Pause on the Siri Remote. The list of profiles is the
+station's, so a device with no manager among its profiles can't rename.</p>
+<h2 id="what-im-watching">What I'm Watching <a class="header-anchor" href="#what-im-watching">#</a></h2>
+<p>A list saved by hand: a title's card has <em>Add to / Remove from What I'm
+Watching</em> as its last action. It shows on On Demand's home as a row after
+Continue Watching. It is not Continue Watching, which fills itself from what
+you've started (and, for a series whose last episode you finished, the next
+one); this is for a series between seasons, a film you mean to get
+to. A series saved from Continue Watching is the episode you were on (Select
+resumes it); saved from a shelf it's the series (Select opens its seasons).</p>
+<p>Channels go on it too: the station menu's <em>Add to / Remove from What I'm
+Watching</em> row puts the channel playing (a group's member, when it's on the dial)
+on the list. It shows as a tile with the channel's name, and Ch number and what's
+on now; Select opens a card with <em>Watch Channel</em> and <em>Remove</em>. A channel that's
+off the dial isn't shown (it stays saved). The station menu has no such row on
+On Demand or the TV Guide.</p>
+<p><code>OnDemandWatchList</code> (OnDemandCatalog.swift) keeps the entries as they were
+shown, newest first, at most 60.</p>
+<h2 id="home">Home <a class="header-anchor" href="#home">#</a></h2>
+<p>The station opens on <strong>Home</strong> (<code>HomeModule</code>, id <code>home</code>), a channel module on
+the dial like the MBTA's: the profile's own channel, titled &quot;My Channel&quot; or &quot;Sam's
+Channel&quot; with their avatar. Poster rows in On Demand's style, from the active
+profile's history, and redrawn when the profile changes:</p>
+<ol>
+<li>Continue Watching</li>
+<li>What I'm Watching (titles and channels; a channel's tile says LIVE and what's on now)</li>
+<li>Recently Watched Channels (<code>RecentChannels</code>, key <code>channelRecent</code>: a video
+channel counts after 20 seconds on it, so flipping through the dial doesn't)</li>
+<li>Recently Watched (titles)</li>
+</ol>
+<p>Select on a title opens On Demand's card for it (Home doesn't have a player of
+its own: On Demand owns it, so Menu from the card goes to On Demand's home, and
+Menu there comes back here). Select on a channel tunes it. Left from the first tile and right from
+the last change channel, as anywhere on the dial. Launch always lands on Home
+(it's the dial position of <code>HomeModule.id</code>, not number 1, so existing numbering
+is left alone; new installs number it 3).</p>
+<h2 id="on-demand-and-the-video-store-are-apps">On Demand and the Video Store are apps <a class="header-anchor" href="#on-demand-and-the-video-store-are-apps">#</a></h2>
+<p>Tuned to by the dial, each shows its door: the arrows still change channel, and
+Select goes in. Inside, the arrows are theirs and Back peels their layers (a
+card, a shelf, a title playing); at the top, Back steps out to the door, on the
+same channel, where the dial works again. On Demand opened from a Home tile
+skips the door, and Back at its top returns to Home. Tuning away puts you back
+at the door for next time. Esc on the Mac, Menu on the Siri Remote (claimed
+only while inside, so at the door it leaves Rabbit Ears as on any channel).
+<code>OnDemandBrowser.inside</code>, <code>VideoStoreModel.inside</code>, <code>StationModel.leaveApp()</code>.
+The Video Store's <code>skipDoor</code> setting still starts it among the shelves; Back
+there steps out to the door all the same, so the dial is never out of reach.</p>
+<h2 id="switching">Switching <a class="header-anchor" href="#switching">#</a></h2>
+<p>From anywhere (any channel, On Demand, the Video Store, a title playing):</p>
+<ul>
+<li>Apple TV: hold Select on the Siri Remote for about a second. The click that
+ends the hold is swallowed, so it doesn't pick a face or open the menu.</li>
+<li>Mac: the P key.</li>
+</ul>
+<p>A title that's playing stops when the profile changes (<code>ProfileStore.willChange</code>
+is posted while the old one is still active), so its place is saved under whoever
+was watching it. Hold-to-switch is untested on a real Siri Remote.</p>
+<ul>
+<li>The quick row on On Demand's home ends in a Profile tile (when there's more
+than one profile): Select opens the faces, left/right pick, Select chooses.</li>
+<li>The header shows who's watching; the filter drawer's Profile section and the
+station menu's Profile row do the same.</li>
+<li>The Manager's On Demand pane adds, renames, recolours, re-faces and removes.</li>
+</ul>
+<h2 id="not-yet">Not yet <a class="header-anchor" href="#not-yet">#</a></h2>
+<p>Per-profile favourites and channel lineups, kids restrictions and PINs,
+recommendations.</p>
+
+    <nav class="pager" aria-label="Pages">
+      <span><a href="../plans/2026-11-03-retire-the-swift-servers/"><small>Previous</small>Plan: retire the Swift servers on main</a></span>
+      <span><a href="../read-ahead/"><small>Next</small>On Demand read-ahead: played while it downloads</a></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>

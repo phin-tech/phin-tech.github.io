@@ -1,0 +1,367 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The Manager relay: live feeds fetched once for every screen · Rabbit Ears Manager docs</title>
+<meta name="description" content="Set up the Rabbit Ears station from your Mac: channels, IPTV logins, sports, Plex and the relay.">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/rabbit-ears-manager/index.html">Rabbit Ears Manager in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Rabbit Ears Manager docs">
+    <h2>Rabbit Ears Manager</h2>
+    <p class="version">v1.0.1 · 2026-11-22</p>
+    <ul>
+    
+      <li><a href="../">Rabbit Ears Manager</a>
+      </li>
+    
+      <li><a href="../adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/">Settings come from the Mac mini, with an R2 mirror, not iCloud</a>
+      </li>
+    
+      <li><a href="../adr/0002-the-relay-runs-on-its-own/">The relay runs on its own, as Antenna Tower</a>
+      </li>
+    
+      <li><a href="../adr/0003-antenna-tower-on-linux-with-a-web-manager/">Antenna Tower can run on Linux, managed from a web page</a>
+      </li>
+    
+      <li><a href="../adr/0004-a-tv-at-another-house/">A TV at another house, joined by a scan and reached over Tailscale</a>
+      </li>
+    
+      <li><a href="../adr/0005-the-tower-in-go-behind-a-written-interface/">0005: The tower in Go, behind a written interface</a>
+      </li>
+    
+      <li><a href="../android/">An Android TV box for Dad</a>
+      </li>
+    
+      <li><a href="../api/">The station&#39;s interface</a>
+      </li>
+    
+      <li><a href="../channel-feeds/">Channels apart from providers</a>
+      </li>
+    
+      <li><a href="../channel-modules/">Channel modules, and the MBTA channel</a>
+      </li>
+    
+      <li><a href="../getting-started/">Getting started</a>
+      </li>
+    
+      <li><a href="../group-channels/">Group channels</a>
+      </li>
+    
+      <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
+      </li>
+    
+      <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
+      </li>
+    
+      <li><a href="../iptv-channels/">One kind of IPTV channel</a>
+      </li>
+    
+      <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
+      </li>
+    
+      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../manager-relay/" aria-current="page">The Manager relay: live feeds fetched once for every screen</a>
+      
+        <ul class="toc"><li class="l2"><a href="#decisions">Decisions</a></li><li class="l2"><a href="#the-protocol">The protocol</a></li><li class="l2"><a href="#discovery-and-the-token">Discovery and the token</a></li><li class="l2"><a href="#in-the-code">In the code</a></li><li class="l2"><a href="#the-first-feeds">The first feeds</a></li><li class="l2"><a href="#built-2026-09-27">Built (2026-09-27)</a></li><li class="l2"><a href="#status-and-clients-2026-09-28">Status and clients (2026-09-28)</a></li><li class="l2"><a href="#one-relay-chosen-2026-09-28">One relay, chosen (2026-09-28)</a></li></ul>
+      </li>
+    
+      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      </li>
+    
+      <li><a href="../packages/">The station&#39;s packages</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../profiles/">Profiles</a>
+      </li>
+    
+      <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
+      </li>
+    
+      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      </li>
+    
+      <li><a href="../sport-channels/">Sport channels</a>
+      </li>
+    
+      <li><a href="../telemetry/">Telemetry: errors and traces from the screens</a>
+      </li>
+    
+      <li><a href="../themes/">Themes</a>
+      </li>
+    
+      <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
+      </li>
+    
+      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+  </nav>
+  <article>
+    <h1>The Manager relay: live feeds fetched once for every screen</h1>
+    <blockquote>
+<p><strong>Superseded 2026-11-03.</strong> The Swift server (<code>StationServer</code>, <code>RelayServer</code>, <code>antenna-tower-server</code>, <code>control-room</code>, the Manager's launchd helper and MCP assistant) was replaced by the Go tower in <code>tower/</code> (<a href="../adr/0005-the-tower-in-go-behind-a-written-interface/">ADR 0005</a>). What follows is history.</p>
+</blockquote>
+<p>Design agreed 2026-09-27. The relay and its first feed, planes, were built the
+same day; see <strong>Built</strong> at the end.</p>
+<p>Live layers (planes, ships, lightning) come from sources with quotas, keys or
+one-connection terms. Today each Apple TV and the Mac app fetches for itself,
+so two TVs halve an OpenSky login's credits, and a source like Blitzortung or
+AISStream would see a connection per screen. The <strong>relay</strong> fetches each source
+once, in the Manager, and every screen in the house reads from it.</p>
+<h2 id="decisions">Decisions <a class="header-anchor" href="#decisions">#</a></h2>
+<ol>
+<li><strong>A protocol, hosted by the Manager.</strong> Relay code talks to a small HTTP
+protocol, not to the Manager's windows, so the same relay could run on the
+homelab later without changing the TVs. For now the Manager hosts it: it runs
+all the time on the Mac mini, so it's effectively always on.</li>
+<li><strong>Plain HTTP polling.</strong> Screens ask for a feed every few seconds and get JSON
+from the relay's cache; event feeds take a <code>since</code> cursor and return only
+what's new. None of the sources update faster than every few seconds, so push
+would look the same and cost reconnect logic on every screen. Asking counts
+as watching: there's no subscribe step.</li>
+<li><strong>Found two ways.</strong> The Manager writes its address into a synced setting
+(rewritten when the Mac's address changes) and advertises
+<code>_retrotv-relay._tcp</code> over Bonjour. Screens try the synced address first
+(instant, and works across mesh Wi-Fi and segmented networks), then Bonjour.</li>
+<li><strong>Each feed says how it falls back.</strong> A feed with a free, keyless source
+(planes on anonymous OpenSky) fetches directly from the screen when the relay
+can't be reached, as today. A feed that needs the relay (a secret key, one
+shared connection, permission terms: ships, lightning) drops out quietly, and
+its layer shows as unavailable in the Select menu.</li>
+<li><strong>A household token.</strong> The Manager makes a random token once and syncs it
+through iCloud; every request carries it and anything without it is refused.
+It keeps guests' devices from reading the relay or burning quotas. The data is
+public, so plain HTTP on the home network is fine.</li>
+</ol>
+<h2 id="the-protocol">The protocol <a class="header-anchor" href="#the-protocol">#</a></h2>
+<p>Version 1, at <code>http://&lt;host&gt;:&lt;port&gt;/v1</code>. Every request sends
+<code>X-RetroTV-Token</code>; without the right one the answer is 401.</p>
+<table>
+<thead>
+<tr>
+<th>Request</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /v1/hello</code></td>
+<td>The relay's version and its feeds: id, kind, and whether each is running.</td>
+</tr>
+<tr>
+<td><code>GET /v1/feeds/&lt;id&gt;?box=minLat,minLon,maxLat,maxLon</code></td>
+<td>A <strong>snapshot</strong> feed's latest items in the box, with the time they're from. <code>If-None-Match</code> gets a 304 when nothing changed.</td>
+</tr>
+<tr>
+<td><code>GET /v1/feeds/&lt;id&gt;?box=…&amp;since=&lt;cursor&gt;</code></td>
+<td>An <strong>event</strong> feed's items since the cursor (at most the last ten minutes), and the next cursor.</td>
+</tr>
+</tbody>
+</table>
+<ul>
+<li>A feed that can't serve (upstream down, no key set, no permission) answers
+503 with a reason; the screen then falls back as its feed says.</li>
+<li><strong>Interest</strong>: each request marks its feed and box as watched for a minute.
+The relay merges the boxes being watched into as few upstream calls as it can
+(one world call when a screen is on the World page; one small box for each
+area page, which OpenSky prices at a credit). A feed nobody has asked for in a
+minute stops.</li>
+</ul>
+<h2 id="discovery-and-the-token">Discovery and the token <a class="header-anchor" href="#discovery-and-the-token">#</a></h2>
+<ul>
+<li>Synced setting <code>relay</code>: <code>{host, port, updated}</code>, written by the Manager when
+it starts and when the network changes.</li>
+<li>Bonjour <code>_retrotv-relay._tcp</code>, TXT <code>v=1</code>. The apps already declare Bonjour
+and local network use for diagnostics; the relay's service type is added.</li>
+<li>Synced setting <code>relayToken</code>: 32 random bytes, made once. The Manager's Relay
+pane can make a new one.</li>
+<li>A screen keeps the last address that worked, and tries it first next time.</li>
+</ul>
+<h2 id="in-the-code">In the code <a class="header-anchor" href="#in-the-code">#</a></h2>
+<ul>
+<li><strong>Shared</strong> (<code>Packages/StationUI/Sources/StationUI/Relay/</code>): <code>RelayFeed</code>, a feed's description: its
+id, kind (snapshot or events), item type, and fallback (a direct fetch, or
+none). <code>RelayClient</code> finds the relay, adds the token, fetches, and falls back.
+Channel modules call it instead of fetching themselves.</li>
+<li><strong>Manager</strong> (<code>Packages/ManagerUI/Sources/ManagerUI/Relay/</code>): <code>RelayServer</code> (an <code>NWListener</code>, sharing
+the HTTP code the assistant server already has), and a <code>RelaySource</code> for each
+feed: what it fetches upstream, for which boxes, how often. A <strong>Relay</strong> pane in Settings
+shows each feed: running or not, upstream calls today against its quota, and
+which screens asked lately.</li>
+<li><strong>Secrets stay on the Manager.</strong> The OpenSky login stops syncing to the
+screens: the relay uses it, and a screen falling back uses anonymous access.
+An AIS key, when there is one, lives only on the Manager too.</li>
+</ul>
+<h2 id="the-first-feeds">The first feeds <a class="header-anchor" href="#the-first-feeds">#</a></h2>
+<ol>
+<li><strong>Planes</strong> (OpenSky): through the relay with your login; a small box for
+each area page, so it can refresh every half minute there. Falls back to
+anonymous access from the screen.</li>
+<li><strong>Ships</strong> (AISStream, a free key): the relay holds one live connection
+subscribed to the boxes being watched, and serves ships in a box. Relay only.</li>
+<li><strong>Lightning</strong> (Blitzortung, if they agree): one connection, strikes as
+events. Relay only.</li>
+</ol>
+<h2 id="built-2026-09-27">Built (2026-09-27) <a class="header-anchor" href="#built-2026-09-27">#</a></h2>
+<ul>
+<li><strong><code>Packages/RetroRelay</code></strong>, a Swift package, so the relay can also run on its
+own:
+<ul>
+<li><code>RelayKit</code> (plain Foundation; the Apple TV links it): the protocol types
+and <code>RelayClient</code>.</li>
+<li><code>RelayServer</code> (Hummingbird, for macOS and Linux): <code>RelayService</code> (routes,
+the token check) and <code>PlanesSource</code>.</li>
+<li><code>retro-relay</code>, the relay alone:
+<code>RETRO_RELAY_TOKEN=… [OPENSKY_CLIENT_ID=… OPENSKY_CLIENT_SECRET=…] retro-relay</code>.
+The Linux build hasn't been tried yet (no Docker running here); the code keeps
+to Foundation, <code>FoundationNetworking</code> and Hummingbird so it should.</li>
+</ul>
+</li>
+<li><strong>The Manager hosts it</strong> (<code>RelayHost</code>), from its window's process only, on
+port 8766: Bonjour, the synced address (<code>relay</code>) and token (<code>relayToken</code>),
+and the <strong>Relay</strong> pane in Settings (on or off, where screens find it, the token, the
+OpenSky login, credits and calls today, screens lately).</li>
+<li><strong>The OpenSky login moved to the relay.</strong> It's no longer synced (the Manager
+removes the old copy from iCloud) and isn't in the World pane any more.</li>
+<li><strong>Screens</strong> (<code>RelayFinder</code>): the synced address, then three seconds of
+Bonjour; a relay that answered is kept five minutes, and nothing found isn't
+looked for again for a minute. The World channel asks the relay for planes in
+the page's box every refresh (15 seconds), and falls back to anonymous OpenSky
+every 15 minutes when there's no relay.</li>
+<li><strong>Planes</strong> (<code>PlanesSource</code>): boxes being watched (a minute's lease) become
+calls: the whole world if any box is 400 square degrees or more, else each box
+not inside another, split at the date line. Calls are spaced so the day's
+credits (4,000 with a login, 400 without) last the day with a tenth spare,
+never more than every ten seconds; OpenSky's &quot;wait&quot; is honoured.</li>
+</ul>
+<h2 id="status-and-clients-2026-09-28">Status and clients (2026-09-28) <a class="header-anchor" href="#status-and-clients-2026-09-28">#</a></h2>
+<ul>
+<li><strong>Clients</strong>: the relay notes every request that passes the token check
+against the screen that sent it (its <code>X-RetroTV-Screen</code> name, else its
+address): address, first and last seen, what it last asked for, and how many
+requests. <code>/v1/hello</code> lists the last day's (<code>RelayClientInfo</code>), and so does
+the Manager's Settings › Relay.</li>
+<li><strong>The Status channel</strong> (a channel module kept with the settings channels at
+the end of the dial): this screen (name, address, build, iCloud sync), the
+relay (where, how it was found, when this screen last connected, its feeds),
+the other screens on it, and each module's live sources with how fresh they
+are (<code>ChannelModule.statusLines()</code>). It asks the relay afresh every ten seconds
+while it's on.</li>
+</ul>
+<h2 id="one-relay-chosen-2026-09-28">One relay, chosen (2026-09-28) <a class="header-anchor" href="#one-relay-chosen-2026-09-28">#</a></h2>
+<ul>
+<li><strong>Off until you turn it on.</strong> The Manager only runs the relay where &quot;Run the
+relay on this Mac&quot; is on (the Mac mini), so two Managers don't fight over the
+synced address. Turning it off takes the synced address away if it was this
+Mac's.</li>
+<li><strong>Each relay names itself</strong> in <code>/v1/hello</code> (its Mac's name, or
+<code>RETRO_RELAY_NAME</code> for <code>retro-relay</code>).</li>
+<li><strong>Screens find every relay</strong>: the synced address and all Bonjour turns up,
+each asked for its hello. The Status channel lists them, and its Select menu
+chooses one (&quot;Relay: Mac mini&quot;) or Automatic (the synced one first); the
+choice is kept on that screen (<code>relayChoice</code>).</li>
+<li>The Manager's Settings › Relay warns when another relay is running on the network.</li>
+<li>Modules can put rows of their own in their channel's Select menu
+(<code>ChannelModule.menuItems()</code>), besides their on/off settings.</li>
+</ul>
+
+    <nav class="pager" aria-label="Pages">
+      <span><a href="../linux-server/"><small>Previous</small>Antenna Tower on Linux, with a web Manager</a></span>
+      <span><a href="../mcp/"><small>Next</small>The Manager&#39;s MCP server</a></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>

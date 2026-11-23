@@ -1,0 +1,521 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Antenna Tower on Linux, with a web Manager · Rabbit Ears Manager docs</title>
+<meta name="description" content="Set up the Rabbit Ears station from your Mac: channels, IPTV logins, sports, Plex and the relay.">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/rabbit-ears-manager/index.html">Rabbit Ears Manager in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Rabbit Ears Manager docs">
+    <h2>Rabbit Ears Manager</h2>
+    <p class="version">v1.0.1 · 2026-11-22</p>
+    <ul>
+    
+      <li><a href="../">Rabbit Ears Manager</a>
+      </li>
+    
+      <li><a href="../adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/">Settings come from the Mac mini, with an R2 mirror, not iCloud</a>
+      </li>
+    
+      <li><a href="../adr/0002-the-relay-runs-on-its-own/">The relay runs on its own, as Antenna Tower</a>
+      </li>
+    
+      <li><a href="../adr/0003-antenna-tower-on-linux-with-a-web-manager/">Antenna Tower can run on Linux, managed from a web page</a>
+      </li>
+    
+      <li><a href="../adr/0004-a-tv-at-another-house/">A TV at another house, joined by a scan and reached over Tailscale</a>
+      </li>
+    
+      <li><a href="../adr/0005-the-tower-in-go-behind-a-written-interface/">0005: The tower in Go, behind a written interface</a>
+      </li>
+    
+      <li><a href="../android/">An Android TV box for Dad</a>
+      </li>
+    
+      <li><a href="../api/">The station&#39;s interface</a>
+      </li>
+    
+      <li><a href="../channel-feeds/">Channels apart from providers</a>
+      </li>
+    
+      <li><a href="../channel-modules/">Channel modules, and the MBTA channel</a>
+      </li>
+    
+      <li><a href="../getting-started/">Getting started</a>
+      </li>
+    
+      <li><a href="../group-channels/">Group channels</a>
+      </li>
+    
+      <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
+      </li>
+    
+      <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
+      </li>
+    
+      <li><a href="../iptv-channels/">One kind of IPTV channel</a>
+      </li>
+    
+      <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
+      </li>
+    
+      <li><a href="../linux-server/" aria-current="page">Antenna Tower on Linux, with a web Manager</a>
+      
+        <ul class="toc"><li class="l2"><a href="#where-it-stands">Where it stands</a></li><li class="l2"><a href="#stages">Stages</a></li><li class="l3"><a href="#1-the-packages-build-on-linux">1. The packages build on Linux</a></li><li class="l3"><a href="#2-the-server-moves-into-a-package">2. The server moves into a package</a></li><li class="l3"><a href="#3-antenna-tower-for-linux">3. `antenna-tower` for Linux</a></li><li class="l3"><a href="#4-the-move">4. The move</a></li><li class="l3"><a href="#5-the-web-manager">5. The web Manager</a></li><li class="l3"><a href="#6-the-control-room-on-linux">6. The control room on Linux</a></li><li class="l2"><a href="#remote-access">Remote access</a></li><li class="l2"><a href="#open">Open</a></li><li class="l2"><a href="#built-2026-11-01">Built, 2026-11-01</a></li><li class="l2"><a href="#running-on-luigi-2026-11-02">Running on luigi, 2026-11-02</a></li></ul>
+      </li>
+    
+      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      </li>
+    
+      <li><a href="../packages/">The station&#39;s packages</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../profiles/">Profiles</a>
+      </li>
+    
+      <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
+      </li>
+    
+      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      </li>
+    
+      <li><a href="../sport-channels/">Sport channels</a>
+      </li>
+    
+      <li><a href="../telemetry/">Telemetry: errors and traces from the screens</a>
+      </li>
+    
+      <li><a href="../themes/">Themes</a>
+      </li>
+    
+      <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
+      </li>
+    
+      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+  </nav>
+  <article>
+    <h1>Antenna Tower on Linux, with a web Manager</h1>
+    <blockquote>
+<p><strong>Superseded 2026-11-03.</strong> The Swift server (<code>StationServer</code>, <code>RelayServer</code>, <code>antenna-tower-server</code>, <code>control-room</code>, the Manager's launchd helper and MCP assistant) was replaced by the Go tower in <code>tower/</code> (<a href="../adr/0005-the-tower-in-go-behind-a-written-interface/">ADR 0005</a>). What follows is history.</p>
+</blockquote>
+<p>Planned 2026-10-19; nothing built yet. The decisions are in
+<a href="../adr/0003-antenna-tower-on-linux-with-a-web-manager/">ADR 0003</a>.</p>
+<p>Goal: the station's server (Antenna Tower, ADR 0002) runs on a Linux box in
+the homelab as well as on the Mac mini, and the station can be managed there
+from a browser. The Apple TVs, phones and Mac Managers don't change. They
+already get everything from the server and R2 (ADR 0001), not iCloud.</p>
+<h2 id="where-it-stands">Where it stands <a class="header-anchor" href="#where-it-stands">#</a></h2>
+<ul>
+<li>
+<p><strong>Builds for Linux in principle:</strong> <code>RetroLineup</code> (Foundation-only; guards
+<code>FoundationNetworking</code> and <code>SQLite3</code>), <code>RelayKit</code>, <code>RelayAdmin</code>,
+<code>RelayServer</code> (Hummingbird) and <code>retro-relay</code>. None of it has been built on
+Linux yet.</p>
+</li>
+<li>
+<p><strong>Known breakages:</strong></p>
+<ul>
+<li><code>Xtream.swift</code> imports <code>os</code> unguarded;</li>
+<li><code>PlaybackDiagnosticsIO.swift</code> imports <code>Network</code>;</li>
+<li><code>RemoteControl</code> uses <code>Network</code> (it stays Apple-only: it's the phone and
+TV's remote).</li>
+</ul>
+</li>
+<li>
+<p><strong>The server is app code.</strong> <code>TowerMain</code> (<code>Sources/AntennaTower</code>) builds
+from <code>Sources/Shared</code> and the Manager's files with <code>RELAY</code>. The pieces it
+starts, and what holds each to the Mac:</p>
+<table>
+<thead>
+<tr>
+<th>Piece</th>
+<th>Mac-only bits</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>RemoteServer</code></td>
+<td>none beyond <code>CryptoKit</code> (use <code>swift-crypto</code>)</td>
+</tr>
+<tr>
+<td><code>StationMirror</code> / <code>StationKeys</code></td>
+<td>the Keychain</td>
+</tr>
+<tr>
+<td><code>RelayHost</code></td>
+<td><code>Network</code>, <code>NetService</code> (Bonjour)</td>
+</tr>
+<tr>
+<td><code>EventRefresher</code></td>
+<td><code>AppKit</code>, <code>SMAppService</code> (the login item)</td>
+</tr>
+<tr>
+<td><code>VODLibrary</code>, <code>OnDemandCatalog</code>, <code>OnDemandTagger</code>, <code>EventScan</code></td>
+<td>none seen; they live in app folders</td>
+</tr>
+<tr>
+<td>VOD fetch (<code>ReadAheadSession</code>)</td>
+<td><code>NWListener</code>; the VPN route (<code>NetworkRoute</code>)</td>
+</tr>
+<tr>
+<td>the assistant (MCP)</td>
+<td><code>NWListener</code>; drives <code>StationModel</code></td>
+</tr>
+</tbody>
+</table>
+</li>
+</ul>
+<h2 id="stages">Stages <a class="header-anchor" href="#stages">#</a></h2>
+<p>Each stage ships on its own, and the Mac mini keeps serving until stage 4.</p>
+<h3 id="1-the-packages-build-on-linux">1. The packages build on Linux <a class="header-anchor" href="#1-the-packages-build-on-linux">#</a></h3>
+<p>Done 2026-10-29, without the Forgejo job yet: see packages.md, step 4.</p>
+<ul>
+<li><code>just linux-check</code>: <code>swift build</code> and <code>swift test</code> for <code>RetroLineup</code> and
+<code>RetroRelay</code> in the official <code>swift:6.x</code> container, plus a Forgejo Actions
+job to match.</li>
+<li>Guard <code>import os</code> (a small <code>Log</code> shim) and move <code>PlaybackDiagnosticsIO</code>'s
+<code>Network</code> use behind <code>#if canImport(Network)</code>.</li>
+<li>Leave out <code>RemoteControl</code> on Linux (<code>.when(platforms:)</code>).</li>
+<li>Done when both packages' tests pass on Linux.</li>
+</ul>
+<h3 id="2-the-server-moves-into-a-package">2. The server moves into a package <a class="header-anchor" href="#2-the-server-moves-into-a-package">#</a></h3>
+<p>Under way as a reorganization of the whole station into packages by layer:
+<a href="../packages/">packages.md</a>. <code>StationCore</code> and <code>StationServer</code> are built,
+and build on Linux (stage 1 done the same way: <code>just linux-check</code>).</p>
+<ul>
+<li>New target <code>StationServer</code> in <code>Packages/Station</code>. Move the pieces above
+one at a time, smallest first: <code>RemoteServer</code> and <code>StationMirror</code>, then
+the On Demand catalog and tagger, the event jobs, and VOD fetch.</li>
+<li>Platform services behind protocols (ADR 0003 decision 3): <code>SecretStore</code>
+(Keychain or file), <code>Advertiser</code> (<code>NetService</code> or <code>avahi-publish</code>), <code>Log</code>.
+<code>UserDefaults</code> works on Linux, so <code>swift-corelibs-foundation</code> backs it with
+a plist; keep it.</li>
+<li><code>NWListener</code> servers (VOD fetch's local server, the assistant) move onto
+Hummingbird, like the relay.</li>
+<li><code>EventRefresher</code> loses <code>AppKit</code>: the login item stays in the Manager.</li>
+<li><code>TowerMain</code> on the Mac links <code>StationServer</code> and behaves exactly as now.</li>
+<li>Done when the Mac's Antenna Tower runs from the package and
+<code>StationServer</code>'s tests pass on Linux.</li>
+</ul>
+<h3 id="3-antenna-tower-for-linux">3. <code>antenna-tower</code> for Linux <a class="header-anchor" href="#3-antenna-tower-for-linux">#</a></h3>
+<p>Built 2026-10-29, not deployed yet:</p>
+<ul>
+<li><code>antenna-tower-server</code>, an executable in <code>Packages/Station</code>. It starts
+<code>Tower.serve()</code> (<code>StationServer</code>), the same serving the Mac's helper starts
+once the Manager hands it the station, on a plain dispatch main loop.</li>
+<li>Configured by environment:
+<ul>
+<li><code>STATION_DATA</code>: one folder for everything. It's where Foundation's XDG
+folders go: <code>config</code> (settings), <code>data</code> (<code>station.sqlite</code>, the On Demand
+catalog, posters, downloads), <code>cache</code> and <code>secrets</code> (<code>0600</code> files).</li>
+<li><code>STATION_SECRETS</code>: the secrets alone, if they belong elsewhere.</li>
+<li><code>STATION_RELAY_NAME</code>: the name screens know the server by. They follow a moved server by it, so the station moved from
+the Mac mini keeps &quot;Samuel’s Mac mini&quot; (default: the host's name).</li>
+<li>The port is the relay's, 8766.</li>
+</ul>
+</li>
+<li><code>just tower-image</code> builds <code>antenna-tower:dev</code> from
+<code>Packages/antenna-tower.Dockerfile</code> (Swift built with a static stdlib, on
+Ubuntu noble; about 420 MB). Tried in Docker: it starts, keeps everything
+in <code>/data</code>, and answers <code>/v1/hello</code> (401 without the household token).</li>
+<li>Still to do:
+<ul>
+<li>CI to build the image, and the deploy through the homelab GitOps repo
+(the <code>deploy-app-to-homelab</code> skill). It needs <code>network_mode: host</code>, for
+mDNS and port 8766, and a volume for <code>/data</code>.</li>
+<li>Advertising: <code>avahi-publish</code> is in the image, but it needs an Avahi
+daemon. Mount the host's (<code>/var/run/dbus</code> and
+<code>/var/run/avahi-daemon/socket</code>); without it the relay serves but isn't
+found by Bonjour, only by the address in the settings.</li>
+<li>Run it beside the Mac mini under a test station (separate R2 prefix,
+its own keys) until the screens, invites and the mirror check out.</li>
+</ul>
+</li>
+</ul>
+<h3 id="4-the-move">4. The move <a class="header-anchor" href="#4-the-move">#</a></h3>
+<ul>
+<li>Export from the Mac mini: <code>station.sqlite</code>, <code>StationKeys</code> and the data
+folder, through a one-time <code>antenna-tower import &lt;bundle&gt;</code> (the same idea
+as ADR 0002's handover, across machines).</li>
+<li>The Mac mini publishes the new server address in the settings before it
+stops. Devices pick it up from the server or from R2, so nobody re-joins.</li>
+<li>The Mac mini's Manager then joins the Linux server as a client, and its
+relay toggle stays off.</li>
+<li>Before this, decide where On Demand downloads live and what happens to the
+VPN route (see Open).</li>
+</ul>
+<h3 id="5-the-web-manager">5. The web Manager <a class="header-anchor" href="#5-the-web-manager">#</a></h3>
+<ul>
+<li>The browser joins with a pairing code and gets a device key with a manager
+profile, kept in an <code>HttpOnly</code> cookie. Pages call the same <code>/v1/admin</code>
+handlers in the same process.</li>
+<li>Server-rendered pages (Hummingbird and Mustache) with htmx. Panes, in the
+order they're used:
+<ol>
+<li>channels and numbers (on dial, rename, renumber, remove or restore);</li>
+<li>IPTV logins and feeds (order, preferred login), with a &quot;did it answer&quot;
+test and no picture;</li>
+<li>groups;</li>
+<li>sports: folders, overrides, aliases, the Jev review queue;</li>
+<li>On Demand: catalogs, downloads, the Video Store;</li>
+<li>devices and invites (QR code drawn as SVG, not CoreImage), profiles;</li>
+<li>status, errors, storage, the relay.</li>
+</ol>
+</li>
+<li>No stream preview (ADR 0003 decision 6). MBTA and World settings come in
+through their modules' get/set fields, as plain forms.</li>
+</ul>
+<h3 id="6-the-control-room-on-linux">6. The control room on Linux <a class="header-anchor" href="#6-the-control-room-on-linux">#</a></h3>
+<p>Agreed 2026-10-30, replacing &quot;the assistant moves into Antenna Tower&quot;. The
+Manager's jobs and its assistant leave the Mac too, but not into the tower:
+into a second headless service beside it, the control room. The tower is the
+broadcast and rarely changes; the control room holds the logic that changes
+often and can be redeployed without restarting what the screens use.</p>
+<p>Why it's needed at all: the jobs (event schedules, sports, Jev's review,
+channel linking, guide files) only run in a control-room Manager, the one on
+the Mac with the tower or the server's own (<code>EventRefresher.isControlRoom</code>).
+Once the tower is on Linux and the Mac Manager is only a client, nothing would
+refresh the sport channels' games.</p>
+<ul>
+<li><strong>It's a headless Manager client.</strong> It pairs with the tower once (a pairing
+code, given by environment on first start), gets a device key with a
+manager profile, and its settings changes reach the tower through
+<code>RemoteLink</code>, as any Manager's do. The jobs already work that way: they
+save into the settings (<code>EventGames</code>, the status lines) and don't touch the
+server's files.</li>
+<li><strong>It's the control room by what it is</strong>, not where it is: <code>AppKind .controlRoom</code>. A Mac Manager runs the jobs only where it serves the
+station itself, as now.</li>
+<li><strong>Steps:</strong>
+<ol>
+<li><code>StationJobs</code> in <code>Packages/Station</code>: <code>EventRefresher</code> (its login item
+stays in the Manager), <code>EventScan</code>, <code>SportReview</code>, <code>IPTVLinker</code>,
+<code>GuideFiles</code>. The Manager links it, as it links <code>StationServer</code>.</li>
+<li><code>control-room</code>, an executable and image like <code>antenna-tower-server</code>:
+pair, then run the jobs.</li>
+<li>The assistant: rewrite the MCP tools against the settings and the jobs
+instead of <code>StationModel</code>, on Hummingbird's HTTP, in the control room.
+Same tool names and arguments, so <code>docs/mcp.md</code> and clients barely
+change. Then the Manager's <code>AssistantServer</code> goes.</li>
+</ol>
+</li>
+<li><strong>The Mac Manager stays the UI</strong>, paired as a client. The web Manager
+(stage 5) is for managing from a phone or a browser, later.</li>
+</ul>
+<h2 id="remote-access">Remote access <a class="header-anchor" href="#remote-access">#</a></h2>
+<p>Agreed 2026-10-19 (ADR 0003 decision 9). It applies wherever the server runs,
+the Mac mini included.</p>
+<ul>
+<li><strong>First, the loopback fix.</strong> <code>RemoteServer</code> trusts loopback (<code>pair-code</code>,
+<code>playing-now</code>), and <code>cloudflared</code> (like <code>tailscale serve</code>) connects from
+localhost. So anything from a tunnel would count as &quot;this Mac&quot; and could
+get a pairing code. The tower opens a second port for proxied traffic.
+It serves only the device API and the web Manager, never a loopback-only
+route, and <code>cloudflared</code> points only there.</li>
+<li><strong>Cloudflare Tunnel + Access</strong> in front of that port, on its own hostname.
+<ul>
+<li>The policy allows your emails and your family's, by Google login or a
+one-time code by email.</li>
+<li>The ingress rules end in <code>http_status:404</code>.</li>
+<li>No video goes through the tunnel: On Demand fetch stays on the home
+network.</li>
+</ul>
+</li>
+<li><strong>Apps log in through Access:</strong>
+<ol>
+<li>The app opens <code>/v1/app-login</code> (a route behind Access) in
+<code>ASWebAuthenticationSession</code>.</li>
+<li>The person logs in, and the server reads the verified
+<code>Cf-Access-Jwt-Assertion</code>.</li>
+<li>The server redirects to <code>rabbitears://access?token=…</code>.</li>
+<li>The app keeps the token in its Keychain and sends it as the
+<code>cf-access-token</code> header, next to its device key.</li>
+<li>When the Access session ends (set it to a month), the app opens the
+login again.</li>
+</ol>
+<ul>
+<li>This covers iOS and macOS. tvOS has no browser, so a TV away from home
+uses Tailscale, or a service token if it ever needs one.</li>
+</ul>
+</li>
+<li><strong>The server checks Access as well:</strong> the
+<code>Cf-Access-Jwt-Assertion</code> signature against the team's keys and the app's
+audience tag, on every request on the proxied port, then the device key.</li>
+<li><strong>The home network is unchanged:</strong> devices that reach the server directly
+skip Access, and R2 stays the path when the server can't be reached.</li>
+<li><strong>Tailscale</strong> stays an option for your own devices, including a TV away
+from home. <strong>Tailscale Funnel is ruled out:</strong> it puts the server on the
+internet with no login in front of it.</li>
+</ul>
+<h2 id="open">Open <a class="header-anchor" href="#open">#</a></h2>
+<ul>
+<li><strong>Which box:</strong> a homelab host (luigi?) or a container on the cluster. It
+needs host networking and room for On Demand downloads.</li>
+<li><strong>On Demand downloads and Plex:</strong> today they go to the Mac mini's disk. On
+Linux, do they land on a NAS share that Plex reads?</li>
+<li><strong>The VPN route</strong> (<code>NetworkRoute</code>) the providers need: a route on the
+Linux host, or a container sharing a VPN sidecar's network.</li>
+<li><strong>Access login in the app:</strong> does Access accept a redirect to the custom
+scheme from our own route, and how long can a session last on the free
+plan?</li>
+</ul>
+<h2 id="built-2026-11-01">Built, 2026-11-01 <a class="header-anchor" href="#built-2026-11-01">#</a></h2>
+<p>Not run against a real tower, a real provider or R2. <code>just linux-check</code>
+passes on Linux (RetroLineup, RetroRelay, and Station with the socket and MCP
+tests); the rest is type-checked on the Mac and, where noted, tested.</p>
+<ul>
+<li><strong>Stage 6, the control room</strong> (<code>control-room</code>, <code>just control-room-image</code>):
+pairs from <code>STATION_SERVER</code> and <code>STATION_PAIR_CODE</code>, runs <code>EventRefresher</code>,
+and serves MCP (<code>MCPServer</code>) with the settings-only tools. Tested: the MCP
+server over a real socket (<code>MCPServerTests</code>). Not done: the lineup's tools
+(channels, groups, numbers, feeds, <code>test_stream</code>) are still the Mac
+assistant's, because they read <code>StationModel</code>.</li>
+<li><strong>Stage 3, read-ahead on Linux:</strong> <code>SocketListener</code> (BSD sockets) in place of
+<code>NWListener</code>, tested on the Mac over a real socket. The Apple path is as it was.</li>
+<li><strong>Stage 3, the proxy:</strong> <code>STATION_PROXY</code> sends provider requests (Xtream's
+API and streams, read-ahead's downloads) through the VPN's HTTP proxy, and
+nothing else. <code>deploy/docker-compose.yml</code> is the reference for luigi.</li>
+<li><strong>CI:</strong> <code>.forgejo/workflows/linux.yml</code> runs <code>just linux-check</code>, which now
+runs the Station tests too, and builds both images.</li>
+<li><strong>Stage 4, the move:</strong> <code>antenna-tower export &lt;folder&gt;</code> (the tower helper in
+the Manager's bundle, <code>Contents/Helpers/</code>, since it holds the station on a
+Mac that's handed over) writes the bundle (<code>handover.plist</code>,
+<code>station.sqlite</code>, the On Demand catalog); <code>antenna-tower-server import &lt;folder&gt; [--force]</code> takes it in. <strong>Untested both ways</strong>: the export reads the
+tower's own defaults and keychain and wasn't run against the real station.</li>
+</ul>
+<h2 id="running-on-luigi-2026-11-02">Running on luigi, 2026-11-02 <a class="header-anchor" href="#running-on-luigi-2026-11-02">#</a></h2>
+<p>The station moved from the Mac mini to luigi the same day. What it showed, and what it runs as now:</p>
+<ul>
+<li><strong>Native, not Docker.</strong> The tower and the control room are systemd user services (<code>retrotv-tower</code>,
+<code>retrotv-control-room</code>; linger on) built on luigi in a Swift dev container with a persistent build volume (<code>build.sh</code>,
+about 35 s when little has changed, against 5 to 6 minutes for an image). Only Gluetun is a container (the homelab
+repo's <code>luigi/retrotv/</code>). <code>deploy/docker-compose.yml</code> is the plan that came first and is no longer what runs.
+<code>swift build --product</code> honours only the last flag: build with none.</li>
+<li><strong>The main actor.</strong> On Linux <code>dispatchMain()</code> stopped serving it once startup was over, so an MCP request, the tower's
+admin routes and timers never came back. Both programs end in <code>RunLoop.main.run()</code> now.</li>
+<li><strong>Preferences don't last on Linux</strong>, and the station's database is the station. Three things follow:
+<ul>
+<li>The tower loads the stored settings into the preferences at startup (<code>RemoteServer.loadStoredSettings</code>). Without
+that, its first look found every setting gone and the ledger recorded each as deleted, which paired devices then
+pick up.</li>
+<li><code>import</code> saves its settings to the database (<code>saveSettingsNow</code>): they were only in memory and vanished on exit.</li>
+<li>A Linux client (the control room) seeds its preferences from the server state it saved (<code>server-settings.plist</code>)
+before comparing. Otherwise its empty preferences against that state looked like every setting deleted here,
+and it sent the deletions to the tower on each restart: this wiped luigi's station three times, and only while the
+control room ran.</li>
+<li>The household token is kept in <code>$STATION_SECRETS/relay-token.json</code>. It must be the one the screens hold, or every
+one of them gets a 401 from the relay. The export doesn't carry it.</li>
+</ul>
+</li>
+<li><strong>Names and addresses.</strong> Screens follow a moved server by its Bonjour name: <code>STATION_RELAY_NAME</code> keeps the old one
+(&quot;Samuel's Mac mini&quot;). The address the tower publishes is the default route's interface, not the first of Docker's
+bridges (<code>LocalAddress.ipv4()</code>; it was <code>10.89.0.1</code>). <code>avahi-publish</code> exits if Avahi isn't up yet, so it's started
+again within seconds.</li>
+<li><strong>Not carried by the export:</strong> the On Demand catalog (a cache: luigi fetches its own, which also fixed the macOS
+<code>http</code> provider that App Transport Security had blocked since 19 October), the household token, and API keys the Mac's
+tower never had (TMDB, OpenSubtitles). A Manager has to pair with luigi again.</li>
+<li><strong>Don't</strong> <code>pkill -f</code> or <code>pgrep -f</code> over <code>ssh</code> with a pattern that's in the command itself: it kills the session.</li>
+</ul>
+
+    <nav class="pager" aria-label="Pages">
+      <span><a href="../iptv-relay/"><small>Previous</small>IPTV relay: provider traffic through PIA, by country</a></span>
+      <span><a href="../manager-relay/"><small>Next</small>The Manager relay: live feeds fetched once for every screen</a></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>

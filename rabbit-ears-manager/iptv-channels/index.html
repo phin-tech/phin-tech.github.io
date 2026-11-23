@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>One kind of IPTV channel · Rabbit Ears Manager docs</title>
+<meta name="description" content="Set up the Rabbit Ears station from your Mac: channels, IPTV logins, sports, Plex and the relay.">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/rabbit-ears-manager/index.html">Rabbit Ears Manager in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Rabbit Ears Manager docs">
+    <h2>Rabbit Ears Manager</h2>
+    <p class="version">v1.0.1 · 2026-11-22</p>
+    <ul>
+    
+      <li><a href="../">Rabbit Ears Manager</a>
+      </li>
+    
+      <li><a href="../adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/">Settings come from the Mac mini, with an R2 mirror, not iCloud</a>
+      </li>
+    
+      <li><a href="../adr/0002-the-relay-runs-on-its-own/">The relay runs on its own, as Antenna Tower</a>
+      </li>
+    
+      <li><a href="../adr/0003-antenna-tower-on-linux-with-a-web-manager/">Antenna Tower can run on Linux, managed from a web page</a>
+      </li>
+    
+      <li><a href="../adr/0004-a-tv-at-another-house/">A TV at another house, joined by a scan and reached over Tailscale</a>
+      </li>
+    
+      <li><a href="../adr/0005-the-tower-in-go-behind-a-written-interface/">0005: The tower in Go, behind a written interface</a>
+      </li>
+    
+      <li><a href="../android/">An Android TV box for Dad</a>
+      </li>
+    
+      <li><a href="../api/">The station&#39;s interface</a>
+      </li>
+    
+      <li><a href="../channel-feeds/">Channels apart from providers</a>
+      </li>
+    
+      <li><a href="../channel-modules/">Channel modules, and the MBTA channel</a>
+      </li>
+    
+      <li><a href="../getting-started/">Getting started</a>
+      </li>
+    
+      <li><a href="../group-channels/">Group channels</a>
+      </li>
+    
+      <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
+      </li>
+    
+      <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
+      </li>
+    
+      <li><a href="../iptv-channels/" aria-current="page">One kind of IPTV channel</a>
+      
+        <ul class="toc"><li class="l2"><a href="#phase-0-several-feeds-from-one-login">Phase 0: several feeds from one login</a></li><li class="l2"><a href="#the-model">The model</a></li><li class="l2"><a href="#playing">Playing</a></li><li class="l3"><a href="#the-select-menu">The Select menu</a></li><li class="l2"><a href="#guide">Guide</a></li><li class="l2"><a href="#manager">Manager</a></li><li class="l2"><a href="#mcp-tools">MCP tools</a></li><li class="l2"><a href="#rollout">Rollout</a></li><li class="l2"><a href="#settled-while-building">Settled while building</a></li><li class="l2"><a href="#build-order">Build order</a></li></ul>
+      </li>
+    
+      <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
+      </li>
+    
+      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      </li>
+    
+      <li><a href="../packages/">The station&#39;s packages</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../profiles/">Profiles</a>
+      </li>
+    
+      <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
+      </li>
+    
+      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      </li>
+    
+      <li><a href="../sport-channels/">Sport channels</a>
+      </li>
+    
+      <li><a href="../telemetry/">Telemetry: errors and traces from the screens</a>
+      </li>
+    
+      <li><a href="../themes/">Themes</a>
+      </li>
+    
+      <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
+      </li>
+    
+      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+  </nav>
+  <article>
+    <h1>One kind of IPTV channel</h1>
+    <p>Design agreed 2026-09-27; built the same day. Where building it settled
+something the design left open, it's noted under <strong>Settled while building</strong>. It follows
+<a href="../channel-feeds/">channel-feeds.md</a> and <a href="../sport-channels/">sport-channels.md</a>.</p>
+<p>Today there are two kinds of IPTV channel. A <strong>feed channel</strong> (<code>FeedChannel</code>,
+BBC 1 on 43) is a list of streams tried in order. A <strong>sport channel</strong>
+(<code>EventChannel</code>, NFL) gathers games from event folders, plus always-on channels
+(<code>AlwaysOn</code>, Sky Sports F1) that play when their guide shows the sport live.
+They're edited, played, guided and found on your logins by separate code.</p>
+<p>The two are already close: an always-on channel is a stream with feeds on
+several logins and an optional guide, which is all BBC 1 is. This makes them one
+thing: <strong>a channel is an ordered list of entries</strong>.</p>
+<h2 id="phase-0-several-feeds-from-one-login">Phase 0: several feeds from one login <a class="header-anchor" href="#phase-0-several-feeds-from-one-login">#</a></h2>
+<p>Built 2026-09-27, ahead of the rest. A feed channel can hold several streams
+from the same login (BBC One HD and BBC One Scotland on Trex). Adding a feed
+skips only a stream it already has. Taking one off leaves its login's other
+feeds, and the login stays off for finding feeds again only when it was the
+last. <code>set_feeds</code> takes feed ids (<code>login:stream_id</code>) or whole logins.</p>
+<h2 id="the-model">The model <a class="header-anchor" href="#the-model">#</a></h2>
+<p>An IPTV channel has:</p>
+<ul>
+<li><strong>Entries</strong>, in the order you set. Each is one of:
+<ul>
+<li><strong>a stream</strong>: a name (&quot;BBC 1&quot;, &quot;Sky Sports F1&quot;), its feeds on your logins in
+fallback order (as <code>FeedChannel.feeds</code> now, several per login allowed), an
+optional guide, and <strong>when it plays</strong>: always, or only when its guide shows
+the channel's sport live (as <code>AlwaysOn</code> now).</li>
+<li><strong>an event folder</strong> on one login (as <code>EventSource</code> now): it plays whatever
+game is on in it.</li>
+</ul>
+</li>
+<li><strong>Sport rules</strong>, optional: the sport (&quot;nfl&quot;), a team filter (&quot;Mets,
+Yankees&quot;) and a time zone. They decide which folder slots are games, as now.</li>
+<li><strong>A preferred login</strong>, optional (see Playing).</li>
+<li>Kept per channel as now: its id, number, rename, buffer, flaky history, and
+where Earlier Shows come from.</li>
+</ul>
+<p>So BBC 1 is one stream entry that always plays. NFL is its folders, with maybe
+an always-on stream. Nothing stops a channel from having both.</p>
+<p>A game carried in several folders is still one game with several feeds (see
+<code>Games.channel</code>). It takes the place of its highest folder in the entry order.</p>
+<h2 id="playing">Playing <a class="header-anchor" href="#playing">#</a></h2>
+<ul>
+<li><strong>What's on now</strong> is every entry that's on: a stream set to always, a stream
+whose guide shows the sport live, and each folder's live games.</li>
+<li><strong>The first one in your order plays.</strong> Up/down steps through the others on
+now, as sport channels do today. With one thing on, up/down changes channel.
+Between games, a channel with nothing on shows what's coming up.</li>
+<li><strong>Feeds within an entry</strong> go as today: those whose login has room first
+(<code>IPTVLoad.ordered</code>), then the same stream on its login's other servers.</li>
+<li><strong>Preferred login</strong>: every entry on the channel, whether a stream, a game or an
+always-on channel, tries that login's feeds first, still skipping it when it's
+full or down. It's new for games, whose feeds today just follow folder order.</li>
+</ul>
+<h3 id="the-select-menu">The Select menu <a class="header-anchor" href="#the-select-menu">#</a></h3>
+<ul>
+<li>Every entry has the Feed page: streams, games and always-on channels alike.</li>
+<li><strong>A pick plays until you change channel.</strong> Under the feeds, <strong>&quot;Prefer Trex on
+this channel&quot;</strong> sets the channel's preferred login. A bad stream tonight
+doesn't quietly change the channel for good.</li>
+<li>The feed channel's &quot;keep this feed first&quot; goes; the preference replaces it.</li>
+</ul>
+<h2 id="guide">Guide <a class="header-anchor" href="#guide">#</a></h2>
+<ul>
+<li><strong>The row shows what would actually play</strong>, slot by slot, by the same rule:
+the first entry on then. A game at 8pm shows the game, Sky Sports F1's race
+shows the race, and in between it shows the always-on stream's own listings,
+or &quot;Next: …&quot;.</li>
+<li>BBC 1's row is its listings, as now. The grid, the now/next banner and the
+picture agree.</li>
+<li>A stream's guide is found as a feed channel's is now: the first feed whose
+login has one, then epg.pw, then epgshare01 (<code>SportGuides</code>) for always-on ones.</li>
+</ul>
+<h2 id="manager">Manager <a class="header-anchor" href="#manager">#</a></h2>
+<ul>
+<li><strong>One editor</strong> for every IPTV channel: its entries (drag to reorder, add a
+stream or folder, take one off), each stream's feeds within it (as the Feeds
+sheet now), the sport rules, the preferred login, Earlier Shows, and Merge.</li>
+<li><strong>Finding copies</strong> (<code>IPTVLinker</code>) adds feeds to stream entries by guide id or
+name, as now, for every channel's streams, always-on ones included. Folders
+are still found by the sport rescan.</li>
+<li><strong>The Audit</strong> checks every entry: streams as feed channels now, folders as
+sport channels now. A channel is dead only when nothing on it plays.</li>
+<li>Source label: &quot;IPTV · Strong + Trex&quot;, with sport channels saying their sport.</li>
+<li><strong>Logins drop in and out.</strong> Feeds and folders point at a login's id and a
+stream number or category, never at a server, so a login's servers, username
+and password change in place (Details → Edit Login…, <code>LoginSwap</code>) and every
+channel follows. Saving asks the new login for its list: a stream number it
+lists as something else, or doesn't list, is found again by guide id or name
+(<code>Twins</code>), folders by category name, and their epg.pw guides move with them.
+What it can't find is shown before saving and left as it is. A new login is
+linked to your channels (<code>IPTVLinker</code>) as soon as it's added; removing one
+leaves the channels that have other logins playing from those.</li>
+<li><strong>Audit…</strong> in the IPTV pane (<code>ProvidersAudit</code>) lists, for each login, the
+channels with something only it plays: the whole channel (goes dark without
+it), or some of its streams or folders. Each has its feeds editor a click
+away, each login its Edit Login, and Find Backups runs <code>IPTVLinker</code>.</li>
+<li><strong>Signing in</strong> is one form: paste playlist links or a provider's whole
+welcome email, and Find Servers (<code>ProviderMessage</code>) fills the servers, a
+line each, and the username and password when it gives them; addresses under
+a line saying they need a VPN go last. Real emails are its test fixtures,
+logins swapped for test-user and test-pass. The paste boxes are fixed-height
+editors (<code>PasteBox</code>): a text field growing with a long paste beachballed.</li>
+<li><strong>VPN servers</strong> (<code>XtreamLogin.needVPN</code>): Connect, Edit Login's Save and
+Details' Check Servers try every server at once (<code>LoginSwap.ranked</code>). Those
+that answer go first, fastest first; those that turn the login away from here
+(a 403, as VPN-only servers do), or that the email listed for a VPN, are
+tagged VPN and kept last as backups. Remove Not Working leaves them.</li>
+</ul>
+<h2 id="mcp-tools">MCP tools <a class="header-anchor" href="#mcp-tools">#</a></h2>
+<ul>
+<li><code>get_channel</code> lists entries, each with its feeds (and feed ids) or folder.</li>
+<li><code>set_feeds</code> works on one stream entry; a new <code>set_entries</code> orders and removes
+entries; a new <code>set_preferred_login</code>.</li>
+<li><code>add_feed</code> adds to a stream entry, and <code>add_always_on</code> becomes adding a stream
+entry to any channel. <code>add_sport_channel</code>, <code>get_sport</code> and the review tools
+stay.</li>
+</ul>
+<h2 id="rollout">Rollout <a class="header-anchor" href="#rollout">#</a></h2>
+<ul>
+<li>Ids don't change: <code>xtream-…</code>, <code>sport-nfl</code>, <code>events-…</code>. Numbers, renames,
+buffers, flaky history and guide caches are keyed by them.</li>
+<li>The new lineup goes under a <strong>new iCloud key</strong>. Feed channels move out of
+<code>addedChannels</code> and sport channels out of <code>eventLineup</code>. Those keys are left as
+they were, a free backup, and removed in a later cleanup.</li>
+<li>Migration: a feed channel becomes one stream entry (its name, feeds, archive
+and removed logins). A sport channel keeps its folders in order, then its
+always-on channels as stream entries set to play when the sport is live. Its
+folders go before its always-on streams, so it plays as it does today.</li>
+<li>All devices get the new build together, as with feeds.</li>
+</ul>
+<h2 id="settled-while-building">Settled while building <a class="header-anchor" href="#settled-while-building">#</a></h2>
+<ul>
+<li><strong>One type, <code>IPTVChannel</code></strong>, on <code>Channel.kind</code> as <code>.xtream</code>, saved under
+<code>iptvLineup</code>. Its <code>sources</code> and <code>streams</code> read and write its folders and
+streams in place, so the sport code works on it unchanged. <code>AlwaysOn</code> is now
+<code>IPTVStream</code>, with <code>plays</code> saying when it's on. The search result that used
+that name is <code>IPTVListing</code>.</li>
+<li><strong>A channel of one stream</strong> (<code>single</code>) looks as feed channels did: the provider
+guide's now/next banner, its name tidied, Earlier Shows from that stream. With
+more than one entry, or a sport's live showing, the sport banner shows instead.</li>
+<li><strong>Earlier Shows</strong> come from the stream on now, from its own pinned login.</li>
+<li><strong>Adding a feed</strong> with no stream named goes to the stream of the same name,
+else the first. <code>add_feed</code> can make it a stream of its own instead.</li>
+<li><strong>Merging</strong> puts the other channel's folders after this one's. Two channels
+of one stream each merge their feeds into one stream; otherwise the other's
+streams come as streams of their own.</li>
+<li><strong>Game sorts</strong> are kept while a channel's folders and sport rules stay the
+same (<code>sortsLike</code>). Changing a stream's feeds or the preferred login doesn't
+make the Apple TV sort again.</li>
+<li><strong>The Guide overlay</strong> is <code>Timeline.overlay</code> in RetroLineup, with tests. A
+stream with no listings fills its gaps with its name.</li>
+<li><strong>&quot;Prefer Trex on This Channel&quot;</strong> in the Select menu replaces &quot;Always Use This
+Feed&quot;, on every stream and game.</li>
+<li><strong>The Feeds sheet</strong> is the one editor. Folders are still added from Sports and
+the Live TV pane, and the sport rules are still set in Sports.</li>
+</ul>
+<h2 id="build-order">Build order <a class="header-anchor" href="#build-order">#</a></h2>
+<ol>
+<li>The model, migration and storage, with tests for the migration.</li>
+<li>Playing: one channel view for both, preferred login, the Select menu.</li>
+<li>The Guide row.</li>
+<li>The Manager editor, <code>IPTVLinker</code> and the Audit.</li>
+<li>The MCP tools and docs/mcp.md.</li>
+</ol>
+
+    <nav class="pager" aria-label="Pages">
+      <span><a href="../iphone/"><small>Previous</small>iPhone: a player, a remote and a manager</a></span>
+      <span><a href="../iptv-relay/"><small>Next</small>IPTV relay: provider traffic through PIA, by country</a></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>

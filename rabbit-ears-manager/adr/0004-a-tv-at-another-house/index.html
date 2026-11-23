@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>A TV at another house, joined by a scan and reached over Tailscale · Rabbit Ears Manager docs</title>
+<meta name="description" content="Set up the Rabbit Ears station from your Mac: channels, IPTV logins, sports, Plex and the relay.">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../../../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/rabbit-ears-manager/index.html">Rabbit Ears Manager in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Rabbit Ears Manager docs">
+    <h2>Rabbit Ears Manager</h2>
+    <p class="version">v1.0.1 · 2026-11-22</p>
+    <ul>
+    
+      <li><a href="../../">Rabbit Ears Manager</a>
+      </li>
+    
+      <li><a href="../../adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/">Settings come from the Mac mini, with an R2 mirror, not iCloud</a>
+      </li>
+    
+      <li><a href="../../adr/0002-the-relay-runs-on-its-own/">The relay runs on its own, as Antenna Tower</a>
+      </li>
+    
+      <li><a href="../../adr/0003-antenna-tower-on-linux-with-a-web-manager/">Antenna Tower can run on Linux, managed from a web page</a>
+      </li>
+    
+      <li><a href="../../adr/0004-a-tv-at-another-house/" aria-current="page">A TV at another house, joined by a scan and reached over Tailscale</a>
+      
+        <ul class="toc"><li class="l2"><a href="#status-proposed">status: proposed</a></li><li class="l2"><a href="#decisions">Decisions</a></li><li class="l2"><a href="#considered-options">Considered options</a></li><li class="l2"><a href="#consequences">Consequences</a></li><li class="l2"><a href="#to-build">To build</a></li></ul>
+      </li>
+    
+      <li><a href="../../adr/0005-the-tower-in-go-behind-a-written-interface/">0005: The tower in Go, behind a written interface</a>
+      </li>
+    
+      <li><a href="../../android/">An Android TV box for Dad</a>
+      </li>
+    
+      <li><a href="../../api/">The station&#39;s interface</a>
+      </li>
+    
+      <li><a href="../../channel-feeds/">Channels apart from providers</a>
+      </li>
+    
+      <li><a href="../../channel-modules/">Channel modules, and the MBTA channel</a>
+      </li>
+    
+      <li><a href="../../getting-started/">Getting started</a>
+      </li>
+    
+      <li><a href="../../group-channels/">Group channels</a>
+      </li>
+    
+      <li><a href="../../guide-relay/">The guide on the relay: one guide for every screen</a>
+      </li>
+    
+      <li><a href="../../iphone/">iPhone: a player, a remote and a manager</a>
+      </li>
+    
+      <li><a href="../../iptv-channels/">One kind of IPTV channel</a>
+      </li>
+    
+      <li><a href="../../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
+      </li>
+    
+      <li><a href="../../linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../../mcp/">The Manager&#39;s MCP server</a>
+      </li>
+    
+      <li><a href="../../packages/">The station&#39;s packages</a>
+      </li>
+    
+      <li><a href="../../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../../profiles/">Profiles</a>
+      </li>
+    
+      <li><a href="../../read-ahead/">On Demand read-ahead: played while it downloads</a>
+      </li>
+    
+      <li><a href="../../remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../../settings-sync/">Settings from the Mac mini</a>
+      </li>
+    
+      <li><a href="../../sport-channels/">Sport channels</a>
+      </li>
+    
+      <li><a href="../../telemetry/">Telemetry: errors and traces from the screens</a>
+      </li>
+    
+      <li><a href="../../themes/">Themes</a>
+      </li>
+    
+      <li><a href="../../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
+      </li>
+    
+      <li><a href="../../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../../vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+  </nav>
+  <article>
+    <h1>A TV at another house, joined by a scan and reached over Tailscale</h1>
+    <hr />
+<h2 id="status-proposed">status: proposed <a class="header-anchor" href="#status-proposed">#</a></h2>
+<h1>A TV at another house, joined by a scan and reached over Tailscale</h1>
+<p>We want an Apple TV at Dad's house to be part of the station: his own
+profile, the same lineup, and changed from our Manager. Today that partly
+works already. Away from home a TV gets its settings from R2 (ADR 0001),
+sends edits and history through its outbox, and plays IPTV directly from the
+providers. What it can't do is set itself up without an invite link, which a
+TV can't open, or reach the server, so it gets no On Demand from the Mac
+mini, no relay feeds, and no status or commands.</p>
+<h2 id="decisions">Decisions <a class="header-anchor" href="#decisions">#</a></h2>
+<ol>
+<li><strong>A TV joins by a scan.</strong> The TV shows a QR code (&quot;Link this TV&quot;) with a
+one-time secret and its address on the local network. A phone already in
+the station scans it with the camera, which opens Rabbit Ears. You pick
+the TV's profiles there: for Dad, his own profile and not a manager. The
+phone gets the TV a device key from the server, and hands it over on the
+local network on the remote's connection (<code>RemoteControl</code>); the QR code's
+secret proves it's the right TV. It's the same flow for a new TV at home,
+and it does what <code>docs/settings-sync.md</code> stage 3 planned (&quot;a new Apple TV
+is set up from the phone&quot;).</li>
+<li><strong>A TV away from home reaches the server over Tailscale</strong>, not Cloudflare
+Access. Tailscale is the secure connection that carries video, so the TV
+behaves like one at home: On Demand fetched by the Mac mini, the
+provider VPN route and the IPTV relay (<code>docs/iptv-relay.md</code>), the relay's
+feeds, the guide, status, errors and commands. Access stays for phones
+(ADR 0003 decision 9) and carries no video.</li>
+<li><strong>The TV is on our tailnet, tagged and fenced off.</strong>
+<ul>
+<li>We install and log in at setup, by scanning Tailscale's own QR code.
+Dad needs no account.</li>
+<li>It's tagged <code>tag:tv</code>, so its key doesn't expire. Untagged devices
+expire after 180 days by default.</li>
+<li>The policy lets <code>tag:tv</code> reach the server's port 8766 and nothing
+else. Only Tailscale addresses go through the tunnel, so Dad's other
+traffic doesn't.</li>
+</ul>
+</li>
+<li><strong>Video wants a direct connection.</strong> Tailscale's DERP fallback is fine
+for settings but not for video. UDP 41641 is forwarded to the server on
+our router, and <code>tailscale ping</code> is part of setup. Our upload speed limits
+how many streams leave the house (roughly 5–8 Mbps for HD).</li>
+<li><strong>Tailscale is just another route.</strong> If the tunnel is down, the TV falls
+back to R2 for settings and to playing directly from the providers, as
+it does now. Its Settings says when it can't reach the station's server,
+so Dad can tell us.</li>
+<li><strong>Commands go by the TV checking in.</strong> The server can't call into
+another house, so what the Manager sends a TV (reload the lineup, clear
+the cache, tune) waits for it. Over Tailscale the TV picks it up on its
+next check, every few seconds. Without Tailscale it comes from the
+updates Worker (decision 8).</li>
+<li><strong>Updates come through TestFlight.</strong> We can't send dev builds to a TV
+that isn't on the home network, so the tvOS upload goes into
+<code>app-release</code>.</li>
+<li><strong>Updates for devices away from home come from a Cloudflare Worker</strong>
+(agreed 2026-10-19). This applies to any device that can't reach the
+server: Dad's TV without Tailscale, and phones.
+<ul>
+<li><strong>One Durable Object for the station</strong> holds the settings revision,
+each device's waiting commands, and the hashes of the device keys.</li>
+<li><strong>The Mac mini pushes to it.</strong> On every change it sends <code>PUT /station</code>
+with an admin secret: the revision, commands, and the devices
+(forgetting one removes its hash). These are requests going out from
+the house; nothing at home faces the internet.</li>
+<li><strong>Devices keep a WebSocket open to it</strong> while awake, with
+<code>Authorization: Bearer &lt;device key&gt;</code> and <code>since=&lt;rev&gt;</code>. The object
+uses the WebSocket Hibernation API, so it costs nothing while idle. A
+<code>PUT</code> wakes it, and it sends the new revision and commands down every
+open socket. A device then fetches the sealed settings from R2, as now.</li>
+<li><strong>Check-ins and command acknowledgements</strong> go up the same socket, and
+the Mac mini gets them in the reply to its next <code>PUT</code>. That replaces
+most of its outbox reading.</li>
+<li><strong>When the house is down,</strong> the Worker still answers: devices see the
+server is away, and commands wait.</li>
+<li><strong>A deliberate exception to Swift only</strong> (ADR 0002 decision 1): the
+Worker is about 100 lines of TypeScript, deployed with <code>wrangler</code>, and
+shares only a small JSON shape with the apps, not the Xtream code, the
+rules or the merge. Nothing else goes in it.</li>
+<li><strong>Cost:</strong> about 1,000 requests a day for three devices away from home,
+with check-ins counted at 20 messages to a request and messages to
+devices free. Duration is close to nothing. That's $0 on the free plan,
+or nothing beyond the $5 base on the paid plan.</li>
+</ul>
+</li>
+<li><strong>R2 polling becomes the safety net.</strong> A device that can't reach the
+server or the Worker reads the settings every 30 seconds for a few
+minutes after losing it or after queueing an edit, until the copy shows
+the edit taken. After that it reads every 5 minutes, then every 15 once
+an hour passes with nothing new. It also reads at once on coming to the
+front, waking from sleep or the screensaver, and opening the guide or
+channel list. The Mac mini reads only the outboxes of devices it hasn't
+heard from (directly or through the Worker) in the last minute.</li>
+</ol>
+<h2 id="considered-options">Considered options <a class="header-anchor" href="#considered-options">#</a></h2>
+<ul>
+<li><strong>An Access service token for the TV:</strong> the phone gets one from the
+server and hands it over in the scan. It needs no VPN on the TV, but the
+tunnel carries no video, so the TV gets only feeds and status, and the
+server needs a Cloudflare API token to make the service tokens. We can add
+it later if a TV can't run Tailscale.</li>
+<li><strong>R2 only, as today:</strong> nothing to install, but no On Demand from the Mac
+mini, no VPN route, and no status or commands.</li>
+<li><strong>Tailscale Funnel:</strong> ruled out in ADR 0003. It puts the server on the
+internet with no login in front of it.</li>
+<li><strong>The updates route on the home server</strong>, through the tunnel with a
+bearer token (<code>GET /v1/updates</code> on a listener of its own, one ingress
+path, no Access). It's sound, but something at home faces the internet,
+it needs <code>cloudflared</code> and path rules, and it goes quiet when the house
+is down.</li>
+<li><strong>Long-polling the Worker:</strong> a held request keeps the Durable Object
+awake. That's about 10,800 GB-s a day for three devices: inside the free
+plan's 13,000 a day, but about $28 a month on the paid plan (2.6M GB-s
+against 400k included, at $12.50 per million). Plain polling every 30
+seconds likely keeps it awake as well.</li>
+<li><strong>Workers KV for the revision:</strong> a change can take about 60 seconds to
+show everywhere, and the free plan allows 1,000 writes a day.</li>
+</ul>
+<h2 id="consequences">Consequences <a class="header-anchor" href="#consequences">#</a></h2>
+<ul>
+<li><strong>IPTV connection limits:</strong> a login that allows one stream can't serve
+both houses at once. A preferred login per channel (<code>set_preferred_login</code>),
+a login for Dad's TV, or streams coming through the IPTV relay deal with
+it.</li>
+<li><strong>A provider that needs the VPN route</strong> works at Dad's only over the
+tunnel. Without it, the TV plays from his connection.</li>
+<li><strong>It's one more device on the tailnet</strong> to keep alive. The Manager's
+device list shows when it was last seen, and the Tailscale admin page
+does too.</li>
+<li><strong>Only one VPN at a time:</strong> another VPN app on that TV would fight
+Tailscale.</li>
+<li><strong>To try first:</strong>
+<ul>
+<li>that Tailscale on tvOS reconnects after sleep, a restart and a tvOS
+update;</li>
+<li>that we get a direct connection from Dad's network;</li>
+<li>a stream at our upload speed.</li>
+</ul>
+</li>
+</ul>
+<h2 id="to-build">To build <a class="header-anchor" href="#to-build">#</a></h2>
+<ol>
+<li>The scan: &quot;Link this TV&quot; on tvOS (QR code, listening for the phone), and
+scanning and choosing profiles on iOS.</li>
+<li>The tvOS TestFlight upload in <code>app-release</code>.</li>
+<li>Tailscale as a route: the server's tailnet address in the settings,
+tried after the home network, and the &quot;can't reach the server&quot; note.</li>
+<li>Commands that wait for a TV to check in.</li>
+<li>The tailnet: <code>tag:tv</code>, its policy, and UDP 41641 forwarded.</li>
+<li>The updates Worker:
+<ul>
+<li>the Durable Object, with hibernating WebSockets;</li>
+<li>the Mac mini's <code>PUT</code> on each change;</li>
+<li>the devices' socket (<code>URLSessionWebSocketTask</code>), with check-ins and
+command acknowledgements going up it.</li>
+</ul>
+</li>
+<li>The R2 polling schedule (decision 9), and the Mac mini skipping outboxes
+of devices it has heard from.</li>
+</ol>
+
+    <nav class="pager" aria-label="Pages">
+      <span><a href="../../adr/0003-antenna-tower-on-linux-with-a-web-manager/"><small>Previous</small>Antenna Tower can run on Linux, managed from a web page</a></span>
+      <span><a href="../../adr/0005-the-tower-in-go-behind-a-written-interface/"><small>Next</small>0005: The tower in Go, behind a written interface</a></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>

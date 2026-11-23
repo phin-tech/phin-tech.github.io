@@ -1,0 +1,535 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>The station&#39;s interface · Rabbit Ears Manager docs</title>
+<meta name="description" content="Set up the Rabbit Ears station from your Mac: channels, IPTV logins, sports, Plex and the relay.">
+<style>
+  :root {
+    --bg: #fbf8f1; --fg: #1c1a17; --muted: #5d554a; --line: #e2dccd; --accent: #9a3412; --code: #f1ece0; --side: #f4efe3;
+    --serif: "Shop Garamond", "EB Garamond", Garamond, "Hoefler Text", Georgia, serif;
+    --sans: system-ui, -apple-system, "Segoe UI", sans-serif;
+    --mono: ui-monospace, SFMono-Regular, Menlo, monospace;
+    color-scheme: light dark;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root { --bg: #17130f; --fg: #efe8d8; --muted: #b3a88f; --line: #352c22; --accent: #f0a868; --code: #241d16; --side: #1d1813; }
+  }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Regular.otf") format("opentype"); font-weight: 400; font-display: swap; }
+  @font-face { font-family: "Shop Garamond"; src: url("https://apps.phin.tech/_store/site/fonts/EBGaramond-Bold.otf") format("opentype"); font-weight: 700; font-display: swap; }
+  * { box-sizing: border-box; }
+  body { margin: 0; background: var(--bg); color: var(--fg); font: 16px/1.6 var(--sans); }
+  a { color: var(--accent); }
+  a:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .top { display: flex; align-items: center; gap: 12px; padding: 12px 20px; border-bottom: 1px solid var(--line); }
+  .top img { width: 28px; height: 28px; }
+  .top .home { font: 700 20px var(--serif); color: var(--fg); text-decoration: none; }
+  .top .shop { margin-left: auto; font-size: 14px; }
+  .layout { display: grid; grid-template-columns: 240px minmax(0, 1fr); max-width: 1180px; margin: 0 auto; }
+  .side { position: sticky; top: 0; align-self: start; max-height: 100vh; overflow-y: auto; padding: 24px 18px;
+          border-right: 1px solid var(--line); background: var(--side); min-height: calc(100vh - 53px); }
+  .side h2 { margin: 0 0 4px; font: 700 22px/1.2 var(--serif); }
+  .side .version { margin: 0 0 18px; color: var(--muted); font-size: 13px; }
+  .side ul { list-style: none; margin: 0; padding: 0; }
+  .side li a { display: block; padding: 5px 10px; border-radius: 6px; color: var(--fg); text-decoration: none; font-size: 15px; }
+  .side li a:hover { background: var(--line); }
+  .side li a[aria-current="page"] { background: var(--accent); color: var(--bg); font-weight: 600; }
+  .side .toc { margin: 2px 0 6px 10px; border-left: 2px solid var(--line); }
+  .side .toc a { padding: 2px 10px; font-size: 13px; color: var(--muted); }
+  .side .toc .l3 a { padding-left: 22px; }
+  .side .get { display: block; margin-top: 22px; padding: 8px 12px; border-radius: 6px; text-align: center; text-decoration: none;
+               background: var(--accent); color: var(--bg); font-weight: 600; font-size: 14px; }
+  article { min-width: 0; padding: 32px clamp(16px, 5vw, 56px) 64px; max-width: 820px; }
+  article h1 { margin: 0 0 18px; font: 700 clamp(32px, 5vw, 44px)/1.1 var(--serif); letter-spacing: -.01em; }
+  article h2 { margin: 36px 0 10px; font: 700 28px/1.2 var(--serif); }
+  article h3 { margin: 26px 0 8px; font: 700 21px/1.25 var(--serif); }
+  .header-anchor { margin-left: .3em; opacity: 0; text-decoration: none; font-family: var(--sans); font-size: .7em; }
+  h2:hover .header-anchor, h3:hover .header-anchor, .header-anchor:focus { opacity: .6; }
+  article img, article video { max-width: 100%; height: auto; border-radius: 6px; border: 1px solid var(--line); }
+  code { font: .88em var(--mono); background: var(--code); padding: .1em .35em; border-radius: 4px; }
+  pre { overflow-x: auto; padding: 14px 16px; background: var(--code); border-radius: 8px; border: 1px solid var(--line); }
+  pre code { padding: 0; background: none; font-size: 13.5px; }
+  table { border-collapse: collapse; display: block; overflow-x: auto; margin: 14px 0; font-size: 15px; }
+  th, td { padding: 6px 12px; border: 1px solid var(--line); text-align: left; vertical-align: top; }
+  th { background: var(--side); }
+  blockquote { margin: 14px 0; padding: 2px 16px; border-left: 3px solid var(--accent); color: var(--muted); }
+  .pager { display: flex; justify-content: space-between; gap: 16px; margin-top: 48px; padding-top: 18px; border-top: 1px solid var(--line); }
+  .pager a { text-decoration: none; }
+  .pager small { display: block; color: var(--muted); }
+  .menu { display: none; }
+  /* The docs home */
+  .index { max-width: 760px; margin: 0 auto; padding: 48px 16px; }
+  .index h1 { font: 700 40px/1.1 var(--serif); margin: 0 0 6px; }
+  .index > p { color: var(--muted); margin: 0 0 28px; }
+  .index ul { list-style: none; padding: 0; margin: 0; border-top: 1px solid var(--line); }
+  .index li { padding: 14px 0; border-bottom: 1px solid var(--line); }
+  .index li a { font-weight: 600; text-decoration: none; font-size: 18px; }
+  .index li span { display: block; color: var(--muted); }
+  .index h2 { margin: 34px 0 10px; font: 700 13px var(--sans); letter-spacing: .16em; text-transform: uppercase; color: var(--muted); }
+  @media (max-width: 760px) {
+    .layout { display: block; }
+    .side { position: static; max-height: none; min-height: 0; border-right: 0; border-bottom: 1px solid var(--line); }
+    .side .toc { display: none; }
+  }
+
+</style>
+</head>
+<body>
+<header class="top">
+  <img src="https://apps.phin.tech/_store/site/pepper-mark.png" alt="">
+  <a class="home" href="../../">Phin Tech docs</a>
+  <a class="shop" href="https://apps.phin.tech/rabbit-ears-manager/index.html">Rabbit Ears Manager in the store →</a>
+</header>
+<div class="layout">
+  <nav class="side" aria-label="Rabbit Ears Manager docs">
+    <h2>Rabbit Ears Manager</h2>
+    <p class="version">v1.0.1 · 2026-11-22</p>
+    <ul>
+    
+      <li><a href="../">Rabbit Ears Manager</a>
+      </li>
+    
+      <li><a href="../adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/">Settings come from the Mac mini, with an R2 mirror, not iCloud</a>
+      </li>
+    
+      <li><a href="../adr/0002-the-relay-runs-on-its-own/">The relay runs on its own, as Antenna Tower</a>
+      </li>
+    
+      <li><a href="../adr/0003-antenna-tower-on-linux-with-a-web-manager/">Antenna Tower can run on Linux, managed from a web page</a>
+      </li>
+    
+      <li><a href="../adr/0004-a-tv-at-another-house/">A TV at another house, joined by a scan and reached over Tailscale</a>
+      </li>
+    
+      <li><a href="../adr/0005-the-tower-in-go-behind-a-written-interface/">0005: The tower in Go, behind a written interface</a>
+      </li>
+    
+      <li><a href="../android/">An Android TV box for Dad</a>
+      </li>
+    
+      <li><a href="../api/" aria-current="page">The station&#39;s interface</a>
+      
+        <ul class="toc"><li class="l2"><a href="#finding-a-tower">Finding a tower</a></li><li class="l2"><a href="#three-kinds-of-caller-three-kinds-of-key">Three kinds of caller, three kinds of key</a></li><li class="l2"><a href="#bodies">Bodies</a></li><li class="l2"><a href="#who-may-do-what">Who may do what</a></li><li class="l2"><a href="#settings-and-revisions">Settings and revisions</a></li><li class="l3"><a href="#the-merge-merge-package-adminmergeswift">The merge (`merge` package, `AdminMerge.swift`)</a></li><li class="l2"><a href="#synced-keys">Synced keys</a></li><li class="l2"><a href="#the-r2-mirror">The R2 mirror</a></li><li class="l3"><a href="#in-the-go-tower">In the Go tower</a></li><li class="l2"><a href="#on-demand-in-the-go-tower">On Demand in the Go tower</a></li><li class="l2"><a href="#errors-reports-storage-and-the-tagger">Errors, reports, storage and the tagger</a></li><li class="l2"><a href="#the-planes-feed">The planes feed</a></li><li class="l2"><a href="#checked-against-the-real-swift">Checked against the real Swift</a></li><li class="l2"><a href="#event-and-sports-jobs-and-the-assistant">Event and sports jobs, and the assistant</a></li><li class="l2"><a href="#not-yet-in-the-go-tower">Not yet in the Go tower</a></li></ul>
+      </li>
+    
+      <li><a href="../channel-feeds/">Channels apart from providers</a>
+      </li>
+    
+      <li><a href="../channel-modules/">Channel modules, and the MBTA channel</a>
+      </li>
+    
+      <li><a href="../getting-started/">Getting started</a>
+      </li>
+    
+      <li><a href="../group-channels/">Group channels</a>
+      </li>
+    
+      <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
+      </li>
+    
+      <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
+      </li>
+    
+      <li><a href="../iptv-channels/">One kind of IPTV channel</a>
+      </li>
+    
+      <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
+      </li>
+    
+      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      </li>
+    
+      <li><a href="../packages/">The station&#39;s packages</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../profiles/">Profiles</a>
+      </li>
+    
+      <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
+      </li>
+    
+      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      </li>
+    
+      <li><a href="../sport-channels/">Sport channels</a>
+      </li>
+    
+      <li><a href="../telemetry/">Telemetry: errors and traces from the screens</a>
+      </li>
+    
+      <li><a href="../themes/">Themes</a>
+      </li>
+    
+      <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
+      </li>
+    
+      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
+    </ul>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+  </nav>
+  <article>
+    <h1>The station&#39;s interface</h1>
+    <p>What a client (Rabbit Ears on a TV, Mac or phone; the Manager) can rely on from
+a tower, whichever program the tower is. The Swift tower (<code>Packages/Station</code>)
+and the Go tower (<code>tower/</code>) both speak it; clients can't tell them apart. The
+Swift code is still the reference where this document is silent
+(<code>RemoteServer.handle</code>, <code>RelayService.router</code>, <code>AdminMerge</code>).</p>
+<p>Machine-readable: <a href="https://apps.phin.tech/rabbit-ears-manager/docs/api/openapi.yaml?v=1.0.1"><code>openapi.yaml</code></a>. Conformance: the Go tower's
+tests (<code>just tower-test</code>) pin each rule below; the Swift tower's are
+<code>RelayAdminTests</code> and <code>AdminMergeTests</code>.</p>
+<h2 id="finding-a-tower">Finding a tower <a class="header-anchor" href="#finding-a-tower">#</a></h2>
+<p>Bonjour service <code>_retrotv-relay._tcp</code>, port 8766, TXT <code>v=1</code>; the instance name
+is the tower's name (&quot;Mac mini&quot;). The synced setting <code>relay</code>
+(<code>{&quot;host&quot;: &quot;...&quot;, &quot;port&quot;: 8766}</code> as JSON in a Data) is tried first, Bonjour
+second. Invites carry the host and port too.</p>
+<h2 id="three-kinds-of-caller-three-kinds-of-key">Three kinds of caller, three kinds of key <a class="header-anchor" href="#three-kinds-of-caller-three-kinds-of-key">#</a></h2>
+<table>
+<thead>
+<tr>
+<th>Caller</th>
+<th>Sends</th>
+<th>Gets</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>a screen using the relay</td>
+<td><code>X-RetroTV-Token: &lt;household token&gt;</code></td>
+<td><code>/v1/hello</code>, <code>/v1/feeds/*</code>, <code>/v1/vod/*</code>, <code>/v1/logs</code></td>
+</tr>
+<tr>
+<td>a joined device</td>
+<td><code>X-RetroTV-Admin: &lt;the device's own key&gt;</code></td>
+<td><code>/v1/admin/*</code></td>
+</tr>
+<tr>
+<td>anything, to join</td>
+<td>nothing, a code or the token, in the body</td>
+<td><code>POST /v1/admin/pair</code>, <code>/enroll</code></td>
+</tr>
+</tbody>
+</table>
+<p>A device's key is 24 random bytes, base64url without padding. The tower keeps
+only its SHA-256 (hex). The household token is the synced setting <code>relayToken</code>.</p>
+<p><code>/v1/admin/*</code> skips the token check: it has keys of its own.</p>
+<h2 id="bodies">Bodies <a class="header-anchor" href="#bodies">#</a></h2>
+<ul>
+<li><code>/v1/hello</code>, feeds, VOD: JSON. Dates are seconds since 1970.</li>
+<li><code>/v1/admin/*</code>: <strong>binary property lists</strong> (<code>application/x-plist</code>) both ways,
+because settings are UserDefaults values and a plist is the one format that
+keeps a Data apart from a String, a Date from a number. Request bodies
+that are empty are fine. An error is a status code with an empty body.</li>
+<li>Value types that must survive: string, integer, real, bool, date, <strong>data</strong>,
+array, dictionary. A Codable setting is a Data of JSON; the tower never
+decodes it except to merge (below).</li>
+</ul>
+<h2 id="who-may-do-what">Who may do what <a class="header-anchor" href="#who-may-do-what">#</a></h2>
+<p>A device has a list of profiles it can use (<code>null</code> = all). It is a <strong>manager</strong>
+when one of those profiles is a manager (a profile with no <code>manager</code> flag is
+one; &quot;main&quot; always exists). Managers may change settings and run commands.
+Others may read settings and report what they play.</p>
+<p>Not sent to a device with no manager: <code>relay</code>, <code>relayToken</code>, <code>typesafeAPIKey</code>.
+Not sent to a screen (<code>?app=screen</code>): <code>sportSettings</code>, <code>eventSchedules</code>,
+<code>sportSchedule</code>, <code>sportJudged</code>, <code>sportGuides</code> (the screen plays the sorted
+<code>channelSchedules</code>).</p>
+<h2 id="settings-and-revisions">Settings and revisions <a class="header-anchor" href="#settings-and-revisions">#</a></h2>
+<p>Every change to a synced key takes the next number of one counter (<code>seq</code>). A
+client remembers the <code>seq</code> and <code>epoch</code> it saw and asks for what changed
+<code>since</code> it. A different (or missing) <code>epoch</code> means the tower's history is
+gone: it sends everything and the client starts over. A key the tower has
+never had a value for is announced empty, with a number of its own, so clients
+may change keys they've heard of.</p>
+<p><code>PUT settings/{key}</code> carries the <code>base</code> revision the change was made on. If it
+is still the current one, the value (or its absence) is saved and takes the
+next number. If not, <strong>409</strong> with the current <code>{key, rev, value}</code>; the client
+merges three ways and tries again. Putting the value a key already has takes no
+number.</p>
+<h3 id="the-merge-merge-package-adminmergeswift">The merge (<code>merge</code> package, <code>AdminMerge.swift</code>) <a class="header-anchor" href="#the-merge-merge-package-adminmergeswift">#</a></h3>
+<p><code>base</code> = what the device changed, <code>mine</code> = its value, <code>theirs</code> = the tower's.
+Only one side changed: that side. Dictionaries (and JSON objects in a Data)
+merge key by key. Lists take the tower's, less what the device removed, plus
+what it added at the end; an item is known by its <code>id</code> if it has one, else by
+its value; lists of items that have neither (nested lists, dictionaries with
+no <code>id</code>) take the device's list. Anything else: the device's. Both tower and
+client implement this: they must agree.</p>
+<h2 id="synced-keys">Synced keys <a class="header-anchor" href="#synced-keys">#</a></h2>
+<p>The list is <code>SettingsSync.keys</code> (Swift). The Go tower holds a copy in
+<code>tower/internal/keys/synced-keys.json</code>. <strong>It may not be complete</strong>: the channel
+modules' own settings keys (<code>ChannelModules.settingsKeys</code>) are only partly
+known (checked 2026-11-02 against a Mac mini database from an older build:
+every key it had that the current Swift code still syncs is listed). Until a Swift-side export writes this file, a missing key shows up as
+a 404 on <code>PUT settings/{key}</code>.</p>
+<h2 id="the-r2-mirror">The R2 mirror <a class="header-anchor" href="#the-r2-mirror">#</a></h2>
+<p>Source: <code>Packages/RetroRelay/Sources/RelayAdmin/Mirror.swift</code>, <code>R2.swift</code>;
+decisions in docs/adr/0001. Everything in R2 is a binary plist <strong>sealed</strong> with
+AES-256-GCM in CryptoKit's &quot;combined&quot; layout: 12-byte nonce, ciphertext,
+16-byte tag; keys are base64 of 32 bytes. Requests are AWS SigV4, region
+<code>auto</code>, service <code>s3</code>; reads send <code>If-None-Match</code> and treat 304 as unchanged.</p>
+<table>
+<thead>
+<tr>
+<th>Bucket</th>
+<th>Object</th>
+<th>Written by</th>
+<th>Sealed with</th>
+<th>Holds</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>rabbit-ears-settings</code></td>
+<td><code>settings/full</code></td>
+<td>tower</td>
+<td><code>fullKey</code></td>
+<td>Snapshot, every key (devices with a manager)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>settings/watch</code></td>
+<td>tower</td>
+<td><code>watchKey</code></td>
+<td>Snapshot less the manager-only and station-only keys</td>
+</tr>
+<tr>
+<td></td>
+<td><code>keys/&lt;outbox&gt;</code></td>
+<td>tower</td>
+<td>the device's secret</td>
+<td>KeyBundle (JSON)</td>
+</tr>
+<tr>
+<td></td>
+<td><code>history/&lt;profile id&gt;</code></td>
+<td>tower</td>
+<td>the profile's key</td>
+<td>History: <code>{v: 1, keys: {&lt;key&gt;: {stamp, value?}}}</code>, only keys that have changed</td>
+</tr>
+<tr>
+<td><code>rabbit-ears-outbox</code></td>
+<td><code>outbox/&lt;outbox&gt;</code></td>
+<td>the device</td>
+<td>the device's secret</td>
+<td>Outbox</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Snapshot</strong> (plist): <code>{v: 1, changes: {epoch, seq, changes: [{key, rev, value?}]}, taken: {&lt;outbox&gt;: n}}</code>.
+<code>changes</code> is <code>GET settings</code> with <code>since=0</code>; <code>taken</code> is the last outbox entry
+the tower took from each device, so a device can drop what's been delivered.</p>
+<p><strong>Outbox</strong> (plist): <code>{v: 1, entries: [Entry]}</code>, each <code>{n, kind, key, ...}</code> with <code>n</code>
+counting up per device. By <code>kind</code>: <code>setting</code> adds <code>baseRev</code>, <code>baseValue?</code>,
+<code>value?</code> (the revision and value the change was made to; applied directly if
+<code>baseRev</code> is current, else three-way merged); <code>history</code> adds <code>stamp</code> (double,
+seconds since 1970) and <code>value?</code>; <code>playing</code> adds <code>stamp</code> and <code>value?</code> (the item,
+absent for nothing; believed for 90 seconds); <code>checkIn</code> has
+<code>value: {build, settingsVersion}</code>. Only a manager's <code>setting</code> entries are applied,
+only for synced keys; entries the tower doesn't understand are skipped.</p>
+<p><strong>Giving a device its way in.</strong> With the mirror on, <code>GET device</code> adds <code>mirror</code>
+and <code>keys</code> (each JSON, as plist Data), and an invite becomes <code>v: 2</code> with the
+same two objects:</p>
+<pre><code class="language-json">&quot;mirror&quot;: {&quot;read&quot;: {&quot;endpoint&quot;: &quot;https://&lt;acct&gt;.r2.cloudflarestorage.com&quot;, &quot;accessKeyID&quot;: &quot;..&quot;, &quot;secret&quot;: &quot;..&quot;},
+           &quot;outbox&quot;: {&quot;endpoint&quot;: &quot;..&quot;, &quot;accessKeyID&quot;: &quot;..&quot;, &quot;secret&quot;: &quot;..&quot;},
+           &quot;device&quot;: &quot;&lt;outbox name&gt;&quot;, &quot;secret&quot;: &quot;&lt;base64 32 bytes&gt;&quot;},
+&quot;keys&quot;: {&quot;generation&quot;: 2, &quot;settingsPath&quot;: &quot;settings/full&quot;, &quot;settingsKey&quot;: &quot;..&quot;, &quot;profileKeys&quot;: {&quot;&lt;profile id&gt;&quot;: &quot;..&quot;}}
+</code></pre>
+<p>A device's outbox name and secret are made the first time it asks and never
+change. Forgetting a device bumps <code>generation</code>, makes new sealing keys,
+re-seals every other device's bundle, and deletes the forgotten device's
+<code>keys/</code> and <code>outbox/</code> objects.</p>
+<h3 id="in-the-go-tower">In the Go tower <a class="header-anchor" href="#in-the-go-tower">#</a></h3>
+<p>History (<code>GET history</code>, <code>GET/PUT history/{key}</code>, the <code>history/&lt;profile&gt;</code>
+objects and outbox <code>history</code> entries) is kept in <code>history.sqlite</code> beside the
+database (<code>key, value</code> as a wrapped plist, <code>stamp</code> real): the Swift tower used
+UserDefaults, which can't be shared. A copy is taken only if its stamp is newer.
+A device may only touch the keys of its own profiles (403 otherwise).</p>
+<p>On when R2 keys are present: put <code>r2-import.json</code> (the Swift tower's format)
+beside <code>station-keys.json</code>; with none, the mirror is off and <code>GET device</code>
+carries no <code>mirror</code> or <code>keys</code>. Settings are written when the settings, the
+entries taken or the keys change; outboxes are read every thirty seconds; a
+device whose outbox doesn't open with its secret is ignored. Checked against
+the real Swift code: CryptoKit opens what Go seals and the reverse, SigV4
+matches AWS's worked example, and the real <code>Mirror.swift</code> decodes Go's
+Snapshot, access and key bundle and wrote the Outbox fixture Go parses.</p>
+<p><strong>Switching a station from the Swift tower to the Go one needs its keys.</strong>
+Devices hold the Swift tower's device secrets and key bundles. The Go tower
+reads the Swift tower's <code>station-keys.json</code> as is (the Keychain item of the
+same name on a Mac: export it to that file); a fresh Go key file would make
+every device's outbox &quot;not sealed by its device&quot; and lock them out of the new
+copies. The entries already taken (<code>mirrorTaken</code> in the Swift tower's UserDefaults) are not carried over: on Linux those are not kept across restarts, so the Swift tower starts from none too, and an old outbox entry is replayed at most once more (settings entries merge against the revision they were based on). Pending invite links (<code>pendingInvites</code> in the keys file) are not kept
+by the Go tower, which has its own. <strong>Never run a Go tower with the real R2
+keys while the Swift tower is live</strong>: two writers fight over <code>settings/full</code>,
+and a key no device holds ends up sealing it.</p>
+<h2 id="on-demand-in-the-go-tower">On Demand in the Go tower <a class="header-anchor" href="#on-demand-in-the-go-tower">#</a></h2>
+<p><code>hello.vod</code> is true (<code>vodPlay</code> too, for the jobs). The catalog is built by the tower itself (no Swift jobs):
+every login's whole movie and series lists (<code>xtreamAccount</code>, <code>iptvProviders</code>),
+every Plex movie and TV library (<code>plexSettings</code>), merged by TMDB id then
+cleaned name and year, only the categories <code>onDemand.kept</code> lists and the
+languages <code>onDemand.languages</code> names, never adult ones. Refreshed daily, when
+<code>kept</code> changes, and at start if a login has no part yet; a source that fails or
+answers with nothing keeps its last copy. Kept on disk as <code>vod-catalog.json</code>
+and <code>vod-archive.json</code> (shows and plots) beside the database.</p>
+<table>
+<thead>
+<tr>
+<th>Route</th>
+<th>Answer</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td><code>GET /v1/vod/sources</code></td>
+<td><code>[SourceSummary]</code>; 404 until there is a catalog</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/sources/{id}/titles?category=</code></td>
+<td><code>[Title]</code> in name order; the copy you browsed to stays when its source is hidden</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/search?q=</code></td>
+<td>at most 50 <code>[Title]</code>, best first; <code>[]</code> for no match</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/shows/{id}</code></td>
+<td><code>Show</code>: episodes merged across copies, fetched on first open, kept a day</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/titles/{id}/plot?season=&amp;episode=</code></td>
+<td><code>{plot}</code>; 404 when none</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/rows?n=</code></td>
+<td>the home screen's <code>[Row]</code> (n clamped to 4...60, default 20)</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/shelves</code></td>
+<td><code>[ShelfInfo]</code>: every shelf and how much is on it, then each language with 25+ titles</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/shelves/{id}?kind=&amp;offset=&amp;limit=</code></td>
+<td>a shelf's <code>[Title]</code> (limit 1...200, default 60)</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/browse?kind=&amp;genre=&amp;service=&amp;decade=&amp;language=&amp;sort=&amp;offset=&amp;limit=</code></td>
+<td>titles passing every part of the filter (<code>sort</code>: newest, rating, name; <code>language</code> <code>*</code> for all; limit default 120)</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/details/{tmdb}</code></td>
+<td><code>Details</code> (plot, genres, runtime, cast...), looked up from a provider copy and kept 60 days</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/extras/{movies|series}/{tmdb}</code></td>
+<td>the collection here and the cast with more to watch; 404 without a TMDB key</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/people/{tmdb person id}</code></td>
+<td>the titles of theirs the catalog has</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/poster/{file}?w=185|342|500</code></td>
+<td>TMDB's image, fetched once and kept; <code>image/heic</code> is its content type, though it is TMDB's JPEG on Linux, as in the Swift tower</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/subtitles?name=&amp;lang=&amp;tmdb=&amp;year=&amp;season=&amp;episode=</code></td>
+<td><code>SubtitleTrack</code> from OpenSubtitles, kept; 404 when none or no key</td>
+</tr>
+<tr>
+<td><code>POST /v1/vod/jobs</code></td>
+<td>starts or joins a fetch job: <code>{port, length}</code> or <code>{refused}</code>; the file is then served ranged at <code>http://&lt;tower&gt;:&lt;port&gt;/&lt;name&gt;.&lt;container&gt;</code> (no token: the player can't send one)</td>
+</tr>
+<tr>
+<td><code>GET /v1/vod/jobs</code>, <code>GET /v1/vod/jobs/{name}</code>, <code>DELETE /v1/vod/jobs/{name}</code></td>
+<td>all jobs; how one stands (asking keeps it going); end it and delete what it held</td>
+</tr>
+</tbody>
+</table>
+<p>The JSON is what the Swift <code>Codable</code> types encode (<code>Origin</code> as
+<code>{&quot;xtream&quot;:{}}</code>, <code>{&quot;xtream&quot;:{&quot;provider&quot;:&quot;x&quot;}}</code> or <code>{&quot;plex&quot;:{&quot;server&quot;,&quot;section&quot;}}</code>;
+dates in seconds since 1970). Checked against the real Swift: its decoders read
+Go's output, and <code>VODIndex</code> and the Go index agree on a shared catalog title
+for title (<code>internal/vod/testdata</code>).</p>
+<h2 id="errors-reports-storage-and-the-tagger">Errors, reports, storage and the tagger <a class="header-anchor" href="#errors-reports-storage-and-the-tagger">#</a></h2>
+<p><code>POST /v1/logs</code> (OTLP/HTTP JSON; 415 for protobuf, 413 over 4 MB, 400 when not
+logs) keeps warn and worse; <code>POST /v1/traces</code> is taken and dropped. Both need
+the household token. <code>GET errors</code>, <code>GET reports?status=&amp;limit=</code>,
+<code>GET/PUT reports/{id}</code>, <code>commands/storage</code>, <code>storage-clear</code>, <code>restart</code> (the
+tower quits, its service manager starts it again; 409 when it has none) and
+<code>commands/ondemand-tags</code>, <code>ondemand-tag</code>, <code>ondemand-seed</code> are answered. The
+tagger asks TypeSafe's Jev about each category once (<code>typesafeAPIKey</code>, or
+<code>TYPESAFE_API_KEY</code>) and writes the picks back into the synced <code>onDemand</code>
+setting (<code>kept</code>, <code>categories</code>), which the catalog refresh then follows.</p>
+<h2 id="the-planes-feed">The planes feed <a class="header-anchor" href="#the-planes-feed">#</a></h2>
+<p><code>GET /v1/feeds/planes?box=minLat,minLon,maxLat,maxLon</code> serves OpenSky's planes
+from a cache, fetched for the boxes screens are watching as often as the day's
+credits allow (a box costs 1 to 4 credits by area; 4,000 a day with a login,
+400 without). A missing or unreadable box is the whole world, as in the Swift
+relay. <code>commands/opensky-login {clientID, clientSecret}</code> saves a login if
+OpenSky accepts it (both empty forgets it); it is kept in <code>opensky-login.json</code>
+beside the keys, readable only by the tower's user. <code>status</code> carries the Relay
+pane's view (<code>relay</code>, JSON: port, the feed's credits, the screens that asked).</p>
+<h2 id="checked-against-the-real-swift">Checked against the real Swift <a class="header-anchor" href="#checked-against-the-real-swift">#</a></h2>
+<p><code>tower/conformance</code> compiles the Swift clients' own code with swiftc and runs
+them against a Go tower in-process: <code>AdminClient</code> (joining, settings and
+conflicts, history, devices, invites, status; 27 checks) and <code>RelayClient</code>
+with the RetroLineup types it decodes into (hello, planes, every On Demand
+route over a catalog built from a fake provider, TMDB, OpenSubtitles and
+poster server, and a fetch job read back ranged; 27 checks). They skip when
+there is no swiftc.</p>
+<h2 id="event-and-sports-jobs-and-the-assistant">Event and sports jobs, and the assistant <a class="header-anchor" href="#event-and-sports-jobs-and-the-assistant">#</a></h2>
+<p>The tower runs the station's jobs itself (no separate control room): event
+schedules, the sports rules, Jev's review, channel linking and the epgshare01
+guides, on the cadence in <code>eventRefreshMinutes</code>, when a Manager asks
+(<code>commands/refresh-events</code>, or <code>eventRefreshRequest</code>), and when the lineup
+changes. They read and write the synced settings (<code>iptvLineup</code>, <code>sportSettings</code>,
+<code>sportSchedule</code>, <code>sportJudged</code>, <code>sportGuides</code>, <code>eventSchedules</code>,
+<code>channelSchedules</code>) with compare-and-set, and publish <code>eventRefreshStatus</code>;
+<code>status</code> carries <code>events</code>, <code>refreshing</code> and <code>lastRefresh</code>.</p>
+<p>The assistant's MCP server listens on <code>127.0.0.1:8765</code> (<code>-mcp</code>, <code>STATION_MCP</code>;
+<code>off</code> disables it). It has the control room's 23 tools: logins, On Demand's
+catalog, sports, always-on channels, and <code>job_status</code>. <code>add_sport_channel</code> needs a
+dial, which only the Manager has, so the tower doesn't offer it.</p>
+<h2 id="not-yet-in-the-go-tower">Not yet in the Go tower <a class="header-anchor" href="#not-yet-in-the-go-tower">#</a></h2>
+<p>Listed so a client knows what a Go tower answers, not so it can't be done.</p>
+<table>
+<thead>
+<tr>
+<th>What</th>
+<th>Go tower</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>The assistant's <code>add_login</code>, <code>swap_login</code>, <code>remap_feeds</code> (added on <code>main</code> after this was written)</td>
+<td>being ported</td>
+</tr>
+</tbody>
+</table>
+
+    <nav class="pager" aria-label="Pages">
+      <span><a href="../android/"><small>Previous</small>An Android TV box for Dad</a></span>
+      <span><a href="../channel-feeds/"><small>Next</small>Channels apart from providers</a></span>
+    </nav>
+  </article>
+</div>
+</body>
+</html>
