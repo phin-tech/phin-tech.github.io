@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Booth docs">
     <h2>Booth</h2>
-    <p class="version">v0.2.1 · 2026-11-24</p>
+    <p class="version">v0.3.0 · 2026-11-24</p>
     <ul>
     
       <li><a href="" aria-current="page">Booth</a>
@@ -93,7 +93,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/Booth/Booth-0.2.1.zip">Download v0.2.1</a>
+    <a class="get" href="https://apps.phin.tech/Booth/Booth-0.3.0.zip">Download v0.3.0</a>
   </nav>
   <article>
     <h1>Booth</h1>
@@ -133,7 +133,7 @@ writes <code>script.vtt</code>: what the takes in use say, and when, along the w
 <p>Pick a scene and its narration appears as a teleprompter, split into the chunks demoreel cut it into. A marker sits on
 the word to say now. What happens on screen (a bullet appears, a click, a key) is shown as a tag above its chunk and as a
 dot on the timeline, so you know where to pause.</p>
-<p><img src="https://apps.phin.tech/Booth/docs/media/teleprompter.png?v=0.2.1" alt="The timeline, with its cues, over the teleprompter" /></p>
+<p><img src="https://apps.phin.tech/Booth/docs/media/teleprompter.png?v=0.3.0" alt="The timeline, with its cues, over the teleprompter" /></p>
 <p>The video and the teleprompter can each open in a window of their own (⌥⌘V and ⌥⌘T), and ⌥⌘L moves the teleprompter
 between beside the video and below it.</p>
 <h2 id="it-follows-you-not-a-clock">It follows you, not a clock <a class="header-anchor" href="#it-follows-you-not-a-clock">#</a></h2>
@@ -146,7 +146,7 @@ script takes as long as the scene does.</p>
 them with how each compares with the scene: <em>fits, with so many seconds spare</em>, <em>short</em>, or <em>so many seconds over</em>.
 Tick the one the scene uses; the choice is kept in <code>audio/takes.json</code>, for demoreel to read, and <code>demo.json</code> is not
 touched.</p>
-<p><img src="https://apps.phin.tech/Booth/docs/media/takes.png?v=0.2.1" alt="The takes drawer, with a take's chunks and their retakes" /></p>
+<p><img src="https://apps.phin.tech/Booth/docs/media/takes.png?v=0.3.0" alt="The takes drawer, with a take's chunks and their retakes" /></p>
 <h2 id="retake-a-chunk-not-the-whole-scene">Retake a chunk, not the whole scene <a class="header-anchor" href="#retake-a-chunk-not-the-whole-scene">#</a></h2>
 <p>When one sentence went wrong, <strong>Retake</strong> it. Booth records just that chunk and puts it into the take, and keeps the
 original to play beside it. Where another take got a chunk right, <strong>borrow</strong> it into the take the scene uses. Where
@@ -198,12 +198,20 @@ bottom of the window, with a button to stop it.</p>
 <p>A generated take is marked in the takes drawer with the engine that read it (hover for the voice), and a chunk read
 again by a voice has a waveform on its version pill. Booth keeps which voice read what in <code>&lt;take&gt;.voice.json</code> beside the
 take; demoreel ignores it.</p>
+<p>A word a voice reads wrong can be spelled out for it in <code>demo.json</code>: <code>&quot;say&quot;: { &quot;demoreel&quot;: &quot;demo reel&quot; }</code>. Only the
+voices get the spelling; the script, the teleprompter and the captions keep the word as written.</p>
 <p>The narration's <code>[audio tags]</code> go to the engine that understands them, written its way; tags it doesn't know are left
 out, as they are for Kokoro, so <code>[enthusiasm]</code> is never read aloud.</p>
 <h2 id="edit-the-line-where-you-stumbled-on-it">Edit the line where you stumbled on it <a class="header-anchor" href="#edit-the-line-where-you-stumbled-on-it">#</a></h2>
 <p>⌘E turns the teleprompter into a script editor. Saving writes the new narration into <code>demo.json</code> for that scene and
 changes nothing else in the file: your keys stay in the order you wrote them, and your indentation stays as it was.</p>
 <h2 id="start-from-a-video-of-your-own">Start from a video of your own <a class="header-anchor" href="#start-from-a-video-of-your-own">#</a></h2>
+<p><strong>File › Record Screen…</strong> (⌃⌘R) records it for you: pick a window or a whole display in macOS's own picker (Booth
+needs no Screen Recording permission for that), and do what you want to show. A red ● with the time sits in the menu
+bar while it records; click it, or choose File › Stop Recording Screen, and Booth asks where the project goes and makes
+it around the recording, as below. With <strong>Record My Voice with the Screen</strong> ticked in the File menu, the microphone is
+recorded too: talk as you go, and what you said becomes the script, split into chunks where you paused, ready to cut
+and record properly. Untick it to record the screen alone and narrate afterwards.</p>
 <p><strong>File › New Project from Video…</strong> (⇧⌘N) makes a project around any video: Booth copies it into the project's <code>media/</code>
 folder and writes a <code>demo.json</code> with one full-frame scene, its whole length. <strong>Add Video to Project…</strong> puts another one
 after the scenes there are. Booth plays the stretch of video itself, so there is nothing to render first.</p>
