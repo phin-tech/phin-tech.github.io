@@ -84,16 +84,16 @@
 <div class="layout">
   <nav class="side" aria-label="Booth docs">
     <h2>Booth</h2>
-    <p class="version">v0.1.1 · 2026-11-23</p>
+    <p class="version">v0.2.0 · 2026-11-24</p>
     <ul>
     
       <li><a href="" aria-current="page">Booth</a>
       
-        <ul class="toc"><li class="l2"><a href="#install">Install</a></li><li class="l2"><a href="#open-a-project">Open a project</a></li><li class="l2"><a href="#the-script-beside-the-picture">The script, beside the picture</a></li><li class="l2"><a href="#it-follows-you-not-a-clock">It follows you, not a clock</a></li><li class="l2"><a href="#takes">Takes</a></li><li class="l2"><a href="#retake-a-chunk-not-the-whole-scene">Retake a chunk, not the whole scene</a></li><li class="l2"><a href="#edit-the-line-where-you-stumbled-on-it">Edit the line where you stumbled on it</a></li><li class="l2"><a href="#settings">Settings</a></li><li class="l2"><a href="#develop">Develop</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#install">Install</a></li><li class="l2"><a href="#open-a-project">Open a project</a></li><li class="l2"><a href="#where-the-narration-lives">Where the narration lives</a></li><li class="l2"><a href="#the-script-beside-the-picture">The script, beside the picture</a></li><li class="l2"><a href="#it-follows-you-not-a-clock">It follows you, not a clock</a></li><li class="l2"><a href="#takes">Takes</a></li><li class="l2"><a href="#retake-a-chunk-not-the-whole-scene">Retake a chunk, not the whole scene</a></li><li class="l2"><a href="#or-have-a-voice-read-it">Or have a voice read it</a></li><li class="l2"><a href="#edit-the-line-where-you-stumbled-on-it">Edit the line where you stumbled on it</a></li><li class="l2"><a href="#start-from-a-video-of-your-own">Start from a video of your own</a></li><li class="l2"><a href="#let-an-agent-help">Let an agent help</a></li><li class="l2"><a href="#settings">Settings</a></li><li class="l2"><a href="#develop">Develop</a></li></ul>
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/Booth/Booth-0.1.1.zip">Download v0.1.1</a>
+    <a class="get" href="https://apps.phin.tech/Booth/Booth-0.2.0.zip">Download v0.2.0</a>
   </nav>
   <article>
     <h1>Booth</h1>
@@ -108,13 +108,31 @@ record is kept as a take the scene can use.</p>
 Booth updates itself. It needs macOS 14 Sonoma or later and a microphone.</p>
 <h2 id="open-a-project">Open a project <a class="header-anchor" href="#open-a-project">#</a></h2>
 <p><strong>Open Project…</strong> (⌘O) takes a demoreel project folder, the one with <code>demo.json</code> in it. Render the scenes first with
-<code>demoreel export</code>: Booth plays the videos in <code>out/scenes/</code> and reads each scene's length and what happens in it from
-<code>out/manifest.json</code>. <strong>Reload</strong> (⌘R) picks up a new render or an edited <code>demo.json</code>.</p>
+<code>demoreel export</code>: Booth plays each scene's stretch of the film it writes to <code>out/</code> (or, after <code>demoreel export --scenes</code>,
+the scene's own video in <code>out/scenes/</code>), and reads each scene's length and what happens in it from <code>out/manifest.json</code>.
+Booth reloads by itself when an export finishes, and <strong>Reload</strong> (⌘R) picks up an edited <code>demo.json</code>.</p>
+<p>A take changes how long its scene lasts, so export again after picking one. <strong>Render</strong> (⇧⌘R) runs demoreel's export on
+the project at draft quality (its menu has full quality). Booth offers to install demoreel the first time it starts
+without one: it gets it from GitHub into <code>~/Library/Application Support/Booth/demoreel</code> (it needs git and Node 22 or
+newer, and says which is missing). Settings has Install and Update, or you can point it at a demoreel checkout of your
+own. Booth records, cuts and edits scripts without demoreel; only Render needs it. Or leave <code>demoreel watch &lt;folder&gt;</code> running in a terminal, which
+exports whenever a take is picked.</p>
+<h2 id="where-the-narration-lives">Where the narration lives <a class="header-anchor" href="#where-the-narration-lives">#</a></h2>
+<p>A project keeps each scene's narration in <code>demo.json</code>, or, once it has a <code>script.md</code>, there: a <code>## &lt;scene name&gt;</code>
+heading per scene, then a paragraph per chunk, to write and edit as prose in any editor. <strong>File › Keep Narration in
+script.md</strong> moves it there (and out of <code>demo.json</code>), and a rough take with no script does it by itself. From then on,
+everything that changes narration in Booth (the script editor, cutting and joining scenes, an agent) writes script.md,
+and Booth reloads when you save it elsewhere. Booth gives each scene a short <code>ref</code> in <code>demo.json</code> and puts it at the end
+of its heading, <code>## intro · 01 · 0:00 – 0:07 {#k7qx}</code>, so a scene keeps its narration when it is renamed, renumbered or
+shares its name. When Booth changes the script it changes only the lines it is about: your wrapping, comments and notes
+stay. A heading that matches no scene shows a warning. The rules are in demoreel's
+<a href="https://github.com/phin-tech/demoreel/tree/main/spec">spec/</a>, which Booth's tests run. <strong>File › Write Captions</strong>
+writes <code>script.vtt</code>: what the takes in use say, and when, along the whole video. demoreel reads script.md the same way.</p>
 <h2 id="the-script-beside-the-picture">The script, beside the picture <a class="header-anchor" href="#the-script-beside-the-picture">#</a></h2>
 <p>Pick a scene and its narration appears as a teleprompter, split into the chunks demoreel cut it into. A marker sits on
 the word to say now. What happens on screen (a bullet appears, a click, a key) is shown as a tag above its chunk and as a
 dot on the timeline, so you know where to pause.</p>
-<p><img src="https://apps.phin.tech/Booth/docs/media/teleprompter.png?v=0.1.1" alt="The timeline, with its cues, over the teleprompter" /></p>
+<p><img src="https://apps.phin.tech/Booth/docs/media/teleprompter.png?v=0.2.0" alt="The timeline, with its cues, over the teleprompter" /></p>
 <p>The video and the teleprompter can each open in a window of their own (⌥⌘V and ⌥⌘T), and ⌥⌘L moves the teleprompter
 between beside the video and below it.</p>
 <h2 id="it-follows-you-not-a-clock">It follows you, not a clock <a class="header-anchor" href="#it-follows-you-not-a-clock">#</a></h2>
@@ -127,17 +145,108 @@ script takes as long as the scene does.</p>
 them with how each compares with the scene: <em>fits, with so many seconds spare</em>, <em>short</em>, or <em>so many seconds over</em>.
 Tick the one the scene uses; the choice is kept in <code>audio/takes.json</code>, for demoreel to read, and <code>demo.json</code> is not
 touched.</p>
-<p><img src="https://apps.phin.tech/Booth/docs/media/takes.png?v=0.1.1" alt="The takes drawer, with a take's chunks and their retakes" /></p>
+<p><img src="https://apps.phin.tech/Booth/docs/media/takes.png?v=0.2.0" alt="The takes drawer, with a take's chunks and their retakes" /></p>
 <h2 id="retake-a-chunk-not-the-whole-scene">Retake a chunk, not the whole scene <a class="header-anchor" href="#retake-a-chunk-not-the-whole-scene">#</a></h2>
 <p>When one sentence went wrong, <strong>Retake</strong> it. Booth records just that chunk and puts it into the take, and keeps the
 original to play beside it. Where another take got a chunk right, <strong>borrow</strong> it into the take the scene uses. Where
 each chunk ends is found from the words recognised in the finished take; when it has to be estimated from the pauses
 instead, the drawer says so and asks you to listen to verify the cuts.</p>
+<h2 id="or-have-a-voice-read-it">Or have a voice read it <a class="header-anchor" href="#or-have-a-voice-read-it">#</a></h2>
+<p>Booth can read the narration for you, on your Mac, with an open-source voice engine. Install one or more in
+<strong>Settings › Voices</strong>:</p>
+<table>
+<thead>
+<tr>
+<th>Engine</th>
+<th>Like</th>
+<th>Download</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Kokoro</td>
+<td>Small and quick, with eleven American and British voices. Reads plainly.</td>
+<td>0.4 GB</td>
+</tr>
+<tr>
+<td>Chatterbox Turbo</td>
+<td>Natural and quick, one voice. Acts on <code>[laugh]</code>, <code>[chuckle]</code>, <code>[sigh]</code>, <code>[gasp]</code>, <code>[cough]</code>, <code>[groan]</code>, <code>[sniff]</code>, <code>[shush]</code> and <code>[clear throat]</code>.</td>
+<td>0.9 GB</td>
+</tr>
+<tr>
+<td>Orpheus</td>
+<td>The most expressive, and the slowest, with eight voices. Acts on <code>[laugh]</code>, <code>[chuckle]</code>, <code>[sigh]</code>, <code>[cough]</code>, <code>[sniffle]</code>, <code>[groan]</code>, <code>[yawn]</code> and <code>[gasp]</code>.</td>
+<td>2 GB</td>
+</tr>
+</tbody>
+</table>
+<p>The first one also installs a Python runtime they share (about 1.3 GB, with <a href="https://docs.astral.sh/uv/">uv</a>; Booth
+fetches uv too if you don't have it). After that they work offline. Everything goes in
+<code>~/Library/Application Support/Booth/Voices</code>, and removing the last engine removes all of it. They need Apple silicon,
+and aren't in the App Store version.</p>
+<p>The <strong>Generate</strong> button beside Record (a waveform with a plus) reads the scene with the engine and voice you pick, and
+files it as a take like any other (the <strong>Voice</strong> menu does the same with each engine's chosen voice). Booth knows exactly
+where each chunk ends in it, so you can retake its chunks and comp it, and <strong>regenerate</strong> one chunk (the waveform
+button beside Retake) without reading the rest again. A regenerated chunk can go into a recorded take too: it is
+converted to that take's sample rate and channels. Borrowing a chunk between a generated take and a recorded one
+doesn't work, as they are recorded differently (24 kHz mono against your microphone's format); regenerate it there
+instead.</p>
+<p><strong>Voice › Generate All Scenes with …</strong> reads every scene with narration, one after another, each into a new take that
+becomes the one the scene uses (the takes there before are kept, so you can switch back). Its progress shows at the
+bottom of the window, with a button to stop it.</p>
+<p>A generated take is marked in the takes drawer with the engine that read it (hover for the voice), and a chunk read
+again by a voice has a waveform on its version pill. Booth keeps which voice read what in <code>&lt;take&gt;.voice.json</code> beside the
+take; demoreel ignores it.</p>
+<p>The narration's <code>[audio tags]</code> go to the engine that understands them, written its way; tags it doesn't know are left
+out, as they are for Kokoro, so <code>[enthusiasm]</code> is never read aloud.</p>
 <h2 id="edit-the-line-where-you-stumbled-on-it">Edit the line where you stumbled on it <a class="header-anchor" href="#edit-the-line-where-you-stumbled-on-it">#</a></h2>
 <p>⌘E turns the teleprompter into a script editor. Saving writes the new narration into <code>demo.json</code> for that scene and
 changes nothing else in the file: your keys stay in the order you wrote them, and your indentation stays as it was.</p>
+<h2 id="start-from-a-video-of-your-own">Start from a video of your own <a class="header-anchor" href="#start-from-a-video-of-your-own">#</a></h2>
+<p><strong>File › New Project from Video…</strong> (⇧⌘N) makes a project around any video: Booth copies it into the project's <code>media/</code>
+folder and writes a <code>demo.json</code> with one full-frame scene, its whole length. <strong>Add Video to Project…</strong> puts another one
+after the scenes there are. Booth plays the stretch of video itself, so there is nothing to render first.</p>
+<p>Then work in either order:</p>
+<ul>
+<li><strong>Cut first, then record.</strong> Move the playhead to where a scene should end and press <strong>Cut at Playhead</strong> (⌘K) on the
+timeline. Write each scene's narration and record it as usual.</li>
+<li><strong>Dub it rough, then edit the script.</strong> Record over the video with no script and say whatever fits: what you said
+becomes each scene's narration, in <code>script.md</code> in the project (a heading per scene, a paragraph per chunk), and
+<code>script.vtt</code> has what you said and when, along the whole video. Edit <code>script.md</code> in any editor: a blank line starts the
+next chunk, and lines without one between them are one chunk however they wrap. Booth reloads when you save it, so
+your edits are the script to record properly or have a voice read.</li>
+<li><strong>Mark as it plays.</strong> Press <strong>M</strong> at each place a new scene should start, as the video plays or while you record over
+it. Each press drops a mark (blue scissors) on the timeline, a quarter second earlier for the time a press takes, and
+on a shot change or pause that Find Cuts found within half a second. Scrub to check one; its menu moves it to the
+playhead or dismisses it. <strong>Cut at Marks</strong> (the scissors with a count) then cuts at all of them at once. The key can be
+changed in Settings.</li>
+<li><strong>Record first, then cut.</strong> Record over the whole video. With no script, what you said becomes the narration, split
+into sentences where you paused. Then cut it: each chunk goes to the scene it was said in, and every take is cut at the
+quietest moment near the cut, so the scenes keep their takes.</li>
+</ul>
+<p><strong>Find Cuts</strong> (the wand) looks for shot changes in the picture and long pauses in the voice, on your Mac, and marks them
+on the timeline with scissors: click one to cut there or dismiss it. <strong>Join Next</strong> puts a scene and the one after it back
+together, with their narration and the takes they use joined. Nothing recorded is lost: a take that was cut is kept whole,
+with its retakes, in <code>audio/set-aside/</code>, as are the other takes of a scene joined into the one before.
+Cutting or joining renumbers the scenes after it, and their takes are renamed to match.</p>
+<p>Cutting never touches the video file: each scene is a stretch of it. Each scene is a <code>clip</code> with <code>from</code>, <code>to</code> and
+<code>layout: &quot;full&quot;</code> in <code>demo.json</code>, which demoreel renders as that stretch of
+the video, full frame (it needs the demoreel that reads them).</p>
+<h2 id="let-an-agent-help">Let an agent help <a class="header-anchor" href="#let-an-agent-help">#</a></h2>
+<p>Booth can be driven by an agent, such as Claude Code, over MCP. It can read the scenes, look at frames of the video and
+at what was said in a take, suggest cuts (they appear on the timeline for you to take or leave), cut and join scenes,
+have a voice read a scene, and suggest new narration: a line that runs too long, a transcript to tidy, a cue to say as it
+happens. A suggested script shows above the teleprompter with the changed words marked and the agent's reason, and
+<strong>Use It</strong> saves it; it also says which chunks of the takes you have will need retaking. Recording stays with you.</p>
+<p>To add it to Claude Code, copy the command from <strong>Settings › Agents</strong>; it is</p>
+<pre><code class="language-sh">claude mcp add booth -- /Applications/Booth.app/Contents/MacOS/booth-mcp
+</code></pre>
+<p><code>booth-mcp</code> starts Booth if it isn't running and works on the project open in it, on this Mac only. Not in the App Store
+version.</p>
 <h2 id="settings">Settings <a class="header-anchor" href="#settings">#</a></h2>
-<p>Settings › Updates turns automatic update checks on and off, and <strong>Get beta versions</strong> adds the beta channel.</p>
+<p>Settings › Updates turns automatic update checks on and off, and <strong>Get beta versions</strong> adds the beta channel.
+Settings › Voices installs and removes the voice engines, and picks each one's voice. Settings › Agents turns the MCP
+server on and off, and has the command to give an agent.</p>
 <h2 id="develop">Develop <a class="header-anchor" href="#develop">#</a></h2>
 <pre><code class="language-sh">just build   # needs Xcode and xcodegen
 just test
