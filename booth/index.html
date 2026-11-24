@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Booth docs">
     <h2>Booth</h2>
-    <p class="version">v0.2.0 · 2026-11-24</p>
+    <p class="version">v0.2.1 · 2026-11-24</p>
     <ul>
     
       <li><a href="" aria-current="page">Booth</a>
@@ -93,7 +93,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/Booth/Booth-0.2.0.zip">Download v0.2.0</a>
+    <a class="get" href="https://apps.phin.tech/Booth/Booth-0.2.1.zip">Download v0.2.1</a>
   </nav>
   <article>
     <h1>Booth</h1>
@@ -112,10 +112,11 @@ Booth updates itself. It needs macOS 14 Sonoma or later and a microphone.</p>
 the scene's own video in <code>out/scenes/</code>), and reads each scene's length and what happens in it from <code>out/manifest.json</code>.
 Booth reloads by itself when an export finishes, and <strong>Reload</strong> (⌘R) picks up an edited <code>demo.json</code>.</p>
 <p>A take changes how long its scene lasts, so export again after picking one. <strong>Render</strong> (⇧⌘R) runs demoreel's export on
-the project at draft quality (its menu has full quality). Booth offers to install demoreel the first time it starts
-without one: it gets it from GitHub into <code>~/Library/Application Support/Booth/demoreel</code> (it needs git and Node 22 or
-newer, and says which is missing). Settings has Install and Update, or you can point it at a demoreel checkout of your
-own. Booth records, cuts and edits scripts without demoreel; only Render needs it. Or leave <code>demoreel watch &lt;folder&gt;</code> running in a terminal, which
+the project at draft quality (its menu has full quality). Booth uses demoreel from Homebrew (<code>brew install phin-tech/tap/demoreel</code>)
+when it finds it, and offers to install it the first time it starts without one: with Homebrew when the Mac has it, else
+from GitHub into <code>~/Library/Application Support/Booth/demoreel</code> (that needs git, Node 22 or newer and ffmpeg, and says
+which is missing). Settings has Install and Update for a demoreel Booth installed, or you can point it at a checkout of
+your own. Booth records, cuts and edits scripts without demoreel; only Render needs it. Or leave <code>demoreel watch &lt;folder&gt;</code> running in a terminal, which
 exports whenever a take is picked.</p>
 <h2 id="where-the-narration-lives">Where the narration lives <a class="header-anchor" href="#where-the-narration-lives">#</a></h2>
 <p>A project keeps each scene's narration in <code>demo.json</code>, or, once it has a <code>script.md</code>, there: a <code>## &lt;scene name&gt;</code>
@@ -132,7 +133,7 @@ writes <code>script.vtt</code>: what the takes in use say, and when, along the w
 <p>Pick a scene and its narration appears as a teleprompter, split into the chunks demoreel cut it into. A marker sits on
 the word to say now. What happens on screen (a bullet appears, a click, a key) is shown as a tag above its chunk and as a
 dot on the timeline, so you know where to pause.</p>
-<p><img src="https://apps.phin.tech/Booth/docs/media/teleprompter.png?v=0.2.0" alt="The timeline, with its cues, over the teleprompter" /></p>
+<p><img src="https://apps.phin.tech/Booth/docs/media/teleprompter.png?v=0.2.1" alt="The timeline, with its cues, over the teleprompter" /></p>
 <p>The video and the teleprompter can each open in a window of their own (⌥⌘V and ⌥⌘T), and ⌥⌘L moves the teleprompter
 between beside the video and below it.</p>
 <h2 id="it-follows-you-not-a-clock">It follows you, not a clock <a class="header-anchor" href="#it-follows-you-not-a-clock">#</a></h2>
@@ -145,7 +146,7 @@ script takes as long as the scene does.</p>
 them with how each compares with the scene: <em>fits, with so many seconds spare</em>, <em>short</em>, or <em>so many seconds over</em>.
 Tick the one the scene uses; the choice is kept in <code>audio/takes.json</code>, for demoreel to read, and <code>demo.json</code> is not
 touched.</p>
-<p><img src="https://apps.phin.tech/Booth/docs/media/takes.png?v=0.2.0" alt="The takes drawer, with a take's chunks and their retakes" /></p>
+<p><img src="https://apps.phin.tech/Booth/docs/media/takes.png?v=0.2.1" alt="The takes drawer, with a take's chunks and their retakes" /></p>
 <h2 id="retake-a-chunk-not-the-whole-scene">Retake a chunk, not the whole scene <a class="header-anchor" href="#retake-a-chunk-not-the-whole-scene">#</a></h2>
 <p>When one sentence went wrong, <strong>Retake</strong> it. Booth records just that chunk and puts it into the take, and keeps the
 original to play beside it. Where another take got a chunk right, <strong>borrow</strong> it into the take the scene uses. Where
