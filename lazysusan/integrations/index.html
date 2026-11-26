@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Lazy Susan docs">
     <h2>Lazy Susan</h2>
-    <p class="version">v0.0.1 · 2026-11-26</p>
+    <p class="version">v0.0.2 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Lazy Susan</a>
@@ -96,7 +96,7 @@
       </li>
     
     </ul>
-    <a class="get" href="https://apps.phin.tech/LazySusan/LazySusan-0.0.1.zip">Download v0.0.1</a>
+    <a class="get" href="https://apps.phin.tech/LazySusan/LazySusan-0.0.2.zip">Download v0.0.2</a>
   </nav>
   <article>
     <h1>Integrating another app with Lazy Susan</h1>
@@ -127,9 +127,12 @@ include the user's own folders. <strong>Use absolute paths</strong>, double-quot
 and reads its standard output as JSON: either an array of items or <code>{ &quot;actions&quot;: [ ... ] }</code>.</p>
 <ul>
 <li>It must finish within 3 seconds and exit 0. Otherwise the group shows as failed, with the first line of standard
-error.</li>
+error (the last line, since a login shell such as fish may print its own startup errors first).</li>
 <li>Items may leave out <code>key</code>. Lazy Susan then gives them <code>1</code>–<code>9</code>, <code>0</code>, then <code>a</code>–<code>z</code>, skipping keys already used.</li>
 <li>Items may be groups, including other dynamic groups.</li>
+<li>A dynamic group shows its items as soon as it is entered, even when the user has the cheatsheet on a delay: its
+items change, so nobody knows them by heart. Any group can set <code>&quot;showImmediately&quot;: true</code> (or <code>false</code> to turn this
+off for a dynamic group).</li>
 </ul>
 <p>Example output of <code>cubicle leader go</code>:</p>
 <pre><code class="language-json">[
