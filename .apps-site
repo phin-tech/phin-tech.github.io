@@ -1,6 +1,7 @@
 bitmachine/adr/0001-bitmachine-owns-the-play-order/index.html
 bitmachine/adr/0002-skins-are-classic-wsz-sprite-sheets/index.html
 bitmachine/adr/0003-apple-music-audio-through-bitmachine/index.html
+bitmachine/adr/0004-stations-decoded-by-bitmachine/index.html
 bitmachine/index.html
 boiler-room/being-told/index.html
 boiler-room/command-line/index.html
