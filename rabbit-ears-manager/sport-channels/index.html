@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Rabbit Ears Manager docs">
     <h2>Rabbit Ears Manager</h2>
-    <p class="version">v1.0.1 · 2026-11-22</p>
+    <p class="version">v1.0.3 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Rabbit Ears Manager</a>
@@ -126,6 +126,30 @@
       <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
       </li>
     
+      <li><a href="../history/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../history/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../history/CUTOVER/">Moving luigi from the Swift tower to the Go one</a>
+      </li>
+    
+      <li><a href="../history/linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../history/manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../history/remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../history/vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../history/vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
       <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
       </li>
     
@@ -135,22 +159,10 @@
       <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
       </li>
     
-      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
-      </li>
-    
-      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
-      </li>
-    
-      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      <li><a href="../mcp/">Antenna Tower&#39;s MCP server</a>
       </li>
     
       <li><a href="../packages/">The station&#39;s packages</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
       </li>
     
       <li><a href="../profiles/">Profiles</a>
@@ -159,10 +171,7 @@
       <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
       </li>
     
-      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
-      </li>
-    
-      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      <li><a href="../settings-sync/">Settings from Antenna Tower</a>
       </li>
     
       <li><a href="../sport-channels/" aria-current="page">Sport channels</a>
@@ -179,14 +188,8 @@
       <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
       </li>
     
-      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
-      </li>
-    
-      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
-      </li>
-    
     </ul>
-    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.3.zip">Download v1.0.3</a>
   </nav>
   <article>
     <h1>Sport channels</h1>
@@ -196,7 +199,7 @@ from several logins. This makes them <strong>sport channels</strong>: all the NF
 whichever folders and providers carry it.</p>
 <h2 id="what-the-providers-actually-do">What the providers actually do <a class="header-anchor" href="#what-the-providers-actually-do">#</a></h2>
 <p>Surveyed on Trex and Strong on 2026-09-27. Real titles are in
-<a href="https://apps.phin.tech/rabbit-ears-manager/docs/sport-examples.json?v=1.0.1">sport-examples.json</a>.</p>
+<a href="https://apps.phin.tech/rabbit-ears-manager/docs/sport-examples.json?v=1.0.3">sport-examples.json</a>.</p>
 <ul>
 <li><strong>Event folders are mostly grouped by streaming service, not by sport.</strong> They
 include ESPN+ (600 slots), FLO (1,000), Peacock, BTN+, DAZN, Paramount+, TSN+
@@ -389,44 +392,45 @@ slot in them is sorted as above. Ticking one means &quot;look in here&quot;.</li
 <li><strong>A single game</strong>: move it to another sport, or hide it (&quot;not a live game&quot;).</li>
 <li><strong>Aliases</strong>: add a name to a sport, for every login and later folders.</li>
 </ul>
-<p>Overrides sync through iCloud and are saved as labelled examples (see Phase 2).
+<p>Overrides sync through Antenna Tower and are saved as labelled examples (see Phase 2).
 The team lists stay in code.</p>
 <h3 id="on-the-apple-tv">On the Apple TV <a class="header-anchor" href="#on-the-apple-tv">#</a></h3>
-<p>The Apple TV runs the same rules (they're in <code>RetroLineup</code>) with your synced
+<p>The Apple TV runs the same rules with your synced
 overrides and aliases, so games are sorted without the Mac. What only Jev could
-place sits in PPV / Other until the Manager sorts it, then moves.</p>
+place sits in PPV / Other until Antenna Tower sorts it, then moves.</p>
 <p><strong>Sorting is kept off the remote.</strong> Sorting the NFL channel's 8 folders
 (1,064 slots, 69 of them NFL) took 130 ms on a Mac and ran again on every
 up/down press, so the remote lagged on the Apple TV. Now (2026-09-27):</p>
 <ul>
-<li>The Manager saves each channel's sorted games after every refresh
+<li>Antenna Tower saves each channel's sorted games after every refresh
 (<code>EventGames</code>, synced; the NFL's is 19 KB against 147 KB of slots).</li>
 <li><s>A player plays those while they're under 90 minutes old. Otherwise it
 fetches and sorts the folders itself.</s> Since 2026-10-30 the screens never
 sort (see below).</li>
-<li>Only the Manager writes schedules and games to iCloud; the players read them.</li>
+<li>Only Antenna Tower writes schedules and games; the players read them.</li>
 </ul>
-<p><strong>The screens only play what the control room sorted</strong> (2026-10-30). None of
+<p><strong>The screens only play what Antenna Tower sorted</strong> (2026-10-30). None of
 the sport rules, Jev or the folders' fetching is on a TV or phone any more: the
 TV app should be a player of a list, for App Review.</p>
 <ul>
-<li>The control room (the Manager that serves the station, or the control room
-on Linux: docs/linux-server.md, stage 6) publishes each channel's
+<li>Antenna Tower (<code>tower/internal/jobs/</code>, originally the control room in
+<a href="../history/linux-server/">history/linux-server.md</a>) publishes each channel's
 <code>EventGames</code>: its games, and <code>shows</code>, when each always-on stream's guide
 shows the sport. Channels with only always-on streams get one too.</li>
 <li>A screen reads it (<code>ChannelGames.published</code>) and decides only by the
 clock what's on. However old the sort, it's played. Past 90 minutes the
 channel's &quot;coming up&quot; card says &quot;Listings as of 3 h ago&quot;, and with none
 yet it's &quot;waiting for the station's sports guide&quot;.</li>
-<li>A sort made for a channel as it was is ignored, so the control room sorts
+<li>A sort made for a channel as it was is ignored, so Antenna Tower sorts
 again as soon as the lineup changes.</li>
-<li><strong>None of it is in a screen's app.</strong> The rules are <code>RetroSports</code> (in the
-RetroLineup package: <code>Sports</code>, <code>SportJudge</code>, ESPN's <code>Schedules</code>, the event
-parser and feed, the games' merging, the showings' filters and XMLTV) and
-<code>StationJobs</code> (sports settings, event schedules, sport guides, a channel's
-games). The TV, Mac and phone apps link neither; they keep only the data
+<li><strong>None of it is in a screen's app.</strong> The rules live in <code>RetroSports</code>
+(<code>Packages/Sources/RetroSports/</code>: <code>Sports</code>, <code>SportJudge</code>, ESPN's <code>Schedules</code>,
+the event parser and feed, the games' merging, the showings' filters and XMLTV)
+and <code>StationJobs</code> (<code>Packages/Sources/StationJobs/</code>), and run on Go Antenna Tower
+(<code>tower/internal/sports/</code>, <code>tower/internal/jobs/</code>). The TV and phone apps link
+neither <code>RetroSports</code> nor <code>StationJobs</code>; they keep only the data
 (<code>Game</code>, <code>Event</code>, <code>Showing</code>, <code>EventGames</code>). Old channels' sports are
-guessed in the control room's refresh (<code>IPTVChannels.adoptSports</code>).</li>
+guessed in the tower's refresh.</li>
 </ul>
 <h3 id="settled-while-building-phase-1">Settled while building phase 1 <a class="header-anchor" href="#settled-while-building-phase-1">#</a></h3>
 <ul>
@@ -457,9 +461,9 @@ matched at their real times, and 15 MLB games did, merging 34 entries into 29.</
 </ul>
 <h2 id="phase-2-jev">Phase 2: Jev <a class="header-anchor" href="#phase-2-jev">#</a></h2>
 <p><a href="https://docs.typesafe.ai">TypeSafe</a>'s Jev returns typed judgments with
-probabilities. Only the Manager (Mac) calls it. The key is in the Mac's Keychain,
-and the answers sync through iCloud like <code>EventSchedules</code>, so no other device
-needs the API.</p>
+probabilities. Antenna Tower calls it using its configured <code>typesafeAPIKey</code>
+(<code>Settings › Server</code> in the Manager), and the answers sync like <code>EventSchedules</code>,
+so no other device needs the API.</p>
 <h3 id="what-its-asked">What it's asked <a class="header-anchor" href="#what-its-asked">#</a></h3>
 <p>Each new folder or slot is asked about once, in batches of many questions per
 request, and the answer is cached.</p>
@@ -504,7 +508,7 @@ one to fix.</p>
 <h3 id="labelled-examples">Labelled examples <a class="header-anchor" href="#labelled-examples">#</a></h3>
 <p>Every decision you make in review, and every override, is saved as a labelled
 example (title, folder, sport, live or not). The seed is
-<a href="https://apps.phin.tech/rabbit-ears-manager/docs/sport-examples.json?v=1.0.1">sport-examples.json</a>. <code>just check-sports</code> runs the rules and
+<a href="https://apps.phin.tech/rabbit-ears-manager/docs/sport-examples.json?v=1.0.3">sport-examples.json</a>. <code>just check-sports</code> runs the rules and
 Jev over all of them and prints where either is wrong. Run it before changing the
 sport table. The ones the rules must get right are also tests in <code>RetroLineup</code>.</p>
 <h3 id="settled-while-building-phase-2">Settled while building phase 2 <a class="header-anchor" href="#settled-while-building-phase-2">#</a></h3>
@@ -585,7 +589,7 @@ shows while stepping with up/down.</p>
 </ul>
 
     <nav class="pager" aria-label="Pages">
-      <span><a href="../settings-sync/"><small>Previous</small>Settings from the Mac mini</a></span>
+      <span><a href="../settings-sync/"><small>Previous</small>Settings from Antenna Tower</a></span>
       <span><a href="../telemetry/"><small>Next</small>Telemetry: errors and traces from the screens</a></span>
     </nav>
   </article>

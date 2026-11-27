@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Settings from the Mac mini · Rabbit Ears Manager docs</title>
+<title>Settings from Antenna Tower · Rabbit Ears Manager docs</title>
 <meta name="description" content="Set up the Rabbit Ears station from your Mac: channels, IPTV logins, sports, Plex and the relay.">
 <style>
   :root {
@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Rabbit Ears Manager docs">
     <h2>Rabbit Ears Manager</h2>
-    <p class="version">v1.0.1 · 2026-11-22</p>
+    <p class="version">v1.0.3 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Rabbit Ears Manager</a>
@@ -126,6 +126,30 @@
       <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
       </li>
     
+      <li><a href="../history/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../history/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../history/CUTOVER/">Moving luigi from the Swift tower to the Go one</a>
+      </li>
+    
+      <li><a href="../history/linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../history/manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../history/remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../history/vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../history/vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
       <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
       </li>
     
@@ -135,22 +159,10 @@
       <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
       </li>
     
-      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
-      </li>
-    
-      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
-      </li>
-    
-      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      <li><a href="../mcp/">Antenna Tower&#39;s MCP server</a>
       </li>
     
       <li><a href="../packages/">The station&#39;s packages</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
       </li>
     
       <li><a href="../profiles/">Profiles</a>
@@ -159,10 +171,7 @@
       <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
       </li>
     
-      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
-      </li>
-    
-      <li><a href="../settings-sync/" aria-current="page">Settings from the Mac mini</a>
+      <li><a href="../settings-sync/" aria-current="page">Settings from Antenna Tower</a>
       
         <ul class="toc"><li class="l2"><a href="#plan">Plan</a></li><li class="l3"><a href="#1-every-device-on-the-mac-mini">1. Every device on the Mac mini</a></li><li class="l3"><a href="#2-the-r2-mirror">2. The R2 mirror</a></li><li class="l3"><a href="#3-off-icloud">3. Off iCloud</a></li><li class="l2"><a href="#built">Built</a></li></ul>
       </li>
@@ -179,23 +188,17 @@
       <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
       </li>
     
-      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
-      </li>
-    
-      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
-      </li>
-    
     </ul>
-    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.3.zip">Download v1.0.3</a>
   </nav>
   <article>
-    <h1>Settings from the Mac mini</h1>
-    <p>How the station's settings and each profile's history reach every device once
+    <h1>Settings from Antenna Tower</h1>
+    <p>How the station's settings and each profile's history reach every device now that
 iCloud is gone. The decisions are in
-<a href="../adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/">ADR 0001</a>; this is
-the plan for building them, and what's built.</p>
-<p>iCloud keeps working alongside until the last stage, so every stage ships on
-its own and nothing breaks between them.</p>
+<a href="../adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/">ADR 0001</a> and
+<a href="../adr/0005-the-tower-in-go-behind-a-written-interface/">ADR 0005</a>; the current
+server is the Go tower (<code>tower/</code>, documented in <a href="../api/">api/README.md</a>).
+Below is the original October/November 2026 rollout plan and build log.</p>
 <h2 id="plan">Plan <a class="header-anchor" href="#plan">#</a></h2>
 <h3 id="1-every-device-on-the-mac-mini">1. Every device on the Mac mini <a class="header-anchor" href="#1-every-device-on-the-mac-mini">#</a></h3>
 <ul>
@@ -255,6 +258,10 @@ enroll get an invite; the key-value entitlement comes out of the apps.</li>
 connection), since it can't open a link.</li>
 </ul>
 <h2 id="built">Built <a class="header-anchor" href="#built">#</a></h2>
+<p><em>(Dated October–November 2026 Swift-tower build log; those server-side Swift
+types—<code>StationDatabase</code>, <code>SettingsStore</code>, <code>SettingsLedger</code>, <code>RemoteServer</code>,
+<code>StationMirror</code>—were later retired once Go <code>tower/</code> took over the protocol in
+<a href="../api/">api/README.md</a>.)</em></p>
 <ul>
 <li>
 <p><strong>2026-10-18: stage 1, untested on devices.</strong></p>
@@ -359,7 +366,7 @@ profile still reads them there. iCloud, until it goes, sends them all.</p>
 </ul>
 
     <nav class="pager" aria-label="Pages">
-      <span><a href="../remote-management/"><small>Previous</small>Remote management: one Manager is the server, the others are clients</a></span>
+      <span><a href="../read-ahead/"><small>Previous</small>On Demand read-ahead: played while it downloads</a></span>
       <span><a href="../sport-channels/"><small>Next</small>Sport channels</a></span>
     </nav>
   </article>

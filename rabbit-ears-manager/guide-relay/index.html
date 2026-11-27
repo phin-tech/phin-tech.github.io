@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Rabbit Ears Manager docs">
     <h2>Rabbit Ears Manager</h2>
-    <p class="version">v1.0.1 · 2026-11-22</p>
+    <p class="version">v1.0.3 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Rabbit Ears Manager</a>
@@ -128,6 +128,30 @@
         <ul class="toc"><li class="l2"><a href="#decisions">Decisions</a></li><li class="l2"><a href="#matching-borrowing-from-dispatcharr-2026-10-12">Matching, borrowing from Dispatcharr (2026-10-12)</a></li><li class="l2"><a href="#later">Later</a></li></ul>
       </li>
     
+      <li><a href="../history/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../history/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../history/CUTOVER/">Moving luigi from the Swift tower to the Go one</a>
+      </li>
+    
+      <li><a href="../history/linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../history/manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../history/remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../history/vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../history/vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
       <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
       </li>
     
@@ -137,22 +161,10 @@
       <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
       </li>
     
-      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
-      </li>
-    
-      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
-      </li>
-    
-      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      <li><a href="../mcp/">Antenna Tower&#39;s MCP server</a>
       </li>
     
       <li><a href="../packages/">The station&#39;s packages</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
       </li>
     
       <li><a href="../profiles/">Profiles</a>
@@ -161,10 +173,7 @@
       <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
       </li>
     
-      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
-      </li>
-    
-      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      <li><a href="../settings-sync/">Settings from Antenna Tower</a>
       </li>
     
       <li><a href="../sport-channels/">Sport channels</a>
@@ -179,14 +188,8 @@
       <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
       </li>
     
-      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
-      </li>
-    
-      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
-      </li>
-    
     </ul>
-    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.3.zip">Download v1.0.3</a>
   </nav>
   <article>
     <h1>The guide on the relay: one guide for every screen</h1>
@@ -215,10 +218,10 @@ The zone is asked for once a day per login (<code>ServerClock</code>). It follow
 clocks changing, where a fixed offset would not.</p>
 <h2 id="decisions">Decisions <a class="header-anchor" href="#decisions">#</a></h2>
 <ol>
-<li><strong>The relay builds one guide for the whole lineup.</strong> The Manager running
-the relay (see <code>manager-relay.md</code>) fetches every source, picks each
-channel's guide, and serves the result. A screen asks once and gets
-everything; <code>If-None-Match</code> gets a 304 when nothing changed.</li>
+<li><strong>The relay builds one guide for the whole lineup.</strong> Antenna Tower
+(originally the Manager relay, see <a href="../history/manager-relay/">history/manager-relay.md</a>)
+fetches every source, picks each channel's guide, and serves the result. A screen
+asks once and gets everything; <code>If-None-Match</code> gets a 304 when nothing changed.</li>
 <li><strong>Best source wins, per channel; no merging.</strong> In order: the provider's own
 guide for any of the channel's feeds, then the guide sources in the order
 set in the Manager. The first with listings for the next few hours is the
@@ -237,12 +240,9 @@ networks.</li>
 the Mac with &quot;Run the relay on this Mac&quot; on. Its config and Schedules Direct
 login are set up once per Mac by you (<code>epgo -configure</code>), so the password
 never passes through the app.</li>
-<li><strong>Relay first, iCloud as the backup.</strong> Screens ask the relay. The relay also
-saves the finished guide, compressed, as one file in your <strong>private</strong>
-CloudKit database, and a screen that can't reach the relay reads that. Not
-the settings sync: the key-value store holds 1 MB in all, and a guide
-would crowd out the settings. Needs CloudKit turned on for the apps (team
-J35P7AJDN7).</li>
+<li><strong>Tower first, R2 as the backup.</strong> Screens ask Antenna Tower. (An earlier
+draft proposed private CloudKit as the offline backup before R2 settings sync
+replaced iCloud.)</li>
 <li><strong>Broken sources are skipped for a while.</strong> A source that fails on every
 server (Trex's guide now) isn't asked again for an hour, so a channel goes
 straight to the next source.</li>
@@ -256,8 +256,8 @@ it waits in review; with nothing from the rules, it's used alone only when
 very sure (0.9). The Manager lists every channel with its guide and where
 it came from, flags the ones with none or in review, and a fix there is
 kept. Answers are kept too: only new or changed channels are asked again.</li>
-<li><strong>Screens fall back to fetching for themselves</strong> when neither the relay nor
-the iCloud copy has a guide, as today.</li>
+<li><strong>Screens fall back to fetching for themselves</strong> when neither Antenna Tower nor
+a cached copy has a guide, as today.</li>
 </ol>
 <h2 id="matching-borrowing-from-dispatcharr-2026-10-12">Matching, borrowing from Dispatcharr (2026-10-12) <a class="header-anchor" href="#matching-borrowing-from-dispatcharr-2026-10-12">#</a></h2>
 <p>Compared against <a href="https://github.com/Dispatcharr/Dispatcharr">Dispatcharr</a>'s
@@ -302,7 +302,7 @@ none of these: its next run overwrites a hand-set guide.</li>
 
     <nav class="pager" aria-label="Pages">
       <span><a href="../group-channels/"><small>Previous</small>Group channels</a></span>
-      <span><a href="../iphone/"><small>Next</small>iPhone: a player, a remote and a manager</a></span>
+      <span><a href="../history/2026-11-01-dumb-tv-and-linux/"><small>Next</small>Plan: a dumb TV, and the station on Linux</a></span>
     </nav>
   </article>
 </div>

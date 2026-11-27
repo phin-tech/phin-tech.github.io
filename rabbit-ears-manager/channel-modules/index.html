@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Rabbit Ears Manager docs">
     <h2>Rabbit Ears Manager</h2>
-    <p class="version">v1.0.1 · 2026-11-22</p>
+    <p class="version">v1.0.3 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Rabbit Ears Manager</a>
@@ -128,6 +128,30 @@
       <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
       </li>
     
+      <li><a href="../history/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../history/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../history/CUTOVER/">Moving luigi from the Swift tower to the Go one</a>
+      </li>
+    
+      <li><a href="../history/linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../history/manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../history/remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../history/vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../history/vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
       <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
       </li>
     
@@ -137,22 +161,10 @@
       <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
       </li>
     
-      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
-      </li>
-    
-      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
-      </li>
-    
-      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      <li><a href="../mcp/">Antenna Tower&#39;s MCP server</a>
       </li>
     
       <li><a href="../packages/">The station&#39;s packages</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
       </li>
     
       <li><a href="../profiles/">Profiles</a>
@@ -161,10 +173,7 @@
       <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
       </li>
     
-      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
-      </li>
-    
-      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      <li><a href="../settings-sync/">Settings from Antenna Tower</a>
       </li>
     
       <li><a href="../sport-channels/">Sport channels</a>
@@ -179,14 +188,8 @@
       <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
       </li>
     
-      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
-      </li>
-    
-      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
-      </li>
-    
     </ul>
-    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.3.zip">Download v1.0.3</a>
   </nav>
   <article>
     <h1>Channel modules, and the MBTA channel</h1>
@@ -222,13 +225,13 @@ Listing it in <code>ChannelModules.all</code> puts it on the dial (as
 </ul>
 </li>
 <li><strong>Its screen</strong> (<code>ChannelModule</code>, in
-<code>Packages/StationUI/Sources/StationUI/Station/ChannelModules.swift</code>; the MBTA's is
+<code>Packages/Sources/StationUI/Station/ChannelModules.swift</code>; the MBTA's is
 <code>TransitModule</code>): names its <code>Definition</code>, and has <code>view(page:context:)</code>
 and optionally <code>playPause(page:)</code>. An on/off setting given a <code>title</code> is
 also a switch in the channel's Select menu. Listed in <code>ModuleScreens.all</code>.</li>
 </ul>
 </li>
-<li><strong>The Manager side is a <code>ManagerModule</code></strong> (<code>Packages/ManagerUI/Sources/ManagerUI/ManagerModules.swift</code>):
+<li><strong>The Manager side is a <code>ManagerModule</code></strong> (<code>Packages/Sources/ManagerUI/ManagerModules.swift</code>):
 its definition as <code>Module</code>, its <code>icon</code> and <code>pane()</code>, listed in
 <code>ManagerModules.all</code>. The sidebar shows modules under <strong>Channels</strong>.</li>
 <li><strong>Its tools are mostly generated.</strong> Every module gets <code>get_&lt;toolName&gt;</code> (the
@@ -317,9 +320,10 @@ redrawn onto the flat map row by row. Only where countries have radar;
 RainViewer no longer offers satellite clouds, and serves one colour scheme.</li>
 <li><strong>Planes</strong> (OpenSky Network): every plane in the air, as specks on the World
 page and arrows on the continents, flying on at their own speed and heading
-between updates. They come through the Manager's relay
-(<a href="../manager-relay/">manager-relay.md</a>), which holds the OpenSky login and
-fetches for every screen at once; without a relay, anonymously every 15 minutes.</li>
+between updates. They come through Antenna Tower's relay
+(originally the Manager's relay, <a href="../history/manager-relay/">manager-relay.md</a>),
+which holds the OpenSky login and fetches for every screen at once; without a
+relay, anonymously every 15 minutes.</li>
 <li><strong>Areas</strong> (<code>WorldArea</code>, in <code>areas</code>): places you add in the Manager's World
 pane or with <code>add_world_area</code> (&quot;02155&quot;, 100 miles), found once with Apple's
 place search and kept as a name, a middle and a radius. Each is a page after

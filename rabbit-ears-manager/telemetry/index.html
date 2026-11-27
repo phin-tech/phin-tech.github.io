@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Rabbit Ears Manager docs">
     <h2>Rabbit Ears Manager</h2>
-    <p class="version">v1.0.1 · 2026-11-22</p>
+    <p class="version">v1.0.3 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Rabbit Ears Manager</a>
@@ -126,6 +126,30 @@
       <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
       </li>
     
+      <li><a href="../history/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../history/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../history/CUTOVER/">Moving luigi from the Swift tower to the Go one</a>
+      </li>
+    
+      <li><a href="../history/linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../history/manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../history/remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../history/vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../history/vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
       <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
       </li>
     
@@ -135,22 +159,10 @@
       <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
       </li>
     
-      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
-      </li>
-    
-      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
-      </li>
-    
-      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      <li><a href="../mcp/">Antenna Tower&#39;s MCP server</a>
       </li>
     
       <li><a href="../packages/">The station&#39;s packages</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
       </li>
     
       <li><a href="../profiles/">Profiles</a>
@@ -159,10 +171,7 @@
       <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
       </li>
     
-      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
-      </li>
-    
-      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      <li><a href="../settings-sync/">Settings from Antenna Tower</a>
       </li>
     
       <li><a href="../sport-channels/">Sport channels</a>
@@ -179,14 +188,8 @@
       <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
       </li>
     
-      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
-      </li>
-    
-      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
-      </li>
-    
     </ul>
-    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.3.zip">Download v1.0.3</a>
   </nav>
   <article>
     <h1>Telemetry: errors and traces from the screens</h1>
@@ -208,18 +211,19 @@ can be pointed at the relay before anything listens.</li>
 <code>service.instance.id</code>, else the <code>X-RetroTV-Screen</code> header); its area is the
 <code>retro.area</code> attribute, else the scope name. <code>retro.detail</code> (or
 <code>exception.stacktrace</code>) is its detail.</li>
-<li><strong>Store</strong> (<code>ErrorStore</code>, SQLite, <code>~/Library/Application Support/RetroTV/errors.sqlite</code>
-on the relay's Mac): one row per device, area and message, with a count and
-first and last seen; the most recent 2,000 kept. Only the Mac that hosts the
-relay fills it. The Manager reads it directly; <strong>a Manager paired to another
-Mac's server doesn't see it yet</strong> (it would go under <code>/v1/admin</code>, which checks
-the client key; the household token every Apple TV holds isn't enough to read
-errors).</li>
+<li><strong>Store</strong> (<code>station.sqlite</code>, <code>tower/internal/store/errors.go</code>, <code>*store.Store.RecordErrors</code>;
+HTTP intake in <code>tower/internal/relay/otlp.go</code> via <code>otlpRoutes</code> / <code>decodeOTLP</code>): one row
+per device, area and message, with a count and first and last seen; the most recent
+2,000 kept (<code>errorCapacity = 2000</code>). Every Manager is a remote client and reads errors
+over <code>GET /v1/admin/errors</code> (<code>Packages/Sources/ManagerUI/ErrorsPane.swift</code>), and the
+assistant reads them via <code>get_errors</code> (<code>tower/internal/tools/health.go</code>).</li>
 <li><strong>Screens report</strong> with <code>Telemetry.report(&quot;playback&quot;, &quot;…&quot;, detail:, warning:)</code>
-(<code>Sources/Shared/Relay/Telemetry.swift</code>): batched for a couple of seconds, held
-(up to 100) while no relay answers, never in the way of playback. The Mac
-hosting the relay records its own straight in.</li>
-<li><strong>Redaction happens on the device</strong>, before a record exists (<code>Redact</code>): a login
+(<code>Packages/Sources/StationCore/Relay/Telemetry.swift</code>): batched for a couple of seconds,
+held (up to 100) while no relay answers, never in the way of playback. All screens
+push via <code>POST /v1/logs</code>.</li>
+<li><strong>Redaction happens on the device</strong>, before a record exists (<code>Redact</code> and the OTLP
+value types <code>ErrorReport</code>, <code>OTLPLogs</code>, <code>ErrorEvent</code>, <code>ReportStatus</code>, <code>ProblemReport</code>,
+<code>NewReport</code> in <code>Packages/Sources/RetroLineup/Telemetry.swift</code>): a login
 in an address (<code>/movie/&lt;user&gt;/&lt;pass&gt;/…</code>, <code>user:pass@</code>), <code>username=</code>/<code>password=</code>/
 <code>token=</code> parameters, the rest of an address's query, and any known login's
 username and password wherever they appear.</li>
@@ -230,12 +234,13 @@ playback samples from it over Bonjour; this pushes problems to the relay.</li>
 </ul>
 <h2 id="reports-store-and-admin-api-built-screens-cant-file-them-yet">Reports (store and admin API built; screens can't file them yet) <a class="header-anchor" href="#reports-store-and-admin-api-built-screens-cant-file-them-yet">#</a></h2>
 <p>A person's &quot;this is wrong&quot; from a screen, kept in the <strong>same file</strong> as errors
-(<code>errors.sqlite</code>) but in its own table. Not mixed into <code>errors</code>: those rows are
+(<code>station.sqlite</code>) but in its own table. Not mixed into <code>errors</code>: those rows are
 counted, capped at 2,000 and cleared; a report is one event with a payload,
 kept until dealt with.</p>
 <ul>
-<li><strong>Schema is versioned</strong> (<code>PRAGMA user_version</code>, <code>ErrorStore.migrations</code>):
-entries are only ever appended, a database from a newer app is refused
+<li><strong>Schema is versioned</strong> (<code>PRAGMA user_version</code>, <code>migrations</code> in
+<code>tower/internal/store/store.go</code>):
+entries are only ever appended, a database from a newer tower is refused
 rather than run over, and each step is one transaction. WAL, foreign keys on
 and a busy timeout are set on open.</li>
 <li><strong><code>reports</code></strong> is STRICT, with checks: device and reason non-empty, <code>status</code>
@@ -247,10 +252,12 @@ are pruned); what was happening is snapshotted into <code>context</code>.</li>
 and keeps the note). Closed reports go 90 days after they were closed; open
 ones never. Clearing errors leaves reports alone. A context over 256 KB is
 refused rather than cut.</li>
-<li><strong>Admin API</strong> (<code>/v1/admin</code>, the client key; see remote-management.md):
+<li><strong>Admin API</strong> (<code>/v1/admin</code>, the client key; see <a href="../api/">api/README.md</a>,
+<code>tower/internal/admin/reports.go</code>, and historical notes in
+<a href="../history/remote-management/">history/remote-management.md</a>):
 <code>GET errors</code>, <code>GET reports?status=&amp;limit=</code> (no context), <code>GET reports/&lt;id&gt;</code>
-(with it), <code>PUT reports/&lt;id&gt;</code> <code>{status, note}</code>. So a Manager paired to
-another Mac's server sees the relay Mac's errors and reports.</li>
+(with it), <code>PUT reports/&lt;id&gt;</code> <code>{status, note}</code>. Every Manager is paired to Antenna
+Tower and sees its errors and reports.</li>
 <li><strong>Not built</strong>: a screen filing one (<code>POST /v1/reports</code>, household token,
 redacted on the device), the Manager's Reports pane, and an MCP tool.</li>
 </ul>
@@ -258,10 +265,10 @@ redacted on the device), the Manager's Reports pane, and an MCP tool.</li>
 <p>A synced setting in the Manager: off, errors only, full traces. Off creates no
 spans (no cost). Errors stay on at low volume.</p>
 <h2 id="step-3-traces-not-built">Step 3: traces (not built) <a class="header-anchor" href="#step-3-traces-not-built">#</a></h2>
-<p>Spans on playback, provider calls and relay jobs, sent to the relay's
-<code>/v1/traces</code> and forwarded by an OpenTelemetry Collector (a launchd service on
-the relay's Mac) to Logfire or a local Tempo/Jaeger. The Logfire token lives on
-that Mac, never on a screen. Addresses are redacted as for errors.</p>
+<p>Spans on playback, provider calls and relay jobs, sent to the tower's
+<code>/v1/traces</code> and forwarded by an OpenTelemetry Collector on the tower's host
+to Logfire or a local Tempo/Jaeger. The Logfire token lives on that host, never
+on a screen. Addresses are redacted as for errors.</p>
 
     <nav class="pager" aria-label="Pages">
       <span><a href="../sport-channels/"><small>Previous</small>Sport channels</a></span>

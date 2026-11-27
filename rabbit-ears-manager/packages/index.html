@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Rabbit Ears Manager docs">
     <h2>Rabbit Ears Manager</h2>
-    <p class="version">v1.0.1 · 2026-11-22</p>
+    <p class="version">v1.0.3 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Rabbit Ears Manager</a>
@@ -126,6 +126,30 @@
       <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
       </li>
     
+      <li><a href="../history/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../history/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../history/CUTOVER/">Moving luigi from the Swift tower to the Go one</a>
+      </li>
+    
+      <li><a href="../history/linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../history/manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../history/remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../history/vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../history/vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
       <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
       </li>
     
@@ -135,24 +159,12 @@
       <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
       </li>
     
-      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
-      </li>
-    
-      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
-      </li>
-    
-      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      <li><a href="../mcp/">Antenna Tower&#39;s MCP server</a>
       </li>
     
       <li><a href="../packages/" aria-current="page">The station&#39;s packages</a>
       
-        <ul class="toc"><li class="l2"><a href="#where-its-going">Where it&#39;s going</a></li><li class="l2"><a href="#rules">Rules</a></li><li class="l2"><a href="#steps">Steps</a></li><li class="l2"><a href="#moving-a-targets-files">Moving a target&#39;s files</a></li><li class="l2"><a href="#step-5-built-2026-11-02-stationui">Step 5, built 2026-11-02: StationUI</a></li></ul>
-      </li>
-    
-      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+        <ul class="toc"><li class="l2"><a href="#consolidated-package-layout-packagespackageswift">Consolidated package layout (`Packages/Package.swift`)</a></li><li class="l2"><a href="#rules">Rules</a></li><li class="l2"><a href="#history--retired-shims">History &amp; retired shims</a></li></ul>
       </li>
     
       <li><a href="../profiles/">Profiles</a>
@@ -161,10 +173,7 @@
       <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
       </li>
     
-      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
-      </li>
-    
-      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      <li><a href="../settings-sync/">Settings from Antenna Tower</a>
       </li>
     
       <li><a href="../sport-channels/">Sport channels</a>
@@ -179,67 +188,99 @@
       <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
       </li>
     
-      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
-      </li>
-    
-      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
-      </li>
-    
     </ul>
-    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.3.zip">Download v1.0.3</a>
   </nav>
   <article>
     <h1>The station&#39;s packages</h1>
-    <p>Agreed 2026-10-29; steps 1 to 4 built the same day.</p>
-<p><code>Sources/Shared</code> held everything the apps share: models, providers' clients,
-settings, views and players. Every app compiled all of it, and Antenna Tower
-(the server) compiled the Manager's views and VLCKit to get at the few parts it
-runs. The station is now split by layer into SwiftPM packages, so the server
-can build without the views and, later, on Linux
-(<a href="../linux-server/">linux-server.md</a>).</p>
-<h2 id="where-its-going">Where it's going <a class="header-anchor" href="#where-its-going">#</a></h2>
+    <p><code>Sources/Shared</code> originally held everything the apps shared: models, providers'
+clients, settings, views, and players. It was first split into separate SwiftPM
+packages by layer (so a Swift server could build on Linux without views:
+<a href="../history/linux-server/">history/linux-server.md</a>), and later consolidated into
+a single multi-target manifest at <code>Packages/Package.swift</code> (Swift 6.0, <code>.macOS(.v14)</code>,
+<code>.tvOS(.v17)</code>, <code>.iOS(.v17)</code>) once Antenna Tower moved to Go (<code>tower/</code>).</p>
+<h2 id="consolidated-package-layout-packagespackageswift">Consolidated package layout (<code>Packages/Package.swift</code>) <a class="header-anchor" href="#consolidated-package-layout-packagespackageswift">#</a></h2>
 <table>
 <thead>
 <tr>
-<th>Package (target)</th>
+<th>Target</th>
 <th>What's in it</th>
-<th>Runs on</th>
+<th>Platforms</th>
 </tr>
 </thead>
 <tbody>
 <tr>
-<td><code>RetroLineup</code> (<code>RetroLineup</code>)</td>
-<td>lineup rules, IPTV parsing, and the games' data</td>
-<td>Apple, Linux</td>
+<td><code>RetroLineup</code></td>
+<td>lineup rules (<code>DialNumbers</code>), IPTV parsing, playback diagnostics, OTLP redaction (<code>Redact</code>, <code>OTLPLogs</code>), VOD models &amp; store</td>
+<td>macOS, tvOS, iOS</td>
 </tr>
 <tr>
-<td><code>RetroLineup</code> (<code>RetroSports</code>)</td>
-<td>the sport rules: reading event folders, sorting slots into sports and games, ESPN's schedules, Jev. Never in a screen's app (App Review: docs/sport-channels.md)</td>
-<td>Apple (Manager), Linux</td>
+<td><code>RetroSports</code></td>
+<td>sport rules (<code>Sports</code>, <code>SportJudge</code>, <code>Schedules</code>, <code>EventParsing</code>, <code>Games</code>, <code>Showings</code>). Linked only by <code>StationJobs</code>, <code>ManagerUI</code>, <code>check-sports</code>, and tests — never a screen app</td>
+<td>macOS, tvOS, iOS</td>
 </tr>
 <tr>
-<td><code>RetroRelay</code></td>
-<td>the relay's client side, remote management's protocol (the relay itself is the Go tower)</td>
-<td>Apple, Linux (not <code>RemoteControl</code>)</td>
+<td><code>check-sports</code></td>
+<td>CLI executable checking sport rules and Jev against <code>docs/sport-examples.json</code> and settled labels (<code>just check-sports</code>)</td>
+<td>macOS</td>
 </tr>
 <tr>
-<td><code>Station</code> (<code>StationCore</code>)</td>
-<td>what the station is, apart from how it looks: channels and their settings, profiles, the providers' clients (IPTV, Plex, Pluto, the MBTA, weather, news), the guide, search, On Demand's catalog and downloads</td>
-<td>Apple, Linux</td>
+<td><code>RelayKit</code></td>
+<td>relay HTTP client (<code>RelayFinder</code> / <code>RelayClient</code> types for <code>/v1/hello</code>, feeds, VOD, logs)</td>
+<td>macOS, tvOS, iOS</td>
 </tr>
 <tr>
-<td><code>Station</code> (<code>StationJobs</code>)</td>
-<td>the Manager's own jobs: event schedules, sports settings and sorting, Jev's review, channel linking, guide files, On Demand's tagging (the Go tower runs the same for the station)</td>
-<td>Apple (Manager), Linux</td>
+<td><code>RelayAdmin</code></td>
+<td>admin API protocol (<code>AdminClient</code>), three-way merge (<code>AdminMerge</code>), R2 mirror formats &amp; CryptoKit sealing (<code>Mirror</code>, <code>R2</code>)</td>
+<td>macOS, tvOS, iOS</td>
+</tr>
+<tr>
+<td><code>RemoteControl</code></td>
+<td>phone remote HTTP server (<code>ControlServer</code>) and client (<code>ControlClient</code>)</td>
+<td>macOS, tvOS, iOS</td>
+</tr>
+<tr>
+<td><code>StationCore</code></td>
+<td>non-UI station state &amp; services: <code>LineupModel</code>, <code>Channel</code>, <code>ChannelModules</code>, <code>SettingsSync</code>, <code>RemoteLink</code>, <code>Telemetry</code>, <code>StationTheme</code> kind, profiles, providers, guide, On Demand catalog/jobs</td>
+<td>macOS, tvOS, iOS</td>
+</tr>
+<tr>
+<td><code>StationJobs</code></td>
+<td>Manager-side job helpers (<code>SportSettings</code>, <code>OnDemandTagger</code>, <code>IPTVChannelSports</code>)</td>
+<td>macOS, tvOS, iOS</td>
+</tr>
+<tr>
+<td><code>Players</code></td>
+<td><code>OnDemandEngine</code> (<code>AVEngine</code>, <code>VLCEngine</code>), <code>VLCSurface</code>, <code>Subtitles</code>: the only target importing <code>VLCKitSPM</code></td>
+<td>macOS, tvOS, iOS</td>
 </tr>
 <tr>
 <td><code>StationUI</code></td>
-<td>what the screens and the Manager show: themes, the guide, the channels' views and players, <code>StationModel</code>. Everything public, for now (below)</td>
-<td>Apple</td>
+<td>broadcast views, <code>StationTheme</code> UI roles, <code>StationModel</code>, <code>RootView</code>, TV Guide, channel screens, <code>InviteOpening</code></td>
+<td>macOS, tvOS, iOS</td>
+</tr>
+<tr>
+<td><code>PhoneUI</code></td>
+<td>iOS/iPadOS touch player, guide, remote, and manager tabs (<code>PhoneRoot</code>, <code>PhoneOnDemand</code>, <code>PhoneRemote</code>, etc.)</td>
+<td>macOS, tvOS, iOS</td>
+</tr>
+<tr>
+<td><code>ManagerUI</code></td>
+<td>Rabbit Ears Manager app windows and panes (<code>ManagerApp</code>, <code>ManagerNavigation</code>, <code>ServerPane</code>, <code>EventsPane</code>, <code>IPTVPane</code>, etc.)</td>
+<td>macOS</td>
 </tr>
 </tbody>
 </table>
-<p>The app folders end up holding only <code>@main</code>, plists and assets.</p>
+<p>Tests live under <code>Packages/Tests/</code> (<code>RetroLineupTests</code>, <code>RelayAdminTests</code>,
+<code>RemoteControlTests</code>, <code>StationTests</code>) and run together via <code>just test</code>
+(<code>swift test --package-path Packages</code>).</p>
+<p>The app folders under <code>Sources/</code> hold only thin <code>@main</code> entry points, plists,
+and assets:</p>
+<ul>
+<li><code>Sources/TVApp/</code> (<code>RetroTVApp.swift</code>) — shared by <code>RetroTV-macOS</code> and <code>RetroTV-tvOS</code></li>
+<li><code>Sources/Manager/</code> (<code>ManagerMain.swift</code>) — <code>RetroTV-Manager</code></li>
+<li><code>Sources/iOS/</code> (<code>PhoneApp.swift</code>) — <code>RetroTV-iOS</code>, delegating UI to <code>PhoneUI</code></li>
+</ul>
 <h2 id="rules">Rules <a class="header-anchor" href="#rules">#</a></h2>
 <ul>
 <li><strong>Nothing in <code>StationCore</code> draws.</strong> No SwiftUI, AVKit, VLCKit, MapKit or
@@ -247,139 +288,34 @@ SceneKit. AppKit and UIKit appear only behind <code>#if os(…)</code>, for life
 notifications.</li>
 <li><strong>A model doesn't live in its view's file.</strong> When a type is both what a thing
 is and how it looks, split it. A channel module is a <code>ModuleDefinition</code>
-(core) and a <code>ChannelModule</code> screen (UI); <code>StationTheme</code> is which look it is
-(core), with its colours in an extension (UI). See
-<a href="../channel-modules/">channel-modules.md</a>.</li>
-<li><strong>No compile flags across packages.</strong> A package can't see an app's
-<code>MANAGER</code> or <code>RELAY</code>. Ask <code>AppKind.current</code> (set first thing in each
-<code>main</code>) instead.</li>
-<li><strong>Only what another module uses is <code>public</code>.</strong> Narrowed 2026-10-29 by
-building every app with nothing public and putting <code>public</code> back where the
-compiler asked: about 1,200 lines rather than 1,600. That includes
-<code>public init</code>s for structs the apps build, and <code>Sendable</code> said outright on
-public value types the apps send between tasks (only internal types get it
-inferred). Tests reach internals with <code>@testable import</code>.</li>
+(in <code>StationCore</code>'s <code>Station/ModuleDefinitions.swift</code>) and a <code>ChannelModule</code>
+screen (in <code>StationUI</code>'s <code>Station/ChannelModules.swift</code>); <code>StationTheme</code> is
+the enum/key in <code>StationCore/Core/StationThemeKind.swift</code>, with its UI roles in
+<code>StationUI/Core/StationTheme.swift</code>. See <a href="../channel-modules/">channel-modules.md</a>.</li>
+<li><strong>No compile flags across packages.</strong> Targets ask <code>AppKind.current</code> (<code>.player</code> or
+<code>.manager</code>, set in <code>Sources/</code> entry points) instead of <code>#if MANAGER</code>.</li>
+<li><strong><code>package</code> vs <code>public</code> visibility.</strong> Targets inside <code>Packages/Package.swift</code>
+share internal package APIs via <code>package</code> access, keeping <code>public</code> restricted to
+what the <code>@main</code> app shells in <code>Sources/</code> and cross-target boundaries actually use
+(with <code>Sendable</code> declared on public value types). Tests reach internals with
+<code>@testable import</code>.</li>
 </ul>
-<h2 id="steps">Steps <a class="header-anchor" href="#steps">#</a></h2>
-<ol>
-<li>
-<p><strong>Split mixed files</strong> (done, <code>4e6b294</code>). Module definitions, the radio
-catalog, the weather store, the Video Store's titles, ad block's settings,
-the theme's kind, and a title's source each got a file of their own, and
-<code>EventChannel</code> stopped using <code>MANAGER</code>.</p>
-</li>
-<li>
-<p><strong><code>StationCore</code></strong> (done). 65 files moved from <code>Sources/Shared</code>, and every
-app imports it. What stays in <code>Shared</code> imports a UI framework, or is a view
-model: <code>StationModel</code>, <code>StationRemote</code>, <code>OnDemandBrowser</code>, <code>GuideCursor</code>,
-<code>WeatherStore</code>.</p>
-</li>
-<li>
-<p><strong><code>StationServer</code></strong> (done). <code>RemoteServer</code>, <code>StationMirror</code>, <code>RelayHost</code>,
-<code>RelayHandover</code>'s tower side, <code>OnDemandTagger</code> and <code>StorageCache</code> from
-<code>Sources/Manager</code>: what <code>TowerMain.serve()</code> starts. The Manager and the
-tower link it. <code>RemoteLink</code> and <code>Invite</code> went to <code>StationCore</code> instead:
-every app joins a server with them. The seams:</p>
-<ul>
-<li><code>RemoteServer</code> reports and runs the event jobs through <code>EventJobs</code>, which
-the Manager's <code>EventRefresher</code> is; their keys are <code>EventRefresh</code>, in the
-core.</li>
-<li>The Manager adds its assistant's switch to the server's settings
-(<code>ServerSetting.hostSettings</code>).</li>
-<li>Restarting is the tower's alone (<code>AppKind.current == .tower</code>), and
-<code>RemoteLink</code> keeps the relay's status as JSON, which the Manager decodes.</li>
-<li>Handing the station over to the tower stays in the Manager
-(<code>RelayHandoverManager.swift</code>): it starts the tower's launchd agent.
-Jobs (<code>EventRefresher</code>, <code>EventScan</code>, <code>SportReview</code>) and the assistant stay
-in the Manager: the tower is the broadcast, the Manager the control room.</li>
-</ul>
-</li>
-<li>
-<p><strong>Linux</strong> (done). <code>just linux-check</code> builds and tests the three packages
-in Docker (Swift 6.3 with SQLite's headers). What stands in for Apple's
-frameworks on Linux:</p>
-<ul>
-<li><code>Logger</code> (RetroLineup's <code>LinuxLogger.swift</code>) writes <code>os.Logger</code>'s calls
-to standard error, <code>privacy:</code> and all.</li>
-<li>SQLite through a <code>CSQLite</code> system library (<code>libsqlite3-dev</code>).</li>
-<li><code>StreamingFetch</code> for <code>URLSession.bytes</code>: a live address's redirect and
-the start of epg.pw's guide, cancelled once read.</li>
-<li>swift-crypto for CryptoKit (the mirror's sealing, R2's signing, SHA256).</li>
-<li><code>Keychain</code> keeps each secret as a <code>0600</code> JSON file under
-<code>$STATION_SECRETS</code> (default <code>~/.local/share/antenna-tower/secrets</code>).</li>
-<li>iCloud's key-value store is an empty stand-in (<code>NoCloud.swift</code>), and
-<code>AppLifecycle.leaving</code> is nil: there's no app to leave.</li>
-<li>The relay advertises itself through <code>avahi-publish</code> when it's
-installed, and looks at its address each minute instead of watching
-the network path.</li>
-</ul>
-<p>Not on Linux yet:</p>
-<ul>
-<li><strong>Read-ahead</strong> (On Demand fetch's local server is an <code>NWListener</code>):
-titles play from their address. Moving it onto Hummingbird is next.</li>
-<li><strong>Posters stay JPEG</strong>, not HEIC.</li>
-<li><strong>The VPN guess</strong> (<code>NetworkRoute</code>) always says no tunnel.</li>
-<li><strong>Bonjour browsing</strong> (<code>RelayFinder</code>): the server never looks for a relay.</li>
-<li><strong>The phone remote's listener and client</strong> (<code>RemoteControl</code>).</li>
-<li><strong>Tests that need a listener:</strong> <code>FetchTests</code> (a local <code>NWListener</code>
-server), the TV's diagnostics server, and the remote's round trip.</li>
-</ul>
-<p>The server itself runs on Linux as <code>antenna-tower-server</code> (linux-server.md
-stage 3).</p>
-</li>
-<li>
-<p><strong>UI packages.</strong> Group the views by which apps use them. Likely groups:</p>
-<ul>
-<li><code>StationUI</code>: themes, the guide, the channels' screens and menus (TV and
-phone);</li>
-<li><code>Players</code>: AVKit and VLC (TV and phone);</li>
-<li><code>ManagerUI</code>: the Manager's windows and panes.</li>
-</ul>
-</li>
-</ol>
-<h2 id="moving-a-targets-files">Moving a target's files <a class="header-anchor" href="#moving-a-targets-files">#</a></h2>
-<p>Step 2 made the core <code>public</code> with tools rather than by hand. Step 3 will do
-the same:</p>
-<ol>
-<li>Move the files with <code>git mv</code>, and add <code>import &lt;Target&gt;</code> to the files that
-use them.</li>
-<li>Add <code>public</code> to every declaration with no access level, except locals,
-protocol members and members of private types. A swift-syntax rewriter does
-this.</li>
-<li>Give every public struct without an initializer a public memberwise one,
-and every public class a <code>public init() {}</code>.</li>
-<li>Build. For each type named in a Sendable error, add <code>Sendable</code>. Repeat
-until clean. Check nested types named alike (<code>Kind</code>) by hand.</li>
-</ol>
-<h2 id="step-5-built-2026-11-02-stationui">Step 5, built 2026-11-02: StationUI <a class="header-anchor" href="#step-5-built-2026-11-02-stationui">#</a></h2>
-<p>All of <code>Sources/Shared</code> (67 files, 18,600 lines) moved to
-<code>Packages/StationUI</code> as one package, <code>StationUI</code>, in one commit. The apps are
-now <code>@main</code>, plists and assets, and <code>Sources/Manager</code>.</p>
-<ul>
-<li><strong><code>ManagerUI</code></strong> (<code>Packages/ManagerUI</code>) took <code>Sources/Manager</code> the same way:
-its windows, panes and assistant. The Manager's app is <code>ManagerMain.swift</code>
-and the plist.</li>
-<li><strong><code>Players</code></strong> (<code>Packages/Players</code>) holds <code>OnDemandEngine</code> and its two
-engines (<code>AVEngine</code>, <code>VLCEngine</code>), <code>VLCSurface</code> and <code>Subtitles</code>: the only
-package that imports VLCKit. <code>StationUI</code> and <code>ManagerUI</code> depend on it.
-The live channels' views still use AVKit directly, in StationUI.</li>
-<li><strong>The tower links no UI.</strong> Its target is <code>Sources/AntennaTower</code> and
-<code>StationCore</code>, <code>StationServer</code> and the relay: no <code>Sources/Manager</code>, no
-StationUI, no VLCKit (<code>otool -L</code> shows none).</li>
-<li><strong>Everything is <code>public</code>.</strong> The tools were rebuilt as <code>scripts/publicize.py</code>
-(adds <code>public</code> to declarations with no access level, at the top level and in
-type bodies) and <code>scripts/fix-access-errors.py</code> (reads a build log: adds
-<code>Sendable</code>, <code>public</code> where a protocol asks, and a public init to a type
-named in &quot;initializer is inaccessible&quot;). Narrowing it to what the apps use
-is the same compiler loop in reverse, and is worth doing once the package
-is split: most views are only reached through a root view.</li>
-<li><strong><code>just check-tvos</code></strong> emits <code>StationUI</code> as a module, then type-checks the
-TV app's sources against it.</li>
-</ul>
+<h2 id="history--retired-shims">History &amp; retired shims <a class="header-anchor" href="#history--retired-shims">#</a></h2>
+<p>Earlier stages split the codebase across six separate SwiftPM packages (<code>RetroLineup</code>,
+<code>RetroRelay</code>, <code>Station</code>, <code>StationUI</code>, <code>Players</code>, <code>ManagerUI</code>) and included a Swift
+server target (<code>StationServer</code>, <code>Sources/AntennaTower</code>), standalone Manager job loops,
+Linux compatibility shims (<code>CSQLite</code>, <code>LinuxLogger.swift</code>, <code>NoCloud.swift</code>,
+<code>swift-crypto</code>, <code>just linux-check</code>), and access-rewriting scripts (<code>scripts/publicize.py</code>,
+<code>scripts/fix-access-errors.py</code>). Once Antenna Tower moved to Go (<code>tower/</code>) and the
+Manager became a pure remote client, those separate manifests, server targets, Linux
+shims, and scripts were retired and the remaining Swift targets consolidated into
+<code>Packages/Package.swift</code>.</p>
+<p><code>just check-tvos</code> emits each tvOS-facing Swift module from <code>Packages/Sources/</code>
+with <code>-swift-version 6</code> and type-checks <code>Sources/TVApp/</code> against the tvOS SDK.</p>
 
     <nav class="pager" aria-label="Pages">
-      <span><a href="../mcp/"><small>Previous</small>The Manager&#39;s MCP server</a></span>
-      <span><a href="../plans/2026-11-01-dumb-tv-and-linux/"><small>Next</small>Plan: a dumb TV, and the station on Linux</a></span>
+      <span><a href="../mcp/"><small>Previous</small>Antenna Tower&#39;s MCP server</a></span>
+      <span><a href="../profiles/"><small>Next</small>Profiles</a></span>
     </nav>
   </article>
 </div>

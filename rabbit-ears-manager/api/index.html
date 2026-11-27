@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Rabbit Ears Manager docs">
     <h2>Rabbit Ears Manager</h2>
-    <p class="version">v1.0.1 · 2026-11-22</p>
+    <p class="version">v1.0.3 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Rabbit Ears Manager</a>
@@ -110,7 +110,7 @@
     
       <li><a href="../api/" aria-current="page">The station&#39;s interface</a>
       
-        <ul class="toc"><li class="l2"><a href="#finding-a-tower">Finding a tower</a></li><li class="l2"><a href="#three-kinds-of-caller-three-kinds-of-key">Three kinds of caller, three kinds of key</a></li><li class="l2"><a href="#bodies">Bodies</a></li><li class="l2"><a href="#who-may-do-what">Who may do what</a></li><li class="l2"><a href="#settings-and-revisions">Settings and revisions</a></li><li class="l3"><a href="#the-merge-merge-package-adminmergeswift">The merge (`merge` package, `AdminMerge.swift`)</a></li><li class="l2"><a href="#synced-keys">Synced keys</a></li><li class="l2"><a href="#the-r2-mirror">The R2 mirror</a></li><li class="l3"><a href="#in-the-go-tower">In the Go tower</a></li><li class="l2"><a href="#on-demand-in-the-go-tower">On Demand in the Go tower</a></li><li class="l2"><a href="#errors-reports-storage-and-the-tagger">Errors, reports, storage and the tagger</a></li><li class="l2"><a href="#the-planes-feed">The planes feed</a></li><li class="l2"><a href="#checked-against-the-real-swift">Checked against the real Swift</a></li><li class="l2"><a href="#event-and-sports-jobs-and-the-assistant">Event and sports jobs, and the assistant</a></li><li class="l2"><a href="#not-yet-in-the-go-tower">Not yet in the Go tower</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#finding-a-tower">Finding a tower</a></li><li class="l2"><a href="#three-kinds-of-caller-three-kinds-of-key">Three kinds of caller, three kinds of key</a></li><li class="l2"><a href="#bodies">Bodies</a></li><li class="l2"><a href="#who-may-do-what">Who may do what</a></li><li class="l2"><a href="#settings-and-revisions">Settings and revisions</a></li><li class="l3"><a href="#the-merge-admin-package-adminmergeswift">The merge (`admin` package, `AdminMerge.swift`)</a></li><li class="l2"><a href="#synced-keys">Synced keys</a></li><li class="l2"><a href="#the-r2-mirror">The R2 mirror</a></li><li class="l3"><a href="#in-the-go-tower">In the Go tower</a></li><li class="l2"><a href="#on-demand-in-the-go-tower">On Demand in the Go tower</a></li><li class="l2"><a href="#errors-reports-storage-and-the-tagger">Errors, reports, storage and the tagger</a></li><li class="l2"><a href="#the-planes-feed">The planes feed</a></li><li class="l2"><a href="#checked-against-the-real-swift">Checked against the real Swift</a></li><li class="l2"><a href="#event-and-sports-jobs-and-the-assistant">Event and sports jobs, and the assistant</a></li></ul>
       </li>
     
       <li><a href="../channel-feeds/">Channels apart from providers</a>
@@ -128,6 +128,30 @@
       <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
       </li>
     
+      <li><a href="../history/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../history/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../history/CUTOVER/">Moving luigi from the Swift tower to the Go one</a>
+      </li>
+    
+      <li><a href="../history/linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../history/manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../history/remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../history/vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../history/vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
       <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
       </li>
     
@@ -137,22 +161,10 @@
       <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
       </li>
     
-      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
-      </li>
-    
-      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
-      </li>
-    
-      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      <li><a href="../mcp/">Antenna Tower&#39;s MCP server</a>
       </li>
     
       <li><a href="../packages/">The station&#39;s packages</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
       </li>
     
       <li><a href="../profiles/">Profiles</a>
@@ -161,10 +173,7 @@
       <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
       </li>
     
-      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
-      </li>
-    
-      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      <li><a href="../settings-sync/">Settings from Antenna Tower</a>
       </li>
     
       <li><a href="../sport-channels/">Sport channels</a>
@@ -179,25 +188,17 @@
       <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
       </li>
     
-      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
-      </li>
-    
-      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
-      </li>
-    
     </ul>
-    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.3.zip">Download v1.0.3</a>
   </nav>
   <article>
     <h1>The station&#39;s interface</h1>
     <p>What a client (Rabbit Ears on a TV, Mac or phone; the Manager) can rely on from
-a tower, whichever program the tower is. The Swift tower (<code>Packages/Station</code>)
-and the Go tower (<code>tower/</code>) both speak it; clients can't tell them apart. The
-Swift code is still the reference where this document is silent
-(<code>RemoteServer.handle</code>, <code>RelayService.router</code>, <code>AdminMerge</code>).</p>
-<p>Machine-readable: <a href="https://apps.phin.tech/rabbit-ears-manager/docs/api/openapi.yaml?v=1.0.1"><code>openapi.yaml</code></a>. Conformance: the Go tower's
-tests (<code>just tower-test</code>) pin each rule below; the Swift tower's are
-<code>RelayAdminTests</code> and <code>AdminMergeTests</code>.</p>
+Antenna Tower (<code>tower/</code>). The Swift-side merge and protocol types live in
+<code>Packages/Sources/RelayAdmin/</code> (<code>AdminMerge.swift</code>, <code>RelayAdmin.swift</code>).</p>
+<p>Machine-readable: <a href="https://apps.phin.tech/rabbit-ears-manager/docs/api/openapi.yaml?v=1.0.3"><code>openapi.yaml</code></a>. Conformance: the Go tower's
+tests and Swift conformance suite (<code>just tower-test</code>, <code>tower/conformance/</code>) pin
+each rule below alongside <code>RelayAdminTests</code> (<code>AdminMergeTests</code>, <code>RelayAdminTests</code>).</p>
 <h2 id="finding-a-tower">Finding a tower <a class="header-anchor" href="#finding-a-tower">#</a></h2>
 <p>Bonjour service <code>_retrotv-relay._tcp</code>, port 8766, TXT <code>v=1</code>; the instance name
 is the tower's name (&quot;Mac mini&quot;). The synced setting <code>relay</code>
@@ -265,7 +266,7 @@ is still the current one, the value (or its absence) is saved and takes the
 next number. If not, <strong>409</strong> with the current <code>{key, rev, value}</code>; the client
 merges three ways and tries again. Putting the value a key already has takes no
 number.</p>
-<h3 id="the-merge-merge-package-adminmergeswift">The merge (<code>merge</code> package, <code>AdminMerge.swift</code>) <a class="header-anchor" href="#the-merge-merge-package-adminmergeswift">#</a></h3>
+<h3 id="the-merge-admin-package-adminmergeswift">The merge (<code>admin</code> package, <code>AdminMerge.swift</code>) <a class="header-anchor" href="#the-merge-admin-package-adminmergeswift">#</a></h3>
 <p><code>base</code> = what the device changed, <code>mine</code> = its value, <code>theirs</code> = the tower's.
 Only one side changed: that side. Dictionaries (and JSON objects in a Data)
 merge key by key. Lists take the tower's, less what the device removed, plus
@@ -274,15 +275,13 @@ its value; lists of items that have neither (nested lists, dictionaries with
 no <code>id</code>) take the device's list. Anything else: the device's. Both tower and
 client implement this: they must agree.</p>
 <h2 id="synced-keys">Synced keys <a class="header-anchor" href="#synced-keys">#</a></h2>
-<p>The list is <code>SettingsSync.keys</code> (Swift). The Go tower holds a copy in
-<code>tower/internal/keys/synced-keys.json</code>. <strong>It may not be complete</strong>: the channel
-modules' own settings keys (<code>ChannelModules.settingsKeys</code>) are only partly
-known (checked 2026-11-02 against a Mac mini database from an older build:
-every key it had that the current Swift code still syncs is listed). Until a Swift-side export writes this file, a missing key shows up as
-a 404 on <code>PUT settings/{key}</code>.</p>
+<p>The list is <code>SettingsSync.keys</code> (<code>Packages/Sources/StationCore/Core/SettingsSync.swift</code>).
+The Go tower holds the shared source-of-truth JSON in
+<code>tower/internal/keys/synced-keys.json</code>, verified against <code>SettingsSync</code> by
+conformance tests (<code>tower/conformance/swift_keys_test.go</code> and <code>SettingsSyncTests</code>).</p>
 <h2 id="the-r2-mirror">The R2 mirror <a class="header-anchor" href="#the-r2-mirror">#</a></h2>
-<p>Source: <code>Packages/RetroRelay/Sources/RelayAdmin/Mirror.swift</code>, <code>R2.swift</code>;
-decisions in docs/adr/0001. Everything in R2 is a binary plist <strong>sealed</strong> with
+<p>Source: <code>Packages/Sources/RelayAdmin/Mirror.swift</code>, <code>R2.swift</code>;
+decisions in <a href="../adr/0001-settings-from-the-mac-mini-with-an-r2-mirror/">ADR 0001</a>. Everything in R2 is a binary plist <strong>sealed</strong> with
 AES-256-GCM in CryptoKit's &quot;combined&quot; layout: 12-byte nonce, ciphertext,
 16-byte tag; keys are base64 of 32 bytes. Requests are AWS SigV4, region
 <code>auto</code>, service <code>s3</code>; reads send <code>If-None-Match</code> and treat 304 as unchanged.</p>
@@ -371,15 +370,10 @@ device whose outbox doesn't open with its secret is ignored. Checked against
 the real Swift code: CryptoKit opens what Go seals and the reverse, SigV4
 matches AWS's worked example, and the real <code>Mirror.swift</code> decodes Go's
 Snapshot, access and key bundle and wrote the Outbox fixture Go parses.</p>
-<p><strong>Switching a station from the Swift tower to the Go one needs its keys.</strong>
-Devices hold the Swift tower's device secrets and key bundles. The Go tower
-reads the Swift tower's <code>station-keys.json</code> as is (the Keychain item of the
-same name on a Mac: export it to that file); a fresh Go key file would make
-every device's outbox &quot;not sealed by its device&quot; and lock them out of the new
-copies. The entries already taken (<code>mirrorTaken</code> in the Swift tower's UserDefaults) are not carried over: on Linux those are not kept across restarts, so the Swift tower starts from none too, and an old outbox entry is replayed at most once more (settings entries merge against the revision they were based on). Pending invite links (<code>pendingInvites</code> in the keys file) are not kept
-by the Go tower, which has its own. <strong>Never run a Go tower with the real R2
-keys while the Swift tower is live</strong>: two writers fight over <code>settings/full</code>,
-and a key no device holds ends up sealing it.</p>
+<p><strong>Historical migration note (Swift tower → Go tower).</strong> When migrating an
+existing station from the retired Swift tower, the Go tower read the Swift
+tower's <code>station-keys.json</code> as is (exported from the Mac Keychain item of the
+same name); a fresh key file would make existing devices' outboxes fail to open.</p>
 <h2 id="on-demand-in-the-go-tower">On Demand in the Go tower <a class="header-anchor" href="#on-demand-in-the-go-tower">#</a></h2>
 <p><code>hello.vod</code> is true (<code>vodPlay</code> too, for the jobs). The catalog is built by the tower itself (no Swift jobs):
 every login's whole movie and series lists (<code>xtreamAccount</code>, <code>iptvProviders</code>),
@@ -505,25 +499,10 @@ changes. They read and write the synced settings (<code>iptvLineup</code>, <code
 <code>channelSchedules</code>) with compare-and-set, and publish <code>eventRefreshStatus</code>;
 <code>status</code> carries <code>events</code>, <code>refreshing</code> and <code>lastRefresh</code>.</p>
 <p>The assistant's MCP server listens on <code>127.0.0.1:8765</code> (<code>-mcp</code>, <code>STATION_MCP</code>;
-<code>off</code> disables it). It has the control room's 23 tools: logins, On Demand's
-catalog, sports, always-on channels, and <code>job_status</code>. <code>add_sport_channel</code> needs a
-dial, which only the Manager has, so the tower doesn't offer it.</p>
-<h2 id="not-yet-in-the-go-tower">Not yet in the Go tower <a class="header-anchor" href="#not-yet-in-the-go-tower">#</a></h2>
-<p>Listed so a client knows what a Go tower answers, not so it can't be done.</p>
-<table>
-<thead>
-<tr>
-<th>What</th>
-<th>Go tower</th>
-</tr>
-</thead>
-<tbody>
-<tr>
-<td>The assistant's <code>add_login</code>, <code>swap_login</code>, <code>remap_feeds</code> (added on <code>main</code> after this was written)</td>
-<td>being ported</td>
-</tr>
-</tbody>
-</table>
+<code>off</code> disables it). It serves the control room's full toolset: logins (<code>add_login</code>,
+<code>swap_login</code>, <code>remap_feeds</code>), lineup and dial management (<code>add_sport_channel</code>
+included), channel modules (MBTA, World, Video Store), On Demand's catalog,
+sports, always-on channels, health/diagnostics, and <code>job_status</code>.</p>
 
     <nav class="pager" aria-label="Pages">
       <span><a href="../android/"><small>Previous</small>An Android TV box for Dad</a></span>

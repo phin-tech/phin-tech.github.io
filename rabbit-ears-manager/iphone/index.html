@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Rabbit Ears Manager docs">
     <h2>Rabbit Ears Manager</h2>
-    <p class="version">v1.0.1 · 2026-11-22</p>
+    <p class="version">v1.0.3 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Rabbit Ears Manager</a>
@@ -126,6 +126,30 @@
       <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
       </li>
     
+      <li><a href="../history/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../history/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../history/CUTOVER/">Moving luigi from the Swift tower to the Go one</a>
+      </li>
+    
+      <li><a href="../history/linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../history/manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../history/remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../history/vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../history/vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
       <li><a href="../iphone/" aria-current="page">iPhone: a player, a remote and a manager</a>
       
         <ul class="toc"><li class="l2"><a href="#the-three-roles">The three roles</a></li><li class="l2"><a href="#decisions">Decisions</a></li><li class="l2"><a href="#open">Open</a></li><li class="l2"><a href="#plan">Plan</a></li><li class="l3"><a href="#1-player">1. Player</a></li><li class="l3"><a href="#2-manager-client">2. Manager (client)</a></li><li class="l3"><a href="#3-remote">3. Remote</a></li><li class="l2"><a href="#risks">Risks</a></li><li class="l2"><a href="#built">Built</a></li></ul>
@@ -137,22 +161,10 @@
       <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
       </li>
     
-      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
-      </li>
-    
-      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
-      </li>
-    
-      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      <li><a href="../mcp/">Antenna Tower&#39;s MCP server</a>
       </li>
     
       <li><a href="../packages/">The station&#39;s packages</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
       </li>
     
       <li><a href="../profiles/">Profiles</a>
@@ -161,10 +173,7 @@
       <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
       </li>
     
-      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
-      </li>
-    
-      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      <li><a href="../settings-sync/">Settings from Antenna Tower</a>
       </li>
     
       <li><a href="../sport-channels/">Sport channels</a>
@@ -179,14 +188,8 @@
       <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
       </li>
     
-      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
-      </li>
-    
-      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
-      </li>
-    
     </ul>
-    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.3.zip">Download v1.0.3</a>
   </nav>
   <article>
     <h1>iPhone: a player, a remote and a manager</h1>
@@ -203,12 +206,13 @@ same way. Built first.</li>
 <h2 id="decisions">Decisions <a class="header-anchor" href="#decisions">#</a></h2>
 <ol>
 <li><strong>One iOS target, not a separate app.</strong> <code>RetroTV-iOS</code> in <code>project.yml</code>, built
-from <code>Packages/StationUI/Sources/StationUI</code> and <code>Sources/TVApp</code> like the tvOS and macOS targets.
-The packages (RetroLineup, RetroRelay) gain <code>.iOS(.v17)</code>.</li>
-<li><strong>The manager is a client.</strong> It pairs with the server by code and uses the
-admin API (<code>docs/remote-management.md</code>): <code>AdminClient</code> and <code>RemoteLink</code>
-(the Mac's) move to code the iPhone can share. The iPhone runs no jobs and
-never writes iCloud.</li>
+with <code>PhoneUI</code>, <code>StationUI</code>, and <code>StationCore</code> from <code>Packages/Package.swift</code>
+(with a thin <code>@main</code> shell in <code>Sources/iOS/PhoneApp.swift</code>).</li>
+<li><strong>The manager is a client.</strong> It pairs with Antenna Tower by code or invite
+and uses the admin API (<a href="../api/">api/README.md</a>; historical design in
+<a href="../history/remote-management/">history/remote-management.md</a>): <code>AdminClient</code>
+and <code>RemoteLink</code> live in shared targets (<code>RelayAdmin</code> and <code>StationCore</code>). The
+iPhone runs no jobs and uses no iCloud.</li>
 <li><strong>Settings panes first, commands later.</strong> Channels, groups and the Server
 pane are plain synced keys and need nothing new on the server. Anything the
 Manager does with its own code (sports rescan, the review queue, VOD search,
@@ -238,18 +242,19 @@ typed in); nothing else here is encrypted.</li>
 <li>Add the iOS platform to the packages and a <code>RetroTV-iOS</code> target (iPhone only,
 <code>TARGETED_DEVICE_FAMILY: &quot;1&quot;</code>, deployment 17.0). VLCKit already ships an iOS
 build.</li>
-<li>Get <code>Packages/StationUI/Sources/StationUI</code> compiling for iOS. Expect the work in the <code>#if os(tvOS)</code>
+<li>Get <code>Packages/Sources/StationUI</code> compiling for iOS. Expect the work in the <code>#if os(tvOS)</code>
 and <code>#if os(macOS)</code> branches (17 and 23 today) and the nine files importing
 UIKit or AppKit.</li>
 <li>Input: touch for channel up/down and the guide, in place of the Siri Remote's
 <code>onMoveCommand</code> and focus handling in <code>RootView</code>.</li>
 <li>Phone behavior: safe areas, orientation, background audio, Picture in Picture,
 and the AVPlayer and VLC paths in IPTV, Plex and On Demand.</li>
-<li>Reach the relay and iCloud settings as the TV does.</li>
+<li>Reach Antenna Tower and synced settings as the TV does.</li>
 </ul>
 <h3 id="2-manager-client">2. Manager (client) <a class="header-anchor" href="#2-manager-client">#</a></h3>
 <ul>
-<li>Move the pairing, polling and sending code out of <code>Packages/ManagerUI/Sources/ManagerUI/Remote</code> so
+<li>Move the pairing, polling and sending code out of <code>Packages/Sources/ManagerUI/Remote</code>
+(now <code>RemoteLink</code> in <code>Packages/Sources/StationCore/Remote/RemoteLink.swift</code>) so
 both the Mac and the phone use it.</li>
 <li>Phone layouts for the channels, groups and Server panes.</li>
 <li>Admin commands for the Manager's actions, one at a time.</li>
@@ -267,10 +272,17 @@ covers a third platform.</li>
 miscompile (see the TaskGroup note) applies on iOS too.</li>
 </ul>
 <h2 id="built">Built <a class="header-anchor" href="#built">#</a></h2>
+<p><em>(Dated October 2026 implementation log; the iPhone views listed under <code>Sources/iOS</code>
+later moved into <code>Packages/Sources/PhoneUI/</code>, <code>Packages/RetroRelay</code> became
+<code>Packages/Sources/{RelayKit,RelayAdmin,RemoteControl}/</code>, <code>Packages/StationUI/Sources/StationUI</code>
+became <code>Packages/Sources/StationUI/</code>, <code>RemoteLink</code> moved to
+<code>Packages/Sources/StationCore/Remote/RemoteLink.swift</code>, <code>InviteOpening</code> moved to
+<code>Packages/Sources/StationUI/App/InviteOpening.swift</code>, and iCloud sync was retired
+in favor of Antenna Tower and R2.)</em></p>
 <ul>
 <li><strong>2026-10-03: the iOS target and a first player.</strong> <code>RetroTV-iOS</code> builds from
-<code>Packages/StationUI/Sources/StationUI</code> (simulator and device); VLC on iOS is <code>MobileVLCKit</code>.
-<code>Sources/iOS</code> is the phone's own app: <code>PhoneRoot</code> runs the station's
+<code>StationUI</code> (simulator and device); VLC on iOS is <code>MobileVLCKit</code>.
+<code>PhoneUI</code> (<code>Sources/iOS/</code> at the time) is the phone's own app: <code>PhoneRoot</code> runs the station's
 lifecycle (<code>onLaunch</code>, the flavor and refresh timers), hosts <code>StationView</code>
 scaled into a 16:9 box (full screen in landscape), with a swipe to change
 channel (sideways) or step through it (up and down), and a channel list under
@@ -281,9 +293,9 @@ runs it in the simulator.</li>
 on now with how far into it, and what's next, from <code>GuideStore</code>; a search box
 finds a channel by number, name or show. Station channels with an all-day
 block show only their title.</li>
-<li><strong>2026-10-03: the remote.</strong> <code>RemoteControl</code> (in <code>Packages/RetroRelay</code>, tested):
+<li><strong>2026-10-03: the remote.</strong> <code>RemoteControl</code> (in <code>Packages/Sources/RemoteControl</code>, tested):
 <code>GET /v1/state</code> and <code>POST /v1/command</code> over plain HTTP, <code>X-RetroTV-Token</code> on
-every request (the relay's household token, from iCloud), 403 for anything
+every request (the relay's household token), 403 for anything
 with an <code>Origin</code>. A command is a key (<code>{&quot;press&quot;:&quot;up&quot;}</code>: up, down, left, right,
 select, back, playPause, mute), a number (<code>{&quot;number&quot;:12}</code>) or a channel id
 (<code>{&quot;tune&quot;:&quot;…&quot;}</code>). On the TV, <code>ControlHost</code> runs the server (tvOS and the Mac TV
@@ -294,7 +306,8 @@ moment or on Enter, keys that sink into their shadow) or <strong>Standard</stron
 from the palette button. The Guide button tunes the TV from the phone's own
 guide. The Watch tab stops playing while the Remote tab is up.</li>
 <li><strong>2026-10-03: the Manager, first slice.</strong> <code>RemoteLink</code> (the Mac client) moved to
-<code>Sources/Remote</code>, shared by the Manager and the phone; the Mac-only parts are
+shared code (<code>Packages/Sources/StationCore/Remote/RemoteLink.swift</code>), shared by
+the Manager and the phone; the Mac-only parts are
 fenced or handed in. The phone has a Manage tab: <strong>Server</strong> (pair with the
 code the server shows; link state; refresh events; stop managing), <strong>Channels</strong>
 (search; rename, renumber, buffer, remove; restore removed ones) and <strong>Groups</strong>
@@ -302,12 +315,11 @@ code the server shows; link state; refresh events; stop managing), <strong>Chann
 Editing needs the server, paired and in touch, or deliberately without it
 (&quot;Edit without the server&quot; when it can't be reached). <code>RemoteLink.start()</code>
 runs before the station loads, as in the Manager.</li>
-<li><strong>Checked on a phone (2026-10-03):</strong> <code>just phone-install</code> (signed, iCloud)
+<li><strong>Checked on a phone (2026-10-03):</strong> <code>just phone-install</code> (signed)
 shows the lineup, plays streams, swipes and rotates as intended; the remote
 drives the Mac TV app. The Apple TV has the build installed too.</li>
-<li><strong>Not yet checked:</strong> video playback and touch on a real stream; the lineup
-from iCloud (the unsigned simulator build has no iCloud entitlement, so it
-shows the default channels); background audio and Picture in Picture.</li>
+<li><strong>Not yet checked:</strong> video playback and touch on a real stream; the synced
+lineup on an unpaired simulator build; background audio and Picture in Picture.</li>
 <li><strong>2026-10-18: iPad.</strong> The same app runs on iPad (<code>TARGETED_DEVICE_FAMILY</code>
 1,2, every orientation, so Split View works). In landscape with a regular
 width the guide sits beside the picture; a double tap on the picture hides it
@@ -366,7 +378,7 @@ for the link. Their phone opens it in Rabbit Ears as them
 </ul>
 
     <nav class="pager" aria-label="Pages">
-      <span><a href="../guide-relay/"><small>Previous</small>The guide on the relay: one guide for every screen</a></span>
+      <span><a href="../history/vod-relay/"><small>Previous</small>On Demand through the relay: one catalog, and search</a></span>
       <span><a href="../iptv-channels/"><small>Next</small>One kind of IPTV channel</a></span>
     </nav>
   </article>

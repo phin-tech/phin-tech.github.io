@@ -3,7 +3,7 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>The Manager&#39;s MCP server · Rabbit Ears Manager docs</title>
+<title>Antenna Tower&#39;s MCP server · Rabbit Ears Manager docs</title>
 <meta name="description" content="Set up the Rabbit Ears station from your Mac: channels, IPTV logins, sports, Plex and the relay.">
 <style>
   :root {
@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Rabbit Ears Manager docs">
     <h2>Rabbit Ears Manager</h2>
-    <p class="version">v1.0.1 · 2026-11-22</p>
+    <p class="version">v1.0.3 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Rabbit Ears Manager</a>
@@ -126,6 +126,30 @@
       <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
       </li>
     
+      <li><a href="../history/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../history/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../history/CUTOVER/">Moving luigi from the Swift tower to the Go one</a>
+      </li>
+    
+      <li><a href="../history/linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../history/manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../history/remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../history/vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../history/vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
       <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
       </li>
     
@@ -135,24 +159,12 @@
       <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
       </li>
     
-      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
-      </li>
-    
-      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
-      </li>
-    
-      <li><a href="../mcp/" aria-current="page">The Manager&#39;s MCP server</a>
+      <li><a href="../mcp/" aria-current="page">Antenna Tower&#39;s MCP server</a>
       
-        <ul class="toc"><li class="l2"><a href="#decisions-2026-09-27">Decisions (2026-09-27)</a></li><li class="l2"><a href="#protocol">Protocol</a></li><li class="l2"><a href="#tools">Tools</a></li><li class="l2"><a href="#connecting">Connecting</a></li></ul>
+        <ul class="toc"><li class="l2"><a href="#decisions">Decisions</a></li><li class="l2"><a href="#protocol">Protocol</a></li><li class="l2"><a href="#tools">Tools</a></li><li class="l2"><a href="#connecting">Connecting</a></li></ul>
       </li>
     
       <li><a href="../packages/">The station&#39;s packages</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
       </li>
     
       <li><a href="../profiles/">Profiles</a>
@@ -161,10 +173,7 @@
       <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
       </li>
     
-      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
-      </li>
-    
-      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      <li><a href="../settings-sync/">Settings from Antenna Tower</a>
       </li>
     
       <li><a href="../sport-channels/">Sport channels</a>
@@ -179,29 +188,23 @@
       <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
       </li>
     
-      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
-      </li>
-    
-      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
-      </li>
-    
     </ul>
-    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.3.zip">Download v1.0.3</a>
   </nav>
   <article>
-    <h1>The Manager&#39;s MCP server</h1>
-    <p>Rabbit Ears Manager can run an MCP server, so an assistant like Claude Code can manage
+    <h1>Antenna Tower&#39;s MCP server</h1>
+    <p>Antenna Tower runs an MCP server, so an assistant like Claude Code can manage
 the station. It can add channels, look at what's available, sort out IPTV feeds and
-fix sport channels, using the same code as the Manager's panes. Anything it changes
-shows in the Manager's window and reaches the Apple TV through iCloud, like any
-other change.</p>
-<h2 id="decisions-2026-09-27">Decisions (2026-09-27) <a class="header-anchor" href="#decisions-2026-09-27">#</a></h2>
+fix sport channels, sharing the tower's lineup, job, and catalog engines. Anything it
+changes is saved in <code>station.sqlite</code> and synced to every screen through Antenna Tower
+(and R2 when away), like any other change.</p>
+<h2 id="decisions">Decisions <a class="header-anchor" href="#decisions">#</a></h2>
 <ol>
 <li>
-<p><strong>It runs in the Manager</strong>, either as a local Streamable HTTP server on
-<code>http://127.0.0.1:8765/mcp</code> or as a stdio subprocess. Stdio clients launch the
-Manager executable with <code>--mcp-stdio</code>; this opens no window and uses the same
-tools and station settings as the app.</p>
+<p><strong>It runs in Antenna Tower</strong> as a Streamable HTTP server on
+<code>http://127.0.0.1:8765/mcp</code> (configured with <code>-mcp</code> or <code>STATION_MCP</code>; <code>&quot;off&quot;</code>
+disables it). While <code>tower/internal/mcp/server.go</code> implements a stdio transport
+(<code>ServeStdio</code>) internally, <code>antenna-tower</code> exposes the HTTP listener only.</p>
 </li>
 <li>
 <p><strong>It can change the lineup, feeds, sports and logins, but never reveals a secret.</strong>
@@ -212,14 +215,15 @@ a password, token or stream URL with credentials in it, and nothing logs the val
 its arguments.</p>
 </li>
 <li>
-<p><strong>It's off until it's turned on</strong> in the Manager's Assistant pane (in the sidebar). It listens
-on loopback only and has no token. Any request with an <code>Origin</code> header gets a
-403, so a web page can't reach it through DNS rebinding.</p>
+<p><strong>It's on by default</strong> on loopback only (<code>127.0.0.1:8765</code>, no token; pass
+<code>-mcp off</code> or <code>STATION_MCP=off</code> to disable it). Any request with an <code>Origin</code> header
+gets a 403, so a web page can't reach it through DNS rebinding.</p>
 </li>
 <li>
-<p><strong><code>test_stream</code> plays a stream before it's trusted.</strong> It uses AVPlayer, as the
-Manager's own previews do, and waits up to 12 s for a picture. It reports the
-picture size, or why it didn't play. <code>add_stream_url</code> only adds what plays.</p>
+<p><strong><code>test_stream</code> checks streams over HTTP before they're trusted.</strong>
+<code>tower/internal/tools/probe.go</code> asks for the stream (following an HLS playlist to its
+first segment, 12 seconds at most) without launching a media player, and reports why it
+succeeded or failed. <code>add_stream_url</code> only adds what answers cleanly.</p>
 </li>
 <li>
 <p><strong>Slow tools run in the background.</strong> These are the audit, the sports rescan,
@@ -245,47 +249,31 @@ request's <code>_meta</code>. The server handles <code>server/discover</code>, a
 <code>initialize</code>. The server has no sessions, since it doesn't need any.</li>
 </ul>
 <p>Each request answers with JSON only, with no SSE and no GET stream. Notifications
-get a 202. The code is in <code>Packages/ManagerUI/Sources/ManagerUI/Assistant/</code>:</p>
+get a 202. The Go server and tools live in <code>tower/</code>:</p>
 <ul>
-<li><code>AssistantServer.swift</code>: the Manager's listener and stdio transport.</li>
-<li><code>AssistantTools.swift</code>: the lineup's tools (channels, groups, streams), and the instructions sent to the model.</li>
-<li><code>AssistantPane.swift</code>: the pane.</li>
+<li><code>tower/cmd/antenna-tower/assistant.go</code>: wires up the MCP server and tool dependencies (<code>startAssistant</code>).</li>
+<li><code>tower/internal/mcp/</code>: HTTP/JSON-RPC dual-era protocol (<code>server.go</code>), tool registry (<code>registry.go</code>), tasks and jobs (<code>jobs.go</code>), and results (<code>result.go</code>).</li>
+<li><code>tower/internal/tools/</code>: the tool registrations (<code>lineup*.go</code>, <code>search.go</code>, <code>probe.go</code>, <code>audit.go</code>, <code>health.go</code>, <code>logins*.go</code>, <code>sports*.go</code>, <code>modules*.go</code>, <code>tools.go</code>).</li>
+<li><code>tower/internal/lineup/</code>: dial number calculation from <code>channelNumbers</code>, <code>channelNames</code>,
+<code>hiddenChannels</code>, <code>offDialChannels</code>, <code>addedChannels</code>, <code>iptvLineup</code>, and <code>channelGroups</code>
+(matching <code>RetroLineup</code>'s <code>DialNumbers</code> and checked against the compiled Swift).</li>
 </ul>
-<p>The protocol and the tools that need no lineup model are in <code>StationJobs</code>
-(<code>Packages/Station/Sources/StationJobs/MCP/</code>), so the control room serves them
-too:</p>
-<ul>
-<li><code>MCPProtocol.swift</code>: HTTP and JSON-RPC, both eras.</li>
-<li><code>MCPJobs.swift</code>: tasks and jobs.</li>
-<li><code>JobToolkit.swift</code>: logins, On Demand's catalogs, sports, always-on
-channels and <code>job_status</code>.</li>
-<li><code>MCPServer.swift</code>, <code>ControlRoomBackend.swift</code>: the control room's server,
-on <code>STATION_MCP_PORT</code> (default 8765), loopback only.</li>
-</ul>
-<p>The control room has the toolkit's tools only. The channel, group, number,
-feed and <code>test_stream</code> tools need the Manager's <code>StationModel</code> and stay in the
-Mac's assistant until the lineup's logic is out of it (docs/linux-server.md,
-stage 6).</p>
-<p>The Go tower (<code>tower/internal/lineup</code>, <code>tower/internal/tools/lineup.go</code>) now
-serves the lineup tools that need only the synced settings, working the dial
-out from <code>channelNumbers</code>, <code>channelNames</code>, <code>hiddenChannels</code>, <code>offDialChannels</code>,
-<code>addedChannels</code>, <code>iptvLineup</code> and <code>channelGroups</code> (the rules are RetroLineup's
-<code>DialNumbers</code>, checked against the compiled Swift): <code>list_channels</code>,
-<code>get_channel</code>, <code>remove_channel</code>, <code>restore_channel</code>, <code>renumber_channel</code>,
+<p>(The earlier Swift <code>AssistantServer</code> and <code>StationJobs/MCP</code> / control-room host were
+retired once the Go tower took over all tools; see <a href="../history/linux-server/">history/linux-server.md</a>.)</p>
+<p>The Go tower serves the full lineup, search, probe, audit, module, sports, login, and health tools:
+<code>list_channels</code>, <code>get_channel</code>, <code>remove_channel</code>, <code>restore_channel</code>, <code>renumber_channel</code>,
 <code>rename_channel</code>, <code>release_number</code>, <code>set_buffer</code>, <code>set_feeds</code>, <code>set_entries</code>,
-<code>set_preferred_login</code>, <code>merge_channels</code>, <code>list_groups</code>, <code>add_group</code>,
-<code>set_group</code> and <code>set_on_dial</code>. A Plex or Pluto channel the tower can't see
-shows as a held number, not on the dial.</p>
-<p>It also serves the rest of the Manager's assistant (plan steps 1c and 1d):
+<code>set_preferred_login</code>, <code>merge_channels</code>, <code>list_groups</code>, <code>add_group</code>, <code>set_group</code>,
+<code>set_on_dial</code> (a Plex or Pluto channel the tower can't see shows as a held number,
+not on the dial),
 <code>search_channels</code>, <code>add_channel</code>, <code>add_stream_url</code>, <code>add_feed</code>, <code>find_feeds</code>,
 <code>reload_lineup</code>, <code>sync_catalogs</code>, <code>add_sport_channel</code>, <code>test_stream</code>, <code>audit</code>,
-and the health tools <code>get_errors</code>, <code>whats_playing</code>, <code>get_storage</code>, <code>clear_cache</code>
-and <code>get_diagnostics</code>. Where the tower differs from the Manager:</p>
+and the health tools <code>get_errors</code>, <code>whats_playing</code>, <code>get_provider_speeds</code>, <code>get_storage</code>,
+<code>clear_cache</code>, and <code>get_diagnostics</code>. Behavior notes:</p>
 <ul>
 <li><strong>Streams are checked by asking for them, not by playing them.</strong> <code>test_stream</code>
 and <code>add_stream_url</code> follow a playlist to its first segment (12 seconds at
-most) and say they could not show a picture; <code>audit</code> reads the start of each
-stream as the Manager's audit did. Provider streams go through
+most); <code>audit</code> reads the start of each stream. Provider streams go through
 <code>STATION_PROXY</code>, anything else direct.</li>
 <li><strong>Plex Live TV is not searched or tested</strong>: the tower holds no Plex account's
 channel list. <code>sync_catalogs</code> reports <code>plex: 0</code>. Tubi's streams can't be tested
@@ -329,13 +317,14 @@ already have, as the Live TV pane does.</li>
 <li><code>set_entries</code>: an IPTV channel's streams and folders, in play order.</li>
 <li><code>set_preferred_login</code>: the login every stream and game on a channel tries first.</li>
 <li><code>add_feed</code> (to a stream, or as a new stream with <code>as_new_stream</code>), <code>merge_channels</code></li>
-<li><code>find_feeds</code>: runs <code>IPTVLinker</code>.</li>
+<li><code>find_feeds</code>: runs Go's feed linker (<code>tower/internal/jobs/linker.go</code>).</li>
 <li><code>audit</code></li>
 </ul>
 <p><strong>Health</strong></p>
 <ul>
 <li><code>get_errors</code>: what the screens reported (the Errors pane), filtered by <code>area</code> or <code>contains</code>. Read-only.</li>
 <li><code>whats_playing</code>: what each device is playing now, from which login and for which profile, and each login's devices (Settings › Server › Devices). Read-only.</li>
+<li><code>get_provider_speeds</code>: how fast each IPTV login has sent On Demand files fetched by the tower (median, last, slowest, fastest MB/s). Read-only.</li>
 <li><code>get_storage</code>: each On Demand cache's size and file count (the Storage pane). Read-only.</li>
 <li><code>clear_cache</code>: clears one cache by id (<code>readahead</code>, <code>posters</code>, <code>subtitles</code>, <code>tmdb</code>); the title catalog can't be cleared.</li>
 <li><code>get_diagnostics</code>: lists the Apple TVs on the network, or with <code>device</code> fetches one's recent playback log (the Diagnostics pane).</li>
@@ -343,9 +332,10 @@ already have, as the Live TV pane does.</li>
 <p><strong>Logins</strong></p>
 <ul>
 <li><code>list_logins</code>: read-only.</li>
+<li><code>add_login</code>, <code>swap_login</code>, <code>remove_login</code>, <code>remap_feeds</code>: manage IPTV logins and remap feeds (checking/counting before applying, never returning secrets).</li>
 <li><code>list_vod_categories</code>: each login's On Demand categories with title counts, which the adult filter drops (by name, or by a cached Jev tag), titles the menus drop by their own names (their names too, with <code>show_titles</code>), the titles in no listed category, and totals. Slow (a background job); never asks Jev.</li>
-<li><code>search_vod</code>: search On Demand's merged catalog (docs/vod-relay.md): titles, best first, each with its copies (login or Plex, tag, quality, file type, whether it plays as is); <code>with_plots</code> adds the first five titles' descriptions.</li>
-<li><code>vod_catalog</code>: the merged catalog on this Mac, each source's titles, size and last fetch; <code>refresh</code> fetches it all again (a background job).</li>
+<li><code>search_vod</code>: search On Demand's merged catalog (<a href="../api/">api/README.md</a>, historical context in <a href="../history/vod-relay/">history/vod-relay.md</a>): titles, best first, each with its copies (login or Plex, tag, quality, file type, whether it plays as is); <code>with_plots</code> adds the first five titles' descriptions.</li>
+<li><code>vod_catalog</code>: the merged catalog on Antenna Tower, each source's titles, size and last fetch; <code>refresh</code> fetches it all again (a background job).</li>
 </ul>
 <p><strong>Sports</strong></p>
 <ul>
@@ -372,19 +362,16 @@ The MBTA channel's are <code>get_mbta</code> and <code>set_mbta</code>; the Vide
 <ul>
 <li><code>sync_catalogs</code>, <code>reload_lineup</code>, <code>job_status</code></li>
 </ul>
-<p>The Sports pane and the assistant share one <code>EventScan</code>, so a rescan from either
-shows in both.</p>
+<p>The Sports pane and the assistant share the tower's sports scan (<code>tower/internal/jobs/scan.go</code>,
+also backing <code>/v1/admin/commands/sports-scan</code>), so a rescan from either shows in both.</p>
 <h2 id="connecting">Connecting <a class="header-anchor" href="#connecting">#</a></h2>
-<pre><code class="language-sh">claude mcp add retrotv -- &quot;/Applications/Rabbit Ears Manager.app/Contents/MacOS/Rabbit Ears Manager&quot; --mcp-stdio
-codex mcp add retrotv -- &quot;/Applications/Rabbit Ears Manager.app/Contents/MacOS/Rabbit Ears Manager&quot; --mcp-stdio
+<p>Clients connect via Streamable HTTP to Antenna Tower's loopback endpoint (default
+<code>http://127.0.0.1:8765/mcp</code>, configured via <code>-mcp</code> or <code>STATION_MCP</code>):</p>
+<pre><code class="language-sh">claude mcp add --transport http retrotv http://127.0.0.1:8765/mcp
 </code></pre>
-<p>The Assistant pane shows copyable stdio commands using the installed app's
-actual executable path. The HTTP server remains available to other clients that
-connect directly to <code>http://127.0.0.1:8765/mcp</code>. The pane also lists recent tool
-calls from either transport.</p>
 
     <nav class="pager" aria-label="Pages">
-      <span><a href="../manager-relay/"><small>Previous</small>The Manager relay: live feeds fetched once for every screen</a></span>
+      <span><a href="../iptv-relay/"><small>Previous</small>IPTV relay: provider traffic through PIA, by country</a></span>
       <span><a href="../packages/"><small>Next</small>The station&#39;s packages</a></span>
     </nav>
   </article>

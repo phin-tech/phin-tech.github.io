@@ -84,7 +84,7 @@
 <div class="layout">
   <nav class="side" aria-label="Rabbit Ears Manager docs">
     <h2>Rabbit Ears Manager</h2>
-    <p class="version">v1.0.1 · 2026-11-22</p>
+    <p class="version">v1.0.3 · 2026-11-26</p>
     <ul>
     
       <li><a href="../">Rabbit Ears Manager</a>
@@ -128,6 +128,30 @@
       <li><a href="../guide-relay/">The guide on the relay: one guide for every screen</a>
       </li>
     
+      <li><a href="../history/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
+      </li>
+    
+      <li><a href="../history/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
+      </li>
+    
+      <li><a href="../history/CUTOVER/">Moving luigi from the Swift tower to the Go one</a>
+      </li>
+    
+      <li><a href="../history/linux-server/">Antenna Tower on Linux, with a web Manager</a>
+      </li>
+    
+      <li><a href="../history/manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
+      </li>
+    
+      <li><a href="../history/remote-management/">Remote management: one Manager is the server, the others are clients</a>
+      </li>
+    
+      <li><a href="../history/vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
+      </li>
+    
+      <li><a href="../history/vod-relay/">On Demand through the relay: one catalog, and search</a>
+      </li>
+    
       <li><a href="../iphone/">iPhone: a player, a remote and a manager</a>
       </li>
     
@@ -137,22 +161,10 @@
       <li><a href="../iptv-relay/">IPTV relay: provider traffic through PIA, by country</a>
       </li>
     
-      <li><a href="../linux-server/">Antenna Tower on Linux, with a web Manager</a>
-      </li>
-    
-      <li><a href="../manager-relay/">The Manager relay: live feeds fetched once for every screen</a>
-      </li>
-    
-      <li><a href="../mcp/">The Manager&#39;s MCP server</a>
+      <li><a href="../mcp/">Antenna Tower&#39;s MCP server</a>
       </li>
     
       <li><a href="../packages/">The station&#39;s packages</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-01-dumb-tv-and-linux/">Plan: a dumb TV, and the station on Linux</a>
-      </li>
-    
-      <li><a href="../plans/2026-11-03-retire-the-swift-servers/">Plan: retire the Swift servers on main</a>
       </li>
     
       <li><a href="../profiles/">Profiles</a>
@@ -161,10 +173,7 @@
       <li><a href="../read-ahead/">On Demand read-ahead: played while it downloads</a>
       </li>
     
-      <li><a href="../remote-management/">Remote management: one Manager is the server, the others are clients</a>
-      </li>
-    
-      <li><a href="../settings-sync/">Settings from the Mac mini</a>
+      <li><a href="../settings-sync/">Settings from Antenna Tower</a>
       </li>
     
       <li><a href="../sport-channels/">Sport channels</a>
@@ -179,14 +188,8 @@
       <li><a href="../video-store/">Video Store: On Demand as a store you walk through, with covers</a>
       </li>
     
-      <li><a href="../vod-fetch/">On Demand fetched by the relay&#39;s Mac: playing and keeping</a>
-      </li>
-    
-      <li><a href="../vod-relay/">On Demand through the relay: one catalog, and search</a>
-      </li>
-    
     </ul>
-    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.1.zip">Download v1.0.1</a>
+    <a class="get" href="https://apps.phin.tech/rabbit-ears-manager/rabbit-ears-manager-1.0.3.zip">Download v1.0.3</a>
   </nav>
   <article>
     <h1>Getting started</h1>
@@ -236,10 +239,9 @@ radio, screensavers, and live channels you add yourself.</p>
 </tr>
 </tbody>
 </table>
-<p>The Manager is for setting things up and for running the house's shared services.
-It runs on a Mac (an always-on Mac mini is ideal) and talks to the TV through
-iCloud. It isn't on TestFlight or any store: you build it from this repo (see
-below).</p>
+<p>The Manager is for setting things up, pairing with Antenna Tower (<code>tower/</code>) over
+your home network (no iCloud involved). It isn't on TestFlight or any store: you
+build it from this repo (see below).</p>
 <h2 id="install-on-your-apple-tv-testflight">Install on your Apple TV (TestFlight) <a class="header-anchor" href="#install-on-your-apple-tv-testflight">#</a></h2>
 <ol>
 <li>Install <strong>TestFlight</strong> from the App Store on your Apple TV (or on an iPhone
@@ -277,17 +279,15 @@ just --set team ABCDE12345 --set prefix com.example tv-install      # your Apple
 <p>Or set <code>RETRO_TEAM</code> and <code>RETRO_PREFIX</code> once in your shell and use the plain
 recipes. Every recipe takes them, and <code>tv-install</code> also takes your TV's name
 (<code>just tv-install &quot;Bedroom&quot;</code>).</p>
-<p><strong>The catch: iCloud.</strong> The Manager talks to the TV through the iCloud account's
-key-value store, which belongs to the team that signed the app. A Manager you build
-under your team <strong>can't share settings with the TestFlight app</strong> (Sam's team), so
-changes you make in it won't reach that TV. If you want the Manager, build the TV
-app yourself too (<code>tv-install</code>, under the same team and prefix) so they sync.</p>
+<p><strong>Pairing with Antenna Tower.</strong> The Manager and every screen talk to Antenna Tower
+(<code>tower/</code>) using a pairing code or invite link (and R2 when away), not iCloud, so a
+Manager you build under your own team can manage a TestFlight TV app too.</p>
 <h2 id="adding-iptv-a-providers-live-channels-movies-and-series">Adding IPTV (a provider's live channels, movies and series) <a class="header-anchor" href="#adding-iptv-a-providers-live-channels-movies-and-series">#</a></h2>
 <p>Rabbit Ears doesn't include or recommend any IPTV provider. You bring your own
 subscription, from whoever you buy it from (a provider's own site, or a reseller
 listing on a marketplace such as g2g.com), and the app plays what that subscription
-allows. Because this is set up in the Manager, you need the Manager built under the
-same team as your TV app (see above).</p>
+allows. Because this is set up in the Manager, pair the Manager and your TV app with
+your Antenna Tower (see above).</p>
 <p>What you get from the seller, after you pay, is one of these:</p>
 <ul>
 <li><strong>An M3U link</strong>, which looks like <code>http://server.example:8080/get.php?username=...&amp;password=...&amp;type=m3u_plus</code>.
@@ -307,7 +307,7 @@ your login&quot; and press <strong>Connect</strong>.</li>
 ones you want and add them: each becomes a channel on your dial with a number.
 The same channel from a second provider can be added as a backup feed to a
 channel you already have, not as a second channel.</li>
-<li>Your login is kept in your iCloud account so the Apple TV can play the channels.
+<li>Your login is kept in Antenna Tower so the Apple TV can play the channels.
 Movies and series show up on the <strong>On Demand</strong> channel; the Manager's
 <strong>On Demand</strong> pane picks which categories it lists.</li>
 </ol>
